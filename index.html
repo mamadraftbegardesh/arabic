@@ -429,7 +429,6 @@
             .ans-btn { font-size: 0.78rem; padding: 12px 4px; }
         }
 
-        /* ویجت کاربران آنلاین + تایمر مطالعه */
         .online-users-widget {
             position: fixed;
             bottom: 20px;
@@ -457,10 +456,7 @@
             box-shadow: 0 0 8px #4caf50;
             animation: pulse-dot 2s infinite;
         }
-        @keyframes pulse-dot {
-            0%,100% { box-shadow: 0 0 4px #4caf50; }
-            50% { box-shadow: 0 0 12px #4caf50, 0 0 20px rgba(76,175,80,0.4); }
-        }
+        @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 4px #4caf50; } 50% { box-shadow: 0 0 12px #4caf50, 0 0 20px rgba(76,175,80,0.4); } }
         .online-count { font-weight: 700; color: var(--ink); }
         .online-tooltip {
             display: none;
@@ -478,21 +474,9 @@
             z-index: 31;
         }
         .online-users-widget:hover .online-tooltip { display: block; }
-        .online-tooltip .user-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 0;
-            border-bottom: 1px solid var(--border-soft-hover);
-        }
+        .online-tooltip .user-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border-soft-hover); }
         .online-tooltip .user-row:last-child { border-bottom: none; }
-        .user-status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4caf50;
-            flex-shrink: 0;
-        }
+        .user-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4caf50; flex-shrink: 0; }
         .user-status-dot.studying { background: #ff9800; box-shadow: 0 0 6px #ff9800; }
 
         .study-timer {
@@ -650,7 +634,6 @@
         });
 
         const STORAGE_KEY = "arabic_flashcards_state_v1";
-
         function saveState(state) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
         function loadState() { try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch(e) { return null; } }
         function clearState() { try { localStorage.removeItem(STORAGE_KEY); } catch(e) {} }
@@ -664,39 +647,17 @@
             }
         }
 
-        function shuffle(arr) {
-            const a = arr.slice();
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
-
-        function buildWordPool(lessonIds) {
-            const pool = [];
-            LESSONS.filter(l => lessonIds.includes(l.id)).forEach(l => {
-                l.words.forEach((w, idx) => { pool.push({ id: l.id + "-" + idx, lessonId: l.id, word: w[0], meaning: w[1] }); });
-            });
-            return pool;
-        }
+        function shuffle(arr) { const a = arr.slice(); for (let i=a.length-1;i>0;i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+        function buildWordPool(lessonIds) { const pool = []; LESSONS.filter(l=>lessonIds.includes(l.id)).forEach(l=>{ l.words.forEach((w,idx)=>{ pool.push({id:l.id+"-"+idx, lessonId:l.id, word:w[0], meaning:w[1]}); }); }); return pool; }
 
         let session = null;
-        const authScreen = document.getElementById('authScreen');
-        const selectScreen = document.getElementById('selectScreen');
-        const studyScreen = document.getElementById('studyScreen');
-        const doneScreen = document.getElementById('doneScreen');
-        const lessonListEl = document.getElementById('lessonList');
-        const selectedInfo = document.getElementById('selectedInfo');
-        const startBtn = document.getElementById('startBtn');
-        const resumeBanner = document.getElementById('resumeBanner');
-        const authUsernameInput = document.getElementById('authUsername');
-        const authPasswordInput = document.getElementById('authPassword');
-        const authMessageEl = document.getElementById('authMessage');
+        const authScreen = document.getElementById('authScreen'), selectScreen = document.getElementById('selectScreen'), studyScreen = document.getElementById('studyScreen'), doneScreen = document.getElementById('doneScreen');
+        const lessonListEl = document.getElementById('lessonList'), selectedInfo = document.getElementById('selectedInfo'), startBtn = document.getElementById('startBtn'), resumeBanner = document.getElementById('resumeBanner');
+        const authUsernameInput = document.getElementById('authUsername'), authPasswordInput = document.getElementById('authPassword'), authMessageEl = document.getElementById('authMessage');
         let checkedLessons = new Set();
 
         function getFakeEmail(username) { return `${username.trim().toLowerCase()}@arabicflashcards.local`; }
-        function showAuthMessage(text, isError = true) { authMessageEl.textContent = text; authMessageEl.style.color = isError ? "var(--wrong)" : "var(--correct)"; }
+        function showAuthMessage(text, isError=true) { authMessageEl.textContent = text; authMessageEl.style.color = isError ? "var(--wrong)" : "var(--correct)"; }
 
         document.getElementById('signupBtn').addEventListener('click', async () => {
             const username = authUsernameInput.value.trim(), password = authPasswordInput.value;
@@ -728,20 +689,11 @@
             if (authSession) {
                 const { data: { user } } = await supabaseClient.auth.getUser();
                 if (user?.user_metadata?.flashcard_progress) saveState(user.user_metadata.flashcard_progress);
-                authScreen.style.display = 'none';
-                selectScreen.style.display = 'block';
-                renderLessonList();
-                checkForResume();
-                initPresence();
+                authScreen.style.display = 'none'; selectScreen.style.display = 'block';
+                renderLessonList(); checkForResume(); initPresence();
             } else {
-                authScreen.style.display = 'block';
-                selectScreen.style.display = 'none';
-                studyScreen.style.display = 'none';
-                doneScreen.style.display = 'none';
-                authUsernameInput.value = "";
-                authPasswordInput.value = "";
-                authMessageEl.textContent = "";
-                stopPresence();
+                authScreen.style.display = 'block'; selectScreen.style.display = 'none'; studyScreen.style.display = 'none'; doneScreen.style.display = 'none';
+                authUsernameInput.value = ""; authPasswordInput.value = ""; authMessageEl.textContent = ""; stopPresence();
             }
         }
 
@@ -758,203 +710,115 @@
             updateSelectionUI();
         }
 
-        function toggleLesson(id, checked) {
-            if (checked) checkedLessons.add(id); else checkedLessons.delete(id);
-            document.querySelectorAll('.lesson-item').forEach(el => { const cb = el.querySelector('input'); if (parseInt(cb.dataset.id) === id) el.classList.toggle('checked', checked); });
-            updateSelectionUI();
-        }
+        function toggleLesson(id, checked) { if (checked) checkedLessons.add(id); else checkedLessons.delete(id); document.querySelectorAll('.lesson-item').forEach(el => { const cb = el.querySelector('input'); if (parseInt(cb.dataset.id) === id) el.classList.toggle('checked', checked); }); updateSelectionUI(); }
+        function updateSelectionUI() { const count = checkedLessons.size, totalWords = LESSONS.filter(l=>checkedLessons.has(l.id)).reduce((s,l)=>s+l.words.length,0); if (count===0) { selectedInfo.textContent="هیچ درسی انتخاب نشده"; startBtn.disabled=true; } else { selectedInfo.textContent=`${count} درس انتخاب شده — ${totalWords} واژه`; startBtn.disabled=false; } }
 
-        function updateSelectionUI() {
-            const count = checkedLessons.size, totalWords = LESSONS.filter(l => checkedLessons.has(l.id)).reduce((s,l) => s + l.words.length, 0);
-            if (count === 0) { selectedInfo.textContent = "هیچ درسی انتخاب نشده"; startBtn.disabled = true; }
-            else { selectedInfo.textContent = `${count} درس انتخاب شده — ${totalWords} واژه`; startBtn.disabled = false; }
-        }
-
-        document.getElementById('selectAllBtn').addEventListener('click', () => { LESSONS.forEach(l => checkedLessons.add(l.id)); renderLessonList(); });
+        document.getElementById('selectAllBtn').addEventListener('click', () => { LESSONS.forEach(l=>checkedLessons.add(l.id)); renderLessonList(); });
         document.getElementById('clearAllBtn').addEventListener('click', () => { checkedLessons.clear(); renderLessonList(); });
         startBtn.addEventListener('click', () => startNewSession(Array.from(checkedLessons)));
 
-        function checkForResume() {
-            const saved = loadState();
-            if (saved?.queue?.length > 0) { resumeBanner.style.display = 'flex'; resumeBanner.dataset.hasSave = "1"; }
-            else resumeBanner.style.display = 'none';
-        }
+        function checkForResume() { const saved = loadState(); if (saved?.queue?.length > 0) { resumeBanner.style.display='flex'; resumeBanner.dataset.hasSave="1"; } else resumeBanner.style.display='none'; }
         document.getElementById('resumeBtn').addEventListener('click', () => { const saved = loadState(); if (saved) resumeSession(saved); });
-        document.getElementById('discardResumeBtn').addEventListener('click', () => { clearState(); resumeBanner.style.display = 'none'; });
+        document.getElementById('discardResumeBtn').addEventListener('click', () => { clearState(); resumeBanner.style.display='none'; });
 
-        function startNewSession(lessonIds) {
-            const pool = buildWordPool(lessonIds);
-            const ids = shuffle(pool.map(w => w.id));
-            session = { lessonIds, poolMap: Object.fromEntries(pool.map(w => [w.id, w])), queue: ids, mastered: [], total: ids.length };
-            persist();
-            enterStudyScreen();
-        }
+        function startNewSession(lessonIds) { const pool = buildWordPool(lessonIds); const ids = shuffle(pool.map(w=>w.id)); session = { lessonIds, poolMap: Object.fromEntries(pool.map(w=>[w.id,w])), queue: ids, mastered: [], total: ids.length }; persist(); enterStudyScreen(); }
+        function resumeSession(saved) { const pool = buildWordPool(saved.lessonIds); const poolMap = Object.fromEntries(pool.map(w=>[w.id,w])); session = { lessonIds: saved.lessonIds, poolMap, queue: saved.queue.filter(id=>poolMap[id]), mastered: saved.mastered.filter(id=>poolMap[id]), total: saved.total }; enterStudyScreen(); }
+        function persist() { if (!session) return; saveState({ lessonIds: session.lessonIds, queue: session.queue, mastered: session.mastered, total: session.total }); syncProgressToCloud(); }
 
-        function resumeSession(saved) {
-            const pool = buildWordPool(saved.lessonIds);
-            const poolMap = Object.fromEntries(pool.map(w => [w.id, w]));
-            session = { lessonIds: saved.lessonIds, poolMap, queue: saved.queue.filter(id => poolMap[id]), mastered: saved.mastered.filter(id => poolMap[id]), total: saved.total };
-            enterStudyScreen();
-        }
-
-        function persist() {
-            if (!session) return;
-            saveState({ lessonIds: session.lessonIds, queue: session.queue, mastered: session.mastered, total: session.total });
-            syncProgressToCloud();
-        }
-
-        function enterStudyScreen() {
-            selectScreen.style.display = 'none';
-            doneScreen.style.display = 'none';
-            studyScreen.style.display = 'flex';
-            studyScreen.style.flexDirection = 'column';
-            studyScreen.style.alignItems = 'center';
-            document.getElementById('activeLessonsLabel').textContent = LESSONS.filter(l => session.lessonIds.includes(l.id)).map(l => l.title.split('：')[0].split(':')[0]).join('، ');
-            renderCurrentCard();
-            startStudyTimer();
-            updatePresence(true);
-        }
-
-        function backToSelection() {
-            selectScreen.style.display = 'block';
-            studyScreen.style.display = 'none';
-            doneScreen.style.display = 'none';
-            stopStudyTimer();
-            updatePresence(false);
-            checkForResume();
-        }
+        function enterStudyScreen() { selectScreen.style.display='none'; doneScreen.style.display='none'; studyScreen.style.display='flex'; studyScreen.style.flexDirection='column'; studyScreen.style.alignItems='center'; document.getElementById('activeLessonsLabel').textContent = LESSONS.filter(l=>session.lessonIds.includes(l.id)).map(l=>l.title.split('：')[0].split(':')[0]).join('، '); renderCurrentCard(); startStudyTimer(); updatePresence(true); }
+        function backToSelection() { selectScreen.style.display='block'; studyScreen.style.display='none'; doneScreen.style.display='none'; stopStudyTimer(); updatePresence(false); checkForResume(); }
 
         document.getElementById('backBtn').addEventListener('click', backToSelection);
         document.getElementById('doneBackBtn').addEventListener('click', () => { clearState(); backToSelection(); });
         document.getElementById('resetProgressBtn').addEventListener('click', () => { if (!session) return; if (confirm('پیشرفت این تمرین پاک شود؟')) startNewSession(session.lessonIds); });
 
-        const flashcard = document.getElementById('flashcard');
-        const wordText = document.getElementById('wordText');
-        const meaningText = document.getElementById('meaningText');
-        const answerRow = document.getElementById('answerRow');
-        const progressFill = document.getElementById('progressFill');
-        const statQueue = document.getElementById('statQueue');
-        const statMastered = document.getElementById('statMastered');
-        const statTotal = document.getElementById('statTotal');
+        const flashcard = document.getElementById('flashcard'), wordText = document.getElementById('wordText'), meaningText = document.getElementById('meaningText'), answerRow = document.getElementById('answerRow');
+        const progressFill = document.getElementById('progressFill'), statQueue = document.getElementById('statQueue'), statMastered = document.getElementById('statMastered'), statTotal = document.getElementById('statTotal');
 
         function renderCurrentCard() {
             if (!session) return;
             if (session.queue.length === 0) { showDoneScreen(); return; }
             answerRow.classList.remove('show');
-            const currentId = session.queue[0], w = session.poolMap[currentId];
-            flashcard.classList.add('no-anim');
-            flashcard.classList.remove('flipped');
-            void flashcard.offsetWidth;
-            wordText.textContent = w.word;
-            meaningText.textContent = w.meaning;
-            void flashcard.offsetWidth;
-            flashcard.classList.remove('no-anim');
+            const w = session.poolMap[session.queue[0]];
+            flashcard.classList.add('no-anim'); flashcard.classList.remove('flipped'); void flashcard.offsetWidth;
+            wordText.textContent = w.word; meaningText.textContent = w.meaning; void flashcard.offsetWidth; flashcard.classList.remove('no-anim');
             updateProgress();
         }
 
-        function updateProgress() {
-            const masteredCount = session.mastered.length, total = session.total;
-            progressFill.style.width = total ? Math.round((masteredCount / total) * 100) + '%' : '0%';
-            statQueue.textContent = session.queue.length;
-            statMastered.textContent = masteredCount;
-            statTotal.textContent = total;
-        }
+        function updateProgress() { const m = session.mastered.length, t = session.total; progressFill.style.width = t ? Math.round((m/t)*100)+'%' : '0%'; statQueue.textContent = session.queue.length; statMastered.textContent = m; statTotal.textContent = t; }
 
         let flipShowTimer = null;
         flashcard.addEventListener('click', () => {
-            if (!flashcard.classList.contains('flipped')) {
-                flashcard.classList.add('flipped');
-                flipShowTimer = setTimeout(() => answerRow.classList.add('show'), 200);
-            } else {
-                if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer = null; }
-                answerRow.classList.remove('show');
-                flashcard.classList.remove('flipped');
-            }
+            if (!flashcard.classList.contains('flipped')) { flashcard.classList.add('flipped'); flipShowTimer = setTimeout(()=>answerRow.classList.add('show'), 200); }
+            else { if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer=null; } answerRow.classList.remove('show'); flashcard.classList.remove('flipped'); }
         });
 
-        answerRow.addEventListener('click', (e) => {
-            const btn = e.target.closest('.ans-btn');
-            if (!btn) return;
-            handleAnswer(btn.dataset.result);
-        });
+        answerRow.addEventListener('click', (e) => { const btn = e.target.closest('.ans-btn'); if (btn) handleAnswer(btn.dataset.result); });
 
         function handleAnswer(result) {
-            if (!session || session.queue.length === 0) return;
-            if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer = null; }
-            const currentId = session.queue.shift();
-            if (result === 'correct') session.mastered.push(currentId);
-            else session.queue.push(currentId);
-            persist();
-            renderCurrentCard();
+            if (!session || session.queue.length===0) return;
+            if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer=null; }
+            const id = session.queue.shift();
+            if (result==='correct') session.mastered.push(id); else session.queue.push(id);
+            persist(); renderCurrentCard();
         }
 
-        function showDoneScreen() {
-            studyScreen.style.display = 'none';
-            doneScreen.style.display = 'block';
-            document.getElementById('doneSummary').textContent = `${session.total} واژه از درس‌های انتخابی را با موفقیت تمرین کردی 👏`;
-            stopStudyTimer();
-            updatePresence(false);
-            clearState();
-        }
+        function showDoneScreen() { studyScreen.style.display='none'; doneScreen.style.display='block'; document.getElementById('doneSummary').textContent = `${session.total} واژه از درس‌های انتخابی را با موفقیت تمرین کردی 👏`; stopStudyTimer(); updatePresence(false); clearState(); }
 
-        /* theme */
-        const THEME_KEY = "arabic_flashcards_theme";
-        const themeToggleBtn = document.getElementById('themeToggle');
-        function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); themeToggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙'; }
-        function initTheme() { let theme = localStorage.getItem(THEME_KEY); if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; applyTheme(theme); }
-        themeToggleBtn.addEventListener('click', () => { const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; applyTheme(next); localStorage.setItem(THEME_KEY, next); });
+        const THEME_KEY = "arabic_flashcards_theme", themeToggleBtn = document.getElementById('themeToggle');
+        function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); themeToggleBtn.textContent = theme==='dark'?'☀️':'🌙'; }
+        function initTheme() { let theme = localStorage.getItem(THEME_KEY); if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; applyTheme(theme); }
+        themeToggleBtn.addEventListener('click', () => { const next = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; applyTheme(next); localStorage.setItem(THEME_KEY, next); });
 
-        /* حضور و تایمر مطالعه */
-        let presenceInterval = null, onlineUsersInterval = null, currentUsername = null;
-        let studyTimerInterval = null, unsyncedSeconds = 0, sessionTotalSeconds = 0;
-        let isStudyActive = true, lastActivityTime = Date.now();
-        const INACTIVITY_LIMIT = 30;
+        /* ========= حضور و تایمر مطالعه ========= */
+        let presenceInterval=null, onlineUsersInterval=null, currentUsername=null;
+        let studyTimerInterval=null, unsyncedSeconds=0, sessionTotalSeconds=0;
+        let isStudyActive=true, lastActivityTime=Date.now(); const INACTIVITY_LIMIT=30;
 
-        const onlineUsersWidget = document.getElementById('onlineUsersWidget');
-        const onlineCount = document.getElementById('onlineCount');
-        const onlineTooltip = document.getElementById('onlineTooltip');
-        const studyTimerDisplay = document.getElementById('studyTimerDisplay');
-        const timerText = document.getElementById('timerText');
+        const onlineUsersWidget = document.getElementById('onlineUsersWidget'), onlineCount = document.getElementById('onlineCount'), onlineTooltip = document.getElementById('onlineTooltip');
+        const studyTimerDisplay = document.getElementById('studyTimerDisplay'), timerText = document.getElementById('timerText');
 
         async function initPresence() {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user) return;
             currentUsername = user.user_metadata?.display_username || user.email?.split('@')[0] || 'کاربر';
             await updatePresence(false);
-            if (presenceInterval) clearInterval(presenceInterval);
-            presenceInterval = setInterval(sendHeartbeat, 20000);
-            if (onlineUsersInterval) clearInterval(onlineUsersInterval);
-            onlineUsersInterval = setInterval(fetchOnlineUsers, 10000);
+            if (presenceInterval) clearInterval(presenceInterval); presenceInterval = setInterval(sendHeartbeat, 20000);
+            if (onlineUsersInterval) clearInterval(onlineUsersInterval); onlineUsersInterval = setInterval(fetchOnlineUsers, 10000);
             fetchOnlineUsers();
         }
 
-        function stopPresence() { if (presenceInterval) clearInterval(presenceInterval); if (onlineUsersInterval) clearInterval(onlineUsersInterval); presenceInterval = onlineUsersInterval = null; }
+        function stopPresence() { if (presenceInterval) clearInterval(presenceInterval); if (onlineUsersInterval) clearInterval(onlineUsersInterval); presenceInterval=onlineUsersInterval=null; }
 
-        async function removePresence() {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (user) await supabaseClient.from('user_presence').delete().eq('user_id', user.id);
-        }
+        async function removePresence() { const { data: { user } } = await supabaseClient.auth.getUser(); if (user) await supabaseClient.from('user_presence').delete().eq('user_id', user.id); }
 
-        async function sendHeartbeat() {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (user) await supabaseClient.from('user_presence').upsert({ user_id: user.id, username: currentUsername, last_heartbeat: new Date().toISOString() }, { onConflict: 'user_id' });
-        }
+        async function sendHeartbeat() { const { data: { user } } = await supabaseClient.auth.getUser(); if (user) await supabaseClient.from('user_presence').upsert({ user_id: user.id, username: currentUsername, last_heartbeat: new Date().toISOString() }, { onConflict: 'user_id' }); }
 
         async function updatePresence(isStudying) {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user) return;
             const payload = { user_id: user.id, username: currentUsername, last_heartbeat: new Date().toISOString(), is_studying: isStudying };
-            if (isStudying) payload.study_session_start = new Date().toISOString();
-            else payload.study_session_start = null;
+            if (isStudying) payload.study_session_start = new Date().toISOString(); else payload.study_session_start = null;
             await supabaseClient.from('user_presence').upsert(payload, { onConflict: 'user_id' });
         }
 
         async function fetchOnlineUsers() {
             try {
+                // تلاش برای استفاده از تابع امن سرور
                 const { data, error } = await supabaseClient.rpc('get_online_users');
-                if (error) console.error('خطا در دریافت کاربران آنلاین:', error);
-                else renderOnlineUsers(data || []);
-            } catch(e) { console.error('خطا:', e); }
+                if (!error && data) {
+                    renderOnlineUsers(data);
+                    return;
+                }
+                // fallback در صورت خطا
+                console.warn('RPC failed, falling back to client filter', error);
+                const thirtySecAgo = new Date(Date.now() - 30000).toISOString();
+                const { data: fallbackData } = await supabaseClient.from('user_presence').select('*').gte('last_heartbeat', thirtySecAgo);
+                renderOnlineUsers(fallbackData || []);
+            } catch(e) {
+                console.error('fetchOnlineUsers error:', e);
+                onlineCount.textContent = '?';
+            }
         }
 
         function renderOnlineUsers(users) {
@@ -965,75 +829,44 @@
                 users.forEach(u => {
                     const cls = u.is_studying ? ' studying' : '';
                     const label = u.is_studying ? ' 📖 در حال مطالعه' : '';
-                    html += `<div class="user-row"><span class="user-status-dot${cls}"></span><span>${escapeHtml(u.username || 'ناشناس')}${label}</span></div>`;
+                    html += `<div class="user-row"><span class="user-status-dot${cls}"></span><span>${escapeHtml(u.username||'ناشناس')}${label}</span></div>`;
                 });
                 onlineTooltip.innerHTML = html;
             }
         }
-        function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+        function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
 
-        /* تایمر مطالعه تصحیح‌شده */
         function startStudyTimer() {
-            sessionTotalSeconds = 0;
-            unsyncedSeconds = 0;
-            isStudyActive = true;
-            lastActivityTime = Date.now();
-            updateTimerDisplay();
-            studyTimerDisplay.classList.remove('inactive');
+            sessionTotalSeconds=0; unsyncedSeconds=0; isStudyActive=true; lastActivityTime=Date.now(); updateTimerDisplay(); studyTimerDisplay.classList.remove('inactive');
             if (studyTimerInterval) clearInterval(studyTimerInterval);
             studyTimerInterval = setInterval(() => {
-                const now = Date.now();
-                const idleSec = Math.floor((now - lastActivityTime) / 1000);
-                if (idleSec >= INACTIVITY_LIMIT) {
-                    if (isStudyActive) { isStudyActive = false; studyTimerDisplay.classList.add('inactive'); updatePresence(false); }
-                } else {
-                    if (!isStudyActive) { isStudyActive = true; studyTimerDisplay.classList.remove('inactive'); updatePresence(true); }
-                    sessionTotalSeconds++;
-                    unsyncedSeconds++;
-                    updateTimerDisplay();
+                const idleSec = Math.floor((Date.now()-lastActivityTime)/1000);
+                if (idleSec >= INACTIVITY_LIMIT) { if (isStudyActive) { isStudyActive=false; studyTimerDisplay.classList.add('inactive'); updatePresence(false); } }
+                else {
+                    if (!isStudyActive) { isStudyActive=true; studyTimerDisplay.classList.remove('inactive'); updatePresence(true); }
+                    sessionTotalSeconds++; unsyncedSeconds++; updateTimerDisplay();
                     if (unsyncedSeconds % 5 === 0) syncStudyTime();
                 }
             }, 1000);
             setupActivityListeners();
         }
 
-        function stopStudyTimer() {
-            if (studyTimerInterval) { clearInterval(studyTimerInterval); studyTimerInterval = null; }
-            removeActivityListeners();
-            syncStudyTime();
-            studyTimerDisplay.classList.add('inactive');
-        }
+        function stopStudyTimer() { if (studyTimerInterval) { clearInterval(studyTimerInterval); studyTimerInterval=null; } removeActivityListeners(); syncStudyTime(); studyTimerDisplay.classList.add('inactive'); }
 
         async function syncStudyTime() {
             const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user || unsyncedSeconds === 0) return;
+            if (!user || unsyncedSeconds===0) return;
             const { data: existing } = await supabaseClient.from('user_presence').select('accumulated_study_seconds').eq('user_id', user.id).single();
             const previous = existing?.accumulated_study_seconds || 0;
             await supabaseClient.from('user_presence').upsert({ user_id: user.id, username: currentUsername, last_heartbeat: new Date().toISOString(), accumulated_study_seconds: previous + unsyncedSeconds }, { onConflict: 'user_id' });
-            unsyncedSeconds = 0;
+            unsyncedSeconds=0;
         }
 
-        function updateTimerDisplay() {
-            const m = Math.floor(sessionTotalSeconds / 60), s = sessionTotalSeconds % 60;
-            timerText.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
+        function updateTimerDisplay() { const m=Math.floor(sessionTotalSeconds/60), s=sessionTotalSeconds%60; timerText.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
 
-        function setupActivityListeners() {
-            removeActivityListeners();
-            window.addEventListener('mousemove', activityHandler);
-            window.addEventListener('keydown', activityHandler);
-            window.addEventListener('click', activityHandler);
-            window.addEventListener('touchstart', activityHandler);
-            window.addEventListener('scroll', activityHandler);
-        }
-        function removeActivityListeners() {
-            window.removeEventListener('mousemove', activityHandler);
-            window.removeEventListener('keydown', activityHandler);
-            window.removeEventListener('click', activityHandler);
-            window.removeEventListener('touchstart', activityHandler);
-            window.removeEventListener('scroll', activityHandler);
-        }
-        function activityHandler() { lastActivityTime = Date.now(); }
+        function setupActivityListeners() { removeActivityListeners(); window.addEventListener('mousemove',activityHandler); window.addEventListener('keydown',activityHandler); window.addEventListener('click',activityHandler); window.addEventListener('touchstart',activityHandler); window.addEventListener('scroll',activityHandler); }
+        function removeActivityListeners() { window.removeEventListener('mousemove',activityHandler); window.removeEventListener('keydown',activityHandler); window.removeEventListener('click',activityHandler); window.removeEventListener('touchstart',activityHandler); window.removeEventListener('scroll',activityHandler); }
+        function activityHandler() { lastActivityTime=Date.now(); }
 
         window.addEventListener('beforeunload', () => { if (studyTimerInterval) syncStudyTime(); sendHeartbeat(); });
 
