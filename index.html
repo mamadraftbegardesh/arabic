@@ -282,7 +282,7 @@
       </form>
       
       <div class="auth-toggle">
-        <p id="authToggleText">عضو نیستید؟ <span id="authToggleLink">ایجاد حساب جدید</span></p>
+        <p id="authToggleText">عضو نیستید؟ <span id="authToggleLink" style="color: var(--accent); cursor: pointer; font-weight: 700; text-decoration: underline;">ایجاد حساب جدید</span></p>
       </div>
     </div>
   </div>
@@ -417,7 +417,7 @@
     t.className = 'toast show';
     if (type === 'error') t.classList.add('toast-error');
     if (type === 'success') t.classList.add('toast-success');
-    setTimeout(() => t.classList.remove('show'), 3500);
+    setTimeout(() => t.classList.remove('show'), 4000);
   }
 
   function safeEscapeHtml(str) {
@@ -449,37 +449,30 @@
     tab.addEventListener('click', () => switchView(tab.dataset.target.replace('view', '').toLowerCase()));
   });
 
-  function updateAuthUI() {
-    const title = document.getElementById('authTitle');
-    const subtitle = document.getElementById('authSubtitle');
-    const submitBtn = document.getElementById('btnAuthSubmit');
-    const toggleText = document.getElementById('authToggleText');
+  // فرآیند جابجایی حالت فرم با Event Delegation کاملاً امن
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'authToggleLink') {
+      e.preventDefault();
+      isSignUpMode = !isSignUpMode;
+      
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
+      const submitBtn = document.getElementById('btnAuthSubmit');
+      const toggleContainer = document.getElementById('authToggleText');
 
-    if (isSignUpMode) {
-      title.textContent = "ایجاد حساب";
-      subtitle.textContent = "یک نام کاربری و رمز عبور منحصربه‌فرد انتخاب کنید";
-      submitBtn.textContent = "ثبت‌نام و ورود";
-      toggleText.innerHTML = 'قبلاً عضو شده‌اید؟ <span id="authToggleLink">ورود به حساب</span>';
-    } else {
-      title.textContent = "خوش آمدید";
-      subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
-      submitBtn.textContent = "ورود به حساب";
-      toggleText.innerHTML = 'عضو نیستید؟ <span id="authToggleLink">ایجاد حساب جدید</span>';
+      if (isSignUpMode) {
+        title.textContent = "ایجاد حساب";
+        subtitle.textContent = "یک نام کاربری و رمز عبور منحصربه‌فرد انتخاب کنید";
+        submitBtn.textContent = "ثبت‌نام و ورود";
+        toggleContainer.innerHTML = 'قبلاً عضو شده‌اید؟ <span id="authToggleLink" style="color: var(--accent); cursor: pointer; font-weight: 700; text-decoration: underline;">ورود به حساب</span>';
+      } else {
+        title.textContent = "خوش آمدید";
+        subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
+        submitBtn.textContent = "ورود به حساب";
+        toggleContainer.innerHTML = 'عضو نیستید؟ <span id="authToggleLink" style="color: var(--accent); cursor: pointer; font-weight: 700; text-decoration: underline;">ایجاد حساب جدید</span>';
+      }
     }
-    attachToggleEvent();
-  }
-
-  function attachToggleEvent() {
-    const link = document.getElementById('authToggleLink');
-    if(link) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        isSignUpMode = !isSignUpMode;
-        updateAuthUI();
-      });
-    }
-  }
-  attachToggleEvent();
+  });
 
   document.getElementById('authForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -498,15 +491,21 @@
       if (isSignUpMode) {
         const { data: aData, error: sErr } = await supabase.auth.signUp({ email: virtualEmail, password: passVal });
         if (sErr) throw sErr;
+        
         if (aData?.user) {
-          await supabase.from('profiles').insert([{ id: aData.user.id, display_name: userVal }]);
+          // درج امن اطلاعات در جدول پروفایل
+          const { error: profErr } = await supabase.from('profiles').insert([{ id: aData.user.id, display_name: userVal }]);
+          if (profErr) {
+             console.warn("خطای احتمالی لایه امنیتی پروفایل: ", profErr.message);
+          }
           showToast("حساب کاربری شما با موفقیت ایجاد شد.", "success");
         }
       } else {
         const { error: lErr } = await supabase.auth.signInWithPassword({ email: virtualEmail, password: passVal });
         if (lErr) {
+          // حالت پشتیبان: اگر کاربر قبلاً دکمه ایجاد حساب را نزده بود و مستقیم وارد شد
           const { data: retryData, error: retryErr } = await supabase.auth.signUp({ email: virtualEmail, password: passVal });
-          if (retryErr) throw lErr;
+          if (retryErr) throw lErr; // نمایش خطای اصلی ورود
           if (retryData?.user) {
             await supabase.from('profiles').insert([{ id: retryData.user.id, display_name: userVal }]);
           }
@@ -581,7 +580,7 @@
     const box = document.getElementById('lessonList');
     
     if (sorted.length === 0) {
-      box.innerHTML = '<p class="empty-state">هیچ محتوای آموزشی در دیتابیس یافت نشد.</p>';
+      box.innerHTML = '<p class="empty-state">در حال اتصال یا عدم وجود داده در جدول words...</p>';
       return;
     }
     box.innerHTML = '';
