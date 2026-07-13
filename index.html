@@ -9,233 +9,89 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --parchment: #F1E7D3;
-            --parchment-deep: #E7D8B8;
-            --bg-glow: #F8EFDC;
-            --ink: #22314A;
-            --ink-soft: #3E4E68;
-            --gold: #B8892B;
-            --gold-soft: #D9B770;
-            --correct: #4C7A5C;
-            --correct-bg: #E4EEE1;
-            --wrong: #9B4B44;
-            --wrong-bg: #F3E2DF;
-            --shadow: 0 10px 30px rgba(34,49,74,0.18);
-            --surface: #FBF5E8;
-            --surface-alt: rgba(184,137,43,0.06);
-            --surface-alt-hover: rgba(184,137,43,0.14);
-            --card-front-1: #FBF5E8;
-            --card-front-2: #F1E3C3;
-            --card-back-1: #2A3B57;
-            --card-back-2: #22314A;
-            --card-back-text: #F1E7D3;
-            --track-bg: rgba(34,49,74,0.12);
-            --border-soft: rgba(62,78,104,0.3);
+            --parchment: #F1E7D3;--parchment-deep: #E7D8B8;--bg-glow: #F8EFDC;--ink: #22314A;--ink-soft: #3E4E68;
+            --gold: #B8892B;--gold-soft: #D9B770;--correct: #4C7A5C;--correct-bg: #E4EEE1;--wrong: #9B4B44;--wrong-bg: #F3E2DF;
+            --shadow: 0 10px 30px rgba(34,49,74,0.18);--surface: #FBF5E8;--surface-alt: rgba(184,137,43,0.06);
+            --surface-alt-hover: rgba(184,137,43,0.14);--card-front-1: #FBF5E8;--card-front-2: #F1E3C3;--card-back-1: #2A3B57;
+            --card-back-2: #22314A;--card-back-text: #F1E7D3;--track-bg: rgba(34,49,74,0.12);--border-soft: rgba(62,78,104,0.3);
             --border-soft-hover: rgba(62,78,104,0.08);
         }
 
         html[data-theme="dark"] {
-            --parchment: #0f172a;
-            --parchment-deep: #020617;
-            --bg-glow: #1e293b;
-            --ink: #f8fafc;
-            --ink-soft: #94a3b8;
-            --gold: #3b82f6;
-            --gold-soft: #60a5fa;
-            --correct: #34d399;
-            --correct-bg: #064e3b;
-            --wrong: #f87171;
-            --wrong-bg: #7f1d1d;
-            --shadow: 0 10px 30px rgba(0,0,0,0.6);
-            --surface: #1e293b;
-            --surface-alt: rgba(59,130,246,0.1);
-            --surface-alt-hover: rgba(59,130,246,0.2);
-            --card-front-1: #1e293b;
-            --card-front-2: #0f172a;
-            --card-back-1: #172554;
-            --card-back-2: #081232;
-            --card-back-text: #f8fafc;
-            --track-bg: rgba(248,250,252,0.1);
-            --border-soft: rgba(248,250,252,0.15);
-            --border-soft-hover: rgba(248,250,252,0.05);
+            --parchment: #0f172a;--parchment-deep: #020617;--bg-glow: #1e293b;--ink: #f8fafc;--ink-soft: #94a3b8;
+            --gold: #3b82f6;--gold-soft: #60a5fa;--correct: #34d399;--correct-bg: #064e3b;--wrong: #f87171;--wrong-bg: #7f1d1d;
+            --shadow: 0 10px 30px rgba(0,0,0,0.6);--surface: #1e293b;--surface-alt: rgba(59,130,246,0.1);
+            --surface-alt-hover: rgba(59,130,246,0.2);--card-front-1: #1e293b;--card-front-2: #0f172a;--card-back-1: #172554;
+            --card-back-2: #081232;--card-back-text: #f8fafc;--track-bg: rgba(248,250,252,0.1);
+            --border-soft: rgba(248,250,252,0.15);--border-soft-hover: rgba(248,250,252,0.05);
         }
 
-        * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; }
-        html { transition: background .25s; }
+        * { box-sizing: border-box; } html, body { margin: 0; padding: 0; } html { transition: background .25s; }
         body {
             font-family: 'Vazirmatn', sans-serif;
             background: radial-gradient(circle at 20% 10%, var(--bg-glow) 0%, var(--parchment) 45%, var(--parchment-deep) 100%);
-            color: var(--ink);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 24px 16px 60px;
-            transition: background .25s, color .25s;
+            color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+            padding: 24px 16px 60px; transition: background .25s, color .25s;
         }
 
         .theme-toggle {
-            position: fixed;
-            top: 16px;
-            inset-inline-start: 16px;
-            z-index: 20;
-            background: var(--surface);
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            border-radius: 50%;
-            width: 42px;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: transform .15s, background .25s, color .25s, border-color .25s;
+            position: fixed; top: 16px; inset-inline-start: 16px; z-index: 20; background: var(--surface);
+            border: 1px solid var(--gold); color: var(--gold); border-radius: 50%; width: 42px; height: 42px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer;
+            box-shadow: var(--shadow); transition: transform .15s, background .25s, color .25s, border-color .25s;
         }
         .theme-toggle:hover { transform: scale(1.08); }
 
-        .top-ornament {
-            width: 100%;
-            max-width: 640px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            margin-bottom: 6px;
-        }
+        .top-ornament { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 6px; }
         .top-ornament .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
         .top-ornament .diamond { width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); }
 
-        header {
-            width: 100%;
-            max-width: 640px;
-            text-align: center;
-            margin-bottom: 28px;
-        }
+        header { width: 100%; max-width: 640px; text-align: center; margin-bottom: 28px; }
         header h1 { font-size: 1.7rem; font-weight: 800; margin: 6px 0 4px; letter-spacing: 0.5px; }
         header p { margin: 0; color: var(--ink-soft); font-size: 0.92rem; }
 
         .panel {
-            width: 100%;
-            max-width: 640px;
-            background: var(--surface);
-            border: 1px solid rgba(59,130,246,0.35);
-            border-radius: 18px;
-            box-shadow: var(--shadow);
-            padding: 22px;
-            position: relative;
+            width: 100%; max-width: 640px; background: var(--surface); border: 1px solid rgba(59,130,246,0.35);
+            border-radius: 18px; box-shadow: var(--shadow); padding: 22px; position: relative;
             transition: background .25s, border-color .25s;
         }
-        .panel::before {
-            content: "";
-            position: absolute;
-            inset: 6px;
-            border: 1px solid rgba(59,130,246,0.25);
-            border-radius: 12px;
-            pointer-events: none;
-        }
+        .panel::before { content: ""; position: absolute; inset: 6px; border: 1px solid rgba(59,130,246,0.25); border-radius: 12px; pointer-events: none; }
 
         #authScreen { display: none; }
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-top: 20px;
-        }
+        .auth-form { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
         .auth-input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1px solid var(--border-soft);
-            background: var(--surface-alt);
-            color: var(--ink);
-            font-family: inherit;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
+            width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border-soft);
+            background: var(--surface-alt); color: var(--ink); font-family: inherit; font-size: 0.95rem; outline: none; transition: border-color 0.2s;
         }
         .auth-input:focus { border-color: var(--gold); }
-        .auth-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-            flex-direction: row-reverse;
-        }
-        .auth-message {
-            font-size: 0.85rem;
-            text-align: center;
-            margin-top: 5px;
-            font-weight: 500;
-        }
+        .auth-buttons { display: flex; gap: 10px; margin-top: 8px; flex-direction: row-reverse; }
+        .auth-message { font-size: 0.85rem; text-align: center; margin-top: 5px; font-weight: 500; }
 
         #selectScreen { display: none; }
         .panel h2 { font-size: 1.05rem; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
-        .lesson-toolbar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-        }
+        .lesson-toolbar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
         .lesson-toolbar button {
-            background: none;
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            border-radius: 20px;
-            padding: 6px 14px;
-            font-family: inherit;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: .15s;
+            background: none; border: 1px solid var(--gold); color: var(--gold); border-radius: 20px;
+            padding: 6px 14px; font-family: inherit; font-size: 0.8rem; cursor: pointer; transition: .15s;
         }
         .lesson-toolbar button:hover { background: var(--gold); color: var(--surface); }
 
-        .lesson-list {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-            max-height: 340px;
-            overflow-y: auto;
-            padding-inline-end: 4px;
-            margin-bottom: 18px;
-        }
+        .lesson-list { display: grid; grid-template-columns: 1fr; gap: 8px; max-height: 340px; overflow-y: auto; padding-inline-end: 4px; margin-bottom: 18px; }
         .lesson-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 10px 14px;
-            border-radius: 10px;
-            background: var(--surface-alt);
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: .15s;
-            font-size: 0.92rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px;
+            border-radius: 10px; background: var(--surface-alt); border: 1px solid transparent; cursor: pointer; transition: .15s; font-size: 0.92rem;
         }
         .lesson-item:hover { background: var(--surface-alt-hover); }
         .lesson-item.checked { border-color: var(--gold); background: var(--surface-alt-hover); }
         .lesson-item .count { color: var(--ink-soft); font-size: 0.78rem; white-space: nowrap; }
         .lesson-item input { accent-color: var(--gold); width: 17px; height: 17px; cursor: pointer; }
 
-        .start-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .start-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
         .selected-info { color: var(--ink-soft); font-size: 0.85rem; }
 
         .btn {
-            border: none;
-            border-radius: 12px;
-            padding: 12px 22px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform .12s, box-shadow .12s, background .15s;
+            border: none; border-radius: 12px; padding: 12px 22px; font-family: inherit; font-size: 0.95rem;
+            font-weight: 700; cursor: pointer; transition: transform .12s, box-shadow .12s, background .15s;
         }
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: var(--ink); color: var(--surface); }
@@ -245,233 +101,81 @@
         .btn-ghost:hover { background: var(--border-soft-hover); }
 
         .resume-banner {
-            display: none;
-            background: var(--surface-alt);
-            border: 1px solid var(--gold-soft);
-            color: var(--ink);
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 0.85rem;
-            margin-bottom: 16px;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap;
+            display: none; background: var(--surface-alt); border: 1px solid var(--gold-soft); color: var(--ink);
+            border-radius: 12px; padding: 12px 16px; font-size: 0.85rem; margin-bottom: 16px; align-items: center;
+            justify-content: space-between; gap: 10px; flex-wrap: wrap;
         }
         .resume-banner button { white-space: nowrap; }
 
         #studyScreen { display: none; }
 
         .study-top {
-            width: 100%;
-            max-width: 640px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-            gap: 10px;
+            width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 14px; gap: 10px; flex-wrap: wrap;
         }
-        .study-top .lesson-name { font-size: 0.85rem; color: var(--ink-soft); }
+        .study-top .lesson-name { font-size: 0.85rem; color: var(--ink-soft); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; min-width: 0; }
 
-        .progress-wrap {
-            width: 100%;
-            max-width: 640px;
-            margin-bottom: 22px;
-        }
-        .progress-bar-bg {
-            height: 8px;
-            background: var(--track-bg);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold-soft), var(--gold));
-            width: 0%;
-            transition: width .35s ease;
-        }
-        .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.78rem;
-            color: var(--ink-soft);
-            margin-top: 6px;
-        }
+        .progress-wrap { width: 100%; max-width: 640px; margin-bottom: 22px; }
+        .progress-bar-bg { height: 8px; background: var(--track-bg); border-radius: 6px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold-soft), var(--gold)); width: 0%; transition: width .35s ease; }
+        .progress-stats { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--ink-soft); margin-top: 6px; }
         .progress-stats span b { color: var(--ink); }
 
-        .card-stage {
-            width: 100%;
-            max-width: 640px;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 22px;
-            perspective: 1600px;
-        }
-        .flashcard {
-            width: 100%;
-            max-width: 420px;
-            height: 260px;
-            position: relative;
-            cursor: pointer;
-        }
+        .card-stage { width: 100%; max-width: 640px; display: flex; justify-content: center; margin-bottom: 22px; perspective: 1600px; }
+        .flashcard { width: 100%; max-width: 420px; height: 260px; position: relative; cursor: pointer; }
         .flashcard .face {
-            position: absolute;
-            inset: 0;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 26px;
-            backface-visibility: hidden;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(59,130,246,0.4);
-            transition: transform .5s cubic-bezier(.4,.2,.2,1);
+            position: absolute; inset: 0; border-radius: 20px; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; padding: 26px; backface-visibility: hidden; box-shadow: var(--shadow);
+            border: 1px solid rgba(59,130,246,0.4); transition: transform .5s cubic-bezier(.4,.2,.2,1);
         }
-        .flashcard .face::before {
-            content: "";
-            position: absolute;
-            inset: 8px;
-            border: 1px dashed rgba(59,130,246,0.3);
-            border-radius: 13px;
-            pointer-events: none;
-        }
-        .face-front {
-            background: linear-gradient(160deg, var(--card-front-1), var(--card-front-2));
-            transform: rotateY(0deg);
-            z-index: 2;
-            transition: transform .5s cubic-bezier(.4,.2,.2,1), background .25s;
-        }
-        .face-back {
-            background: linear-gradient(160deg, var(--card-back-1), var(--card-back-2));
-            color: var(--card-back-text);
-            transform: rotateY(180deg);
-            transition: transform .5s cubic-bezier(.4,.2,.2,1), background .25s, color .25s;
-        }
+        .flashcard .face::before { content: ""; position: absolute; inset: 8px; border: 1px dashed rgba(59,130,246,0.3); border-radius: 13px; pointer-events: none; }
+        .face-front { background: linear-gradient(160deg, var(--card-front-1), var(--card-front-2)); transform: rotateY(0deg); z-index: 2; }
+        .face-back { background: linear-gradient(160deg, var(--card-back-1), var(--card-back-2)); color: var(--card-back-text); transform: rotateY(180deg); }
         .flashcard.flipped .face-front { transform: rotateY(180deg); }
         .flashcard.flipped .face-back { transform: rotateY(360deg); }
         .flashcard.no-anim .face { transition: none !important; }
 
-        .card-label {
-            position: absolute;
-            top: 14px;
-            inset-inline-start: 18px;
-            font-size: 0.68rem;
-            letter-spacing: 1px;
-            color: var(--gold);
-            opacity: 0.85;
-        }
+        .card-label { position: absolute; top: 14px; inset-inline-start: 18px; font-size: 0.68rem; letter-spacing: 1px; color: var(--gold); opacity: 0.85; }
         .face-back .card-label { color: var(--gold-soft); }
         .word-text { font-size: 2.1rem; font-weight: 800; line-height: 1.3; }
         .meaning-text { font-size: 1.15rem; font-weight: 500; line-height: 1.9; max-height: 170px; overflow-y: auto; padding: 0 4px; }
-        .tap-hint {
-            margin-top: 14px;
-            font-size: 0.75rem;
-            color: var(--ink-soft);
-            opacity: 0.75;
-        }
+        .tap-hint { margin-top: 14px; font-size: 0.75rem; color: var(--ink-soft); opacity: 0.75; }
         .face-back .tap-hint { color: var(--gold-soft); opacity: 0.7; }
 
-        .answer-row {
-            width: 100%;
-            max-width: 640px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 18px;
-            opacity: 0;
-            transform: translateY(6px);
-            pointer-events: none;
-            transition: opacity .25s, transform .25s;
-        }
+        .answer-row { width: 100%; max-width: 640px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .25s, transform .25s; }
         .answer-row.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
-        .ans-btn {
-            border: none;
-            border-radius: 14px;
-            padding: 14px 8px;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            transition: transform .12s, box-shadow .12s;
-        }
+        .ans-btn { border: none; border-radius: 14px; padding: 14px 8px; font-family: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: transform .12s, box-shadow .12s; }
         .ans-btn:active { transform: scale(0.95); }
         .ans-btn .icon { font-size: 1.3rem; }
         .ans-correct { background: var(--correct-bg); color: var(--correct); border: 1.5px solid var(--correct); }
         .ans-wrong { background: var(--wrong-bg); color: var(--wrong); border: 1.5px solid var(--wrong); }
         .ans-btn:hover { box-shadow: 0 6px 14px rgba(0,0,0,0.12); }
 
-        .study-actions {
-            width: 100%;
-            max-width: 640px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
+        .study-actions { width: 100%; max-width: 640px; display: flex; justify-content: center; gap: 10px; }
 
         #doneScreen { display: none; text-align: center; }
         #doneScreen .medal { font-size: 3rem; margin-bottom: 6px; }
         #doneScreen h2 { margin: 4px 0 8px; }
         #doneScreen p { color: var(--ink-soft); margin: 0 0 22px; }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); border-radius: 6px; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); border-radius: 6px; }
 
-        @media (max-width: 480px) {
-            .flashcard { height: 230px; }
-            .word-text { font-size: 1.7rem; }
-            .meaning-text { font-size: 1.02rem; }
-            .ans-btn { font-size: 0.78rem; padding: 12px 4px; }
-        }
+        @media (max-width: 480px) { .flashcard { height: 230px; } .word-text { font-size: 1.7rem; } .meaning-text { font-size: 1.02rem; } .ans-btn { font-size: 0.78rem; padding: 12px 4px; } }
 
         .online-users-widget {
-            position: fixed;
-            bottom: 20px;
-            inset-inline-end: 16px;
-            z-index: 30;
-            background: var(--surface);
-            border: 1px solid var(--gold-soft);
-            border-radius: 30px;
-            padding: 6px 16px 6px 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: var(--shadow);
-            font-size: 0.82rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
+            position: fixed; bottom: 20px; inset-inline-end: 16px; z-index: 30; background: var(--surface);
+            border: 1px solid var(--gold-soft); border-radius: 30px; padding: 6px 16px 6px 10px; display: flex;
+            align-items: center; gap: 10px; box-shadow: var(--shadow); font-size: 0.82rem; cursor: pointer;
+            transition: all 0.2s; user-select: none;
         }
         .online-users-widget:hover { background: var(--surface-alt-hover); border-color: var(--gold); }
-        .online-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #4caf50;
-            box-shadow: 0 0 8px #4caf50;
-            animation: pulse-dot 2s infinite;
-        }
+        .online-dot { width: 10px; height: 10px; border-radius: 50%; background: #4caf50; box-shadow: 0 0 8px #4caf50; animation: pulse-dot 2s infinite; }
         @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 4px #4caf50; } 50% { box-shadow: 0 0 12px #4caf50, 0 0 20px rgba(76,175,80,0.4); } }
         .online-count { font-weight: 700; color: var(--ink); }
         .online-tooltip {
-            display: none;
-            position: absolute;
-            bottom: 50px;
-            inset-inline-end: 0;
-            background: var(--surface);
-            border: 1px solid var(--border-soft);
-            border-radius: 14px;
-            padding: 12px 16px;
-            min-width: 180px;
-            box-shadow: var(--shadow);
-            font-size: 0.78rem;
-            color: var(--ink);
-            z-index: 31;
+            display: none; position: absolute; bottom: 50px; inset-inline-end: 0; background: var(--surface);
+            border: 1px solid var(--border-soft); border-radius: 14px; padding: 12px 16px; min-width: 180px;
+            box-shadow: var(--shadow); font-size: 0.78rem; color: var(--ink); z-index: 31;
         }
         .online-users-widget:hover .online-tooltip { display: block; }
         .online-tooltip .user-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border-soft-hover); }
@@ -480,17 +184,9 @@
         .user-status-dot.studying { background: #ff9800; box-shadow: 0 0 6px #ff9800; }
 
         .study-timer {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--surface-alt);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: var(--ink);
-            border: 1px solid var(--border-soft);
-            white-space: nowrap;
-            transition: background 0.2s;
+            display: flex; align-items: center; gap: 6px; background: var(--surface-alt); padding: 6px 14px;
+            border-radius: 20px; font-size: 0.8rem; color: var(--ink); border: 1px solid var(--border-soft);
+            white-space: nowrap; transition: background 0.2s; flex-shrink: 0;
         }
         .study-timer.inactive { opacity: 0.5; border-color: var(--wrong); }
         .study-timer .timer-icon { font-size: 1rem; }
@@ -503,9 +199,7 @@
         <span class="online-dot"></span>
         <span class="online-count" id="onlineCount">0</span>
         <span style="color:var(--ink-soft);">آنلاین</span>
-        <div class="online-tooltip" id="onlineTooltip">
-            <div style="text-align:center;color:var(--ink-soft);padding:8px;">در حال بارگذاری...</div>
-        </div>
+        <div class="online-tooltip" id="onlineTooltip"><div style="text-align:center;color:var(--ink-soft);padding:8px;">در حال بارگذاری...</div></div>
     </div>
 
     <div class="top-ornament"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
@@ -554,7 +248,7 @@
     <div id="studyScreen">
         <div class="study-top">
             <button class="btn btn-ghost" style="padding:8px 16px;font-size:0.8rem;" id="backBtn">‹ بازگشت به انتخاب درس</button>
-            <div style="display:flex;align-items:center;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;min-width:0;">
                 <span class="lesson-name" id="activeLessonsLabel"></span>
                 <div class="study-timer" id="studyTimerDisplay">
                     <span class="timer-icon">⏱️</span>
@@ -562,6 +256,7 @@
                 </div>
             </div>
         </div>
+
         <div class="progress-wrap">
             <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
             <div class="progress-stats">
@@ -569,6 +264,7 @@
                 <span>یادگرفته‌شده: <b id="statMastered">0</b> از <b id="statTotal">0</b></span>
             </div>
         </div>
+
         <div class="card-stage">
             <div class="flashcard" id="flashcard">
                 <div class="face face-front">
@@ -583,10 +279,12 @@
                 </div>
             </div>
         </div>
+
         <div class="answer-row" id="answerRow">
             <button class="ans-btn ans-correct" data-result="correct"><span class="icon">✅</span>درست</button>
             <button class="ans-btn ans-wrong" data-result="wrong"><span class="icon">❌</span>غلط</button>
         </div>
+
         <div class="study-actions">
             <button class="btn btn-ghost" id="resetProgressBtn">پاک‌کردن پیشرفت این تمرین</button>
         </div>
@@ -634,6 +332,7 @@
         });
 
         const STORAGE_KEY = "arabic_flashcards_state_v1";
+
         function saveState(state) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
         function loadState() { try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch(e) { return null; } }
         function clearState() { try { localStorage.removeItem(STORAGE_KEY); } catch(e) {} }
@@ -647,8 +346,22 @@
             }
         }
 
-        function shuffle(arr) { const a = arr.slice(); for (let i=a.length-1;i>0;i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-        function buildWordPool(lessonIds) { const pool = []; LESSONS.filter(l=>lessonIds.includes(l.id)).forEach(l=>{ l.words.forEach((w,idx)=>{ pool.push({id:l.id+"-"+idx, lessonId:l.id, word:w[0], meaning:w[1]}); }); }); return pool; }
+        function shuffle(arr) {
+            const a = arr.slice();
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function buildWordPool(lessonIds) {
+            const pool = [];
+            LESSONS.filter(l => lessonIds.includes(l.id)).forEach(l => {
+                l.words.forEach((w, idx) => { pool.push({ id: l.id + "-" + idx, lessonId: l.id, word: w[0], meaning: w[1] }); });
+            });
+            return pool;
+        }
 
         let session = null;
         const authScreen = document.getElementById('authScreen'), selectScreen = document.getElementById('selectScreen'), studyScreen = document.getElementById('studyScreen'), doneScreen = document.getElementById('doneScreen');
@@ -657,7 +370,7 @@
         let checkedLessons = new Set();
 
         function getFakeEmail(username) { return `${username.trim().toLowerCase()}@arabicflashcards.local`; }
-        function showAuthMessage(text, isError=true) { authMessageEl.textContent = text; authMessageEl.style.color = isError ? "var(--wrong)" : "var(--correct)"; }
+        function showAuthMessage(text, isError = true) { authMessageEl.textContent = text; authMessageEl.style.color = isError ? "var(--wrong)" : "var(--correct)"; }
 
         document.getElementById('signupBtn').addEventListener('click', async () => {
             const username = authUsernameInput.value.trim(), password = authPasswordInput.value;
@@ -711,22 +424,22 @@
         }
 
         function toggleLesson(id, checked) { if (checked) checkedLessons.add(id); else checkedLessons.delete(id); document.querySelectorAll('.lesson-item').forEach(el => { const cb = el.querySelector('input'); if (parseInt(cb.dataset.id) === id) el.classList.toggle('checked', checked); }); updateSelectionUI(); }
-        function updateSelectionUI() { const count = checkedLessons.size, totalWords = LESSONS.filter(l=>checkedLessons.has(l.id)).reduce((s,l)=>s+l.words.length,0); if (count===0) { selectedInfo.textContent="هیچ درسی انتخاب نشده"; startBtn.disabled=true; } else { selectedInfo.textContent=`${count} درس انتخاب شده — ${totalWords} واژه`; startBtn.disabled=false; } }
+        function updateSelectionUI() { const count = checkedLessons.size, totalWords = LESSONS.filter(l => checkedLessons.has(l.id)).reduce((s,l) => s + l.words.length, 0); if (count === 0) { selectedInfo.textContent = "هیچ درسی انتخاب نشده"; startBtn.disabled = true; } else { selectedInfo.textContent = `${count} درس انتخاب شده — ${totalWords} واژه`; startBtn.disabled = false; } }
 
-        document.getElementById('selectAllBtn').addEventListener('click', () => { LESSONS.forEach(l=>checkedLessons.add(l.id)); renderLessonList(); });
+        document.getElementById('selectAllBtn').addEventListener('click', () => { LESSONS.forEach(l => checkedLessons.add(l.id)); renderLessonList(); });
         document.getElementById('clearAllBtn').addEventListener('click', () => { checkedLessons.clear(); renderLessonList(); });
         startBtn.addEventListener('click', () => startNewSession(Array.from(checkedLessons)));
 
-        function checkForResume() { const saved = loadState(); if (saved?.queue?.length > 0) { resumeBanner.style.display='flex'; resumeBanner.dataset.hasSave="1"; } else resumeBanner.style.display='none'; }
+        function checkForResume() { const saved = loadState(); if (saved?.queue?.length > 0) { resumeBanner.style.display = 'flex'; resumeBanner.dataset.hasSave = "1"; } else resumeBanner.style.display = 'none'; }
         document.getElementById('resumeBtn').addEventListener('click', () => { const saved = loadState(); if (saved) resumeSession(saved); });
-        document.getElementById('discardResumeBtn').addEventListener('click', () => { clearState(); resumeBanner.style.display='none'; });
+        document.getElementById('discardResumeBtn').addEventListener('click', () => { clearState(); resumeBanner.style.display = 'none'; });
 
-        function startNewSession(lessonIds) { const pool = buildWordPool(lessonIds); const ids = shuffle(pool.map(w=>w.id)); session = { lessonIds, poolMap: Object.fromEntries(pool.map(w=>[w.id,w])), queue: ids, mastered: [], total: ids.length }; persist(); enterStudyScreen(); }
-        function resumeSession(saved) { const pool = buildWordPool(saved.lessonIds); const poolMap = Object.fromEntries(pool.map(w=>[w.id,w])); session = { lessonIds: saved.lessonIds, poolMap, queue: saved.queue.filter(id=>poolMap[id]), mastered: saved.mastered.filter(id=>poolMap[id]), total: saved.total }; enterStudyScreen(); }
+        function startNewSession(lessonIds) { const pool = buildWordPool(lessonIds); const ids = shuffle(pool.map(w => w.id)); session = { lessonIds, poolMap: Object.fromEntries(pool.map(w => [w.id, w])), queue: ids, mastered: [], total: ids.length }; persist(); enterStudyScreen(); }
+        function resumeSession(saved) { const pool = buildWordPool(saved.lessonIds); const poolMap = Object.fromEntries(pool.map(w => [w.id, w])); session = { lessonIds: saved.lessonIds, poolMap, queue: saved.queue.filter(id => poolMap[id]), mastered: saved.mastered.filter(id => poolMap[id]), total: saved.total }; enterStudyScreen(); }
         function persist() { if (!session) return; saveState({ lessonIds: session.lessonIds, queue: session.queue, mastered: session.mastered, total: session.total }); syncProgressToCloud(); }
 
-        function enterStudyScreen() { selectScreen.style.display='none'; doneScreen.style.display='none'; studyScreen.style.display='flex'; studyScreen.style.flexDirection='column'; studyScreen.style.alignItems='center'; document.getElementById('activeLessonsLabel').textContent = LESSONS.filter(l=>session.lessonIds.includes(l.id)).map(l=>l.title.split('：')[0].split(':')[0]).join('، '); renderCurrentCard(); startStudyTimer(); updatePresence(true); }
-        function backToSelection() { selectScreen.style.display='block'; studyScreen.style.display='none'; doneScreen.style.display='none'; stopStudyTimer(); updatePresence(false); checkForResume(); }
+        function enterStudyScreen() { selectScreen.style.display = 'none'; doneScreen.style.display = 'none'; studyScreen.style.display = 'flex'; studyScreen.style.flexDirection = 'column'; studyScreen.style.alignItems = 'center'; document.getElementById('activeLessonsLabel').textContent = LESSONS.filter(l => session.lessonIds.includes(l.id)).map(l => l.title.split('：')[0].split(':')[0]).join('، '); renderCurrentCard(); startStudyTimer(); updatePresence(true); }
+        function backToSelection() { selectScreen.style.display = 'block'; studyScreen.style.display = 'none'; doneScreen.style.display = 'none'; stopStudyTimer(); updatePresence(false); checkForResume(); }
 
         document.getElementById('backBtn').addEventListener('click', backToSelection);
         document.getElementById('doneBackBtn').addEventListener('click', () => { clearState(); backToSelection(); });
@@ -739,41 +452,41 @@
             if (!session) return;
             if (session.queue.length === 0) { showDoneScreen(); return; }
             answerRow.classList.remove('show');
-            const w = session.poolMap[session.queue[0]];
+            const currentId = session.queue[0], w = session.poolMap[currentId];
             flashcard.classList.add('no-anim'); flashcard.classList.remove('flipped'); void flashcard.offsetWidth;
             wordText.textContent = w.word; meaningText.textContent = w.meaning; void flashcard.offsetWidth; flashcard.classList.remove('no-anim');
             updateProgress();
         }
 
-        function updateProgress() { const m = session.mastered.length, t = session.total; progressFill.style.width = t ? Math.round((m/t)*100)+'%' : '0%'; statQueue.textContent = session.queue.length; statMastered.textContent = m; statTotal.textContent = t; }
+        function updateProgress() { const masteredCount = session.mastered.length, total = session.total; progressFill.style.width = total ? Math.round((masteredCount / total) * 100) + '%' : '0%'; statQueue.textContent = session.queue.length; statMastered.textContent = masteredCount; statTotal.textContent = total; }
 
         let flipShowTimer = null;
         flashcard.addEventListener('click', () => {
-            if (!flashcard.classList.contains('flipped')) { flashcard.classList.add('flipped'); flipShowTimer = setTimeout(()=>answerRow.classList.add('show'), 200); }
-            else { if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer=null; } answerRow.classList.remove('show'); flashcard.classList.remove('flipped'); }
+            if (!flashcard.classList.contains('flipped')) { flashcard.classList.add('flipped'); flipShowTimer = setTimeout(() => answerRow.classList.add('show'), 200); }
+            else { if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer = null; } answerRow.classList.remove('show'); flashcard.classList.remove('flipped'); }
         });
 
         answerRow.addEventListener('click', (e) => { const btn = e.target.closest('.ans-btn'); if (btn) handleAnswer(btn.dataset.result); });
 
         function handleAnswer(result) {
-            if (!session || session.queue.length===0) return;
-            if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer=null; }
-            const id = session.queue.shift();
-            if (result==='correct') session.mastered.push(id); else session.queue.push(id);
+            if (!session || session.queue.length === 0) return;
+            if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer = null; }
+            const currentId = session.queue.shift();
+            if (result === 'correct') session.mastered.push(currentId); else session.queue.push(currentId);
             persist(); renderCurrentCard();
         }
 
-        function showDoneScreen() { studyScreen.style.display='none'; doneScreen.style.display='block'; document.getElementById('doneSummary').textContent = `${session.total} واژه از درس‌های انتخابی را با موفقیت تمرین کردی 👏`; stopStudyTimer(); updatePresence(false); clearState(); }
+        function showDoneScreen() { studyScreen.style.display = 'none'; doneScreen.style.display = 'block'; document.getElementById('doneSummary').textContent = `${session.total} واژه از درس‌های انتخابی را با موفقیت تمرین کردی 👏`; stopStudyTimer(); updatePresence(false); clearState(); }
 
         const THEME_KEY = "arabic_flashcards_theme", themeToggleBtn = document.getElementById('themeToggle');
-        function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); themeToggleBtn.textContent = theme==='dark'?'☀️':'🌙'; }
-        function initTheme() { let theme = localStorage.getItem(THEME_KEY); if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; applyTheme(theme); }
-        themeToggleBtn.addEventListener('click', () => { const next = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; applyTheme(next); localStorage.setItem(THEME_KEY, next); });
+        function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); themeToggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙'; }
+        function initTheme() { let theme = localStorage.getItem(THEME_KEY); if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; applyTheme(theme); }
+        themeToggleBtn.addEventListener('click', () => { const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; applyTheme(next); localStorage.setItem(THEME_KEY, next); });
 
-        /* ========= حضور و تایمر مطالعه ========= */
-        let presenceInterval=null, onlineUsersInterval=null, currentUsername=null;
-        let studyTimerInterval=null, unsyncedSeconds=0, sessionTotalSeconds=0;
-        let isStudyActive=true, lastActivityTime=Date.now(); const INACTIVITY_LIMIT=30;
+        /* حضور و تایمر */
+        let presenceInterval = null, onlineUsersInterval = null, currentUsername = null;
+        let studyTimerInterval = null, unsyncedSeconds = 0, sessionTotalSeconds = 0;
+        let isStudyActive = true, lastActivityTime = Date.now(); const INACTIVITY_LIMIT = 30;
 
         const onlineUsersWidget = document.getElementById('onlineUsersWidget'), onlineCount = document.getElementById('onlineCount'), onlineTooltip = document.getElementById('onlineTooltip');
         const studyTimerDisplay = document.getElementById('studyTimerDisplay'), timerText = document.getElementById('timerText');
@@ -788,7 +501,7 @@
             fetchOnlineUsers();
         }
 
-        function stopPresence() { if (presenceInterval) clearInterval(presenceInterval); if (onlineUsersInterval) clearInterval(onlineUsersInterval); presenceInterval=onlineUsersInterval=null; }
+        function stopPresence() { if (presenceInterval) clearInterval(presenceInterval); if (onlineUsersInterval) clearInterval(onlineUsersInterval); presenceInterval = onlineUsersInterval = null; }
 
         async function removePresence() { const { data: { user } } = await supabaseClient.auth.getUser(); if (user) await supabaseClient.from('user_presence').delete().eq('user_id', user.id); }
 
@@ -804,19 +517,20 @@
 
         async function fetchOnlineUsers() {
             try {
-                // تلاش برای استفاده از تابع امن سرور
+                // ابتدا سعی می‌کنیم از تابع امن سرور استفاده کنیم
                 const { data, error } = await supabaseClient.rpc('get_online_users');
                 if (!error && data) {
                     renderOnlineUsers(data);
                     return;
                 }
-                // fallback در صورت خطا
-                console.warn('RPC failed, falling back to client filter', error);
+                // اگر خطا بود یا داده‌ای برگشت نکرد، fallback به کوئری مستقیم
+                console.warn('Fallback to direct query due to:', error);
                 const thirtySecAgo = new Date(Date.now() - 30000).toISOString();
                 const { data: fallbackData } = await supabaseClient.from('user_presence').select('*').gte('last_heartbeat', thirtySecAgo);
                 renderOnlineUsers(fallbackData || []);
-            } catch(e) {
+            } catch (e) {
                 console.error('fetchOnlineUsers error:', e);
+                // در نهایت اگر همه چی خطا داد، علامت سوال نشون می‌دیم
                 onlineCount.textContent = '?';
             }
         }
@@ -829,21 +543,21 @@
                 users.forEach(u => {
                     const cls = u.is_studying ? ' studying' : '';
                     const label = u.is_studying ? ' 📖 در حال مطالعه' : '';
-                    html += `<div class="user-row"><span class="user-status-dot${cls}"></span><span>${escapeHtml(u.username||'ناشناس')}${label}</span></div>`;
+                    html += `<div class="user-row"><span class="user-status-dot${cls}"></span><span>${escapeHtml(u.username || 'ناشناس')}${label}</span></div>`;
                 });
                 onlineTooltip.innerHTML = html;
             }
         }
-        function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+        function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
         function startStudyTimer() {
-            sessionTotalSeconds=0; unsyncedSeconds=0; isStudyActive=true; lastActivityTime=Date.now(); updateTimerDisplay(); studyTimerDisplay.classList.remove('inactive');
+            sessionTotalSeconds = 0; unsyncedSeconds = 0; isStudyActive = true; lastActivityTime = Date.now(); updateTimerDisplay(); studyTimerDisplay.classList.remove('inactive');
             if (studyTimerInterval) clearInterval(studyTimerInterval);
             studyTimerInterval = setInterval(() => {
-                const idleSec = Math.floor((Date.now()-lastActivityTime)/1000);
-                if (idleSec >= INACTIVITY_LIMIT) { if (isStudyActive) { isStudyActive=false; studyTimerDisplay.classList.add('inactive'); updatePresence(false); } }
+                const idleSec = Math.floor((Date.now() - lastActivityTime) / 1000);
+                if (idleSec >= INACTIVITY_LIMIT) { if (isStudyActive) { isStudyActive = false; studyTimerDisplay.classList.add('inactive'); updatePresence(false); } }
                 else {
-                    if (!isStudyActive) { isStudyActive=true; studyTimerDisplay.classList.remove('inactive'); updatePresence(true); }
+                    if (!isStudyActive) { isStudyActive = true; studyTimerDisplay.classList.remove('inactive'); updatePresence(true); }
                     sessionTotalSeconds++; unsyncedSeconds++; updateTimerDisplay();
                     if (unsyncedSeconds % 5 === 0) syncStudyTime();
                 }
@@ -851,22 +565,22 @@
             setupActivityListeners();
         }
 
-        function stopStudyTimer() { if (studyTimerInterval) { clearInterval(studyTimerInterval); studyTimerInterval=null; } removeActivityListeners(); syncStudyTime(); studyTimerDisplay.classList.add('inactive'); }
+        function stopStudyTimer() { if (studyTimerInterval) { clearInterval(studyTimerInterval); studyTimerInterval = null; } removeActivityListeners(); syncStudyTime(); studyTimerDisplay.classList.add('inactive'); }
 
         async function syncStudyTime() {
             const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user || unsyncedSeconds===0) return;
+            if (!user || unsyncedSeconds === 0) return;
             const { data: existing } = await supabaseClient.from('user_presence').select('accumulated_study_seconds').eq('user_id', user.id).single();
             const previous = existing?.accumulated_study_seconds || 0;
             await supabaseClient.from('user_presence').upsert({ user_id: user.id, username: currentUsername, last_heartbeat: new Date().toISOString(), accumulated_study_seconds: previous + unsyncedSeconds }, { onConflict: 'user_id' });
-            unsyncedSeconds=0;
+            unsyncedSeconds = 0;
         }
 
-        function updateTimerDisplay() { const m=Math.floor(sessionTotalSeconds/60), s=sessionTotalSeconds%60; timerText.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
+        function updateTimerDisplay() { const m = Math.floor(sessionTotalSeconds / 60), s = sessionTotalSeconds % 60; timerText.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
 
-        function setupActivityListeners() { removeActivityListeners(); window.addEventListener('mousemove',activityHandler); window.addEventListener('keydown',activityHandler); window.addEventListener('click',activityHandler); window.addEventListener('touchstart',activityHandler); window.addEventListener('scroll',activityHandler); }
-        function removeActivityListeners() { window.removeEventListener('mousemove',activityHandler); window.removeEventListener('keydown',activityHandler); window.removeEventListener('click',activityHandler); window.removeEventListener('touchstart',activityHandler); window.removeEventListener('scroll',activityHandler); }
-        function activityHandler() { lastActivityTime=Date.now(); }
+        function setupActivityListeners() { removeActivityListeners(); window.addEventListener('mousemove', activityHandler); window.addEventListener('keydown', activityHandler); window.addEventListener('click', activityHandler); window.addEventListener('touchstart', activityHandler); window.addEventListener('scroll', activityHandler); }
+        function removeActivityListeners() { window.removeEventListener('mousemove', activityHandler); window.removeEventListener('keydown', activityHandler); window.removeEventListener('click', activityHandler); window.removeEventListener('touchstart', activityHandler); window.removeEventListener('scroll', activityHandler); }
+        function activityHandler() { lastActivityTime = Date.now(); }
 
         window.addEventListener('beforeunload', () => { if (studyTimerInterval) syncStudyTime(); sendHeartbeat(); });
 
