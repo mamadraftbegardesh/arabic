@@ -377,11 +377,13 @@
 <div id="toast" class="toast">...</div>
 
 <script>
-  // آدرس‌های دقیق و اختصاصی پروژه شما بر اساس فایل ارسالی
-  const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co"; 
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
+//  این کد اصلاح‌شده رو جاش بذار:
+// آدرس‌های دقیق و اختصاصی پروژه شما بر اساس فایل ارسالی
+const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co"; 
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
 
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// حل مشکل قفل شدن دکمه با اضافه کردن window.
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   let currentSession = null;
   let currentUserProfile = null;
