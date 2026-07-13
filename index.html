@@ -1,1029 +1,1848 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>فلش‌کارت واژگان عربی</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-  :root{
-    --parchment:#F1E7D3;
-    --parchment-deep:#E7D8B8;
-    --bg-glow:#F8EFDC;
-    --ink:#22314A;
-    --ink-soft:#3E4E68;
-    --gold:#B8892B;
-    --gold-soft:#D9B770;
-    --correct:#4C7A5C;
-    --correct-bg:#E4EEE1;
-    --wrong:#9B4B44;
-    --wrong-bg:#F3E2DF;
-    --shadow: 0 10px 30px rgba(34,49,74,0.18);
-    --surface:#FBF5E8;
-    --surface-alt: rgba(184,137,43,0.06);
-    --surface-alt-hover: rgba(184,137,43,0.14);
-    --card-front-1:#FBF5E8;
-    --card-front-2:#F1E3C3;
-    --card-back-1:#2A3B57;
-    --card-back-2:#22314A;
-    --card-back-text:#F1E7D3;
-    --track-bg: rgba(34,49,74,0.12);
-    --border-soft: rgba(62,78,104,0.3);
-    --border-soft-hover: rgba(62,78,104,0.08);
-  }
-  
-  html[data-theme="dark"]{
-    --parchment: #0f172a;
-    --parchment-deep: #020617;
-    --bg-glow: #1e293b;
-    --ink: #f8fafc;
-    --ink-soft: #94a3b8;
-    --gold: #3b82f6;
-    --gold-soft: #60a5fa;
-    --correct: #34d399;
-    --correct-bg: #064e3b;
-    --wrong: #f87171;
-    --wrong-bg: #7f1d1d;
-    --shadow: 0 10px 30px rgba(0,0,0,0.6);
-    --surface: #1e293b;
-    --surface-alt: rgba(59, 130, 246, 0.1);
-    --surface-alt-hover: rgba(59, 130, 246, 0.2);
-    --card-front-1: #1e293b;
-    --card-front-2: #0f172a;
-    --card-back-1: #172554;
-    --card-back-2: #081232;
-    --card-back-text: #f8fafc;
-    --track-bg: rgba(248, 250, 252, 0.1);
-    --border-soft: rgba(248, 250, 252, 0.15);
-    --border-soft-hover: rgba(248, 250, 252, 0.05);
-  }
-  
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  html{transition: background .25s;}
-  body{
-    font-family:'Vazirmatn', sans-serif;
-    background: radial-gradient(circle at 20% 10%, var(--bg-glow) 0%, var(--parchment) 45%, var(--parchment-deep) 100%);
-    color:var(--ink);
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:24px 16px 60px;
-    transition: background .25s, color .25s;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فلش‌کارت واژگان عربی</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --parchment: #F1E7D3;
+            --parchment-deep: #E7D8B8;
+            --bg-glow: #F8EFDC;
+            --ink: #22314A;
+            --ink-soft: #3E4E68;
+            --gold: #B8892B;
+            --gold-soft: #D9B770;
+            --correct: #4C7A5C;
+            --correct-bg: #E4EEE1;
+            --wrong: #9B4B44;
+            --wrong-bg: #F3E2DF;
+            --shadow: 0 10px 30px rgba(34, 49, 74, 0.18);
+            --surface: #FBF5E8;
+            --surface-alt: rgba(184, 137, 43, 0.06);
+            --surface-alt-hover: rgba(184, 137, 43, 0.14);
+            --card-front-1: #FBF5E8;
+            --card-front-2: #F1E3C3;
+            --card-back-1: #2A3B57;
+            --card-back-2: #22314A;
+            --card-back-text: #F1E7D3;
+            --track-bg: rgba(34, 49, 74, 0.12);
+            --border-soft: rgba(62, 78, 104, 0.3);
+            --border-soft-hover: rgba(62, 78, 104, 0.08);
+        }
 
-  .theme-toggle{
-    position:fixed;
-    top:16px;
-    inset-inline-start:16px;
-    z-index:20;
-    background:var(--surface);
-    border:1px solid var(--gold);
-    color:var(--gold);
-    border-radius:50%;
-    width:42px;
-    height:42px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:1.1rem;
-    cursor:pointer;
-    box-shadow:var(--shadow);
-    transition:transform .15s, background .25s, color .25s, border-color .25s;
-  }
-  .theme-toggle:hover{transform:scale(1.08);}
+        html[data-theme="dark"] {
+            --parchment: #0f172a;
+            --parchment-deep: #020617;
+            --bg-glow: #1e293b;
+            --ink: #f8fafc;
+            --ink-soft: #94a3b8;
+            --gold: #3b82f6;
+            --gold-soft: #60a5fa;
+            --correct: #34d399;
+            --correct-bg: #064e3b;
+            --wrong: #f87171;
+            --wrong-bg: #7f1d1d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            --surface: #1e293b;
+            --surface-alt: rgba(59, 130, 246, 0.1);
+            --surface-alt-hover: rgba(59, 130, 246, 0.2);
+            --card-front-1: #1e293b;
+            --card-front-2: #0f172a;
+            --card-back-1: #172554;
+            --card-back-2: #081232;
+            --card-back-text: #f8fafc;
+            --track-bg: rgba(248, 250, 252, 0.1);
+            --border-soft: rgba(248, 250, 252, 0.15);
+            --border-soft-hover: rgba(248, 250, 252, 0.05);
+        }
 
-  .top-ornament{
-    width:100%;
-    max-width:640px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:14px;
-    margin-bottom:6px;
-  }
-  .top-ornament .line{flex:1;height:1px;background:linear-gradient(90deg, transparent, var(--gold), transparent);}
-  .top-ornament .diamond{width:8px;height:8px;background:var(--gold);transform:rotate(45deg);}
+        * {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            transition: background .25s;
+        }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: radial-gradient(circle at 20% 10%, var(--bg-glow) 0%, var(--parchment) 45%, var(--parchment-deep) 100%);
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px 60px;
+            transition: background .25s, color .25s;
+        }
 
-  header{
-    width:100%;
-    max-width:640px;
-    text-align:center;
-    margin-bottom:28px;
-  }
-  header h1{
-    font-size:1.7rem;
-    font-weight:800;
-    margin:6px 0 4px;
-    letter-spacing:0.5px;
-  }
-  header p{
-    margin:0;
-    color:var(--ink-soft);
-    font-size:0.92rem;
-  }
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            inset-inline-start: 16px;
+            z-index: 20;
+            background: var(--surface);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform .15s, background .25s, color .25s, border-color .25s;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.08);
+        }
 
-  .panel{
-    width:100%;
-    max-width:640px;
-    background:var(--surface);
-    border:1px solid rgba(59, 130, 246, 0.35);
-    border-radius:18px;
-    box-shadow:var(--shadow);
-    padding:22px;
-    position:relative;
-    transition: background .25s, border-color .25s;
-  }
-  .panel::before{
-    content:"";
-    position:absolute;
-    inset:6px;
-    border:1px solid rgba(59, 130, 246, 0.25);
-    border-radius:12px;
-    pointer-events:none;
-  }
+        .top-ornament {
+            width: 100%;
+            max-width: 640px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 6px;
+        }
+        .top-ornament .line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        .top-ornament .diamond {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            transform: rotate(45deg);
+        }
 
-  /* ---------- Auth Screen Styles ---------- */
-  #authScreen { display: none; }
-  .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-top: 20px;
-  }
-  .auth-input {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--border-soft);
-    background: var(--surface-alt);
-    color: var(--ink);
-    font-family: inherit;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .auth-input:focus {
-    border-color: var(--gold);
-  }
-  .auth-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-    flex-direction: row-reverse;
-  }
-  .auth-message {
-    font-size: 0.85rem;
-    text-align: center;
-    margin-top: 5px;
-    font-weight: 500;
-  }
+        header {
+            width: 100%;
+            max-width: 640px;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        header h1 {
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin: 6px 0 4px;
+            letter-spacing: 0.5px;
+        }
+        header p {
+            margin: 0;
+            color: var(--ink-soft);
+            font-size: 0.92rem;
+        }
 
-  /* ---------- lesson selection ---------- */
-  #selectScreen { display: none; }
-  .panel h2{
-    font-size:1.05rem;
-    margin:0 0 14px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .lesson-toolbar{
-    display:flex;
-    gap:8px;
-    margin-bottom:14px;
-    flex-wrap:wrap;
-  }
-  .lesson-toolbar button{
-    background:none;
-    border:1px solid var(--gold);
-    color:var(--gold);
-    border-radius:20px;
-    padding:6px 14px;
-    font-family:inherit;
-    font-size:0.8rem;
-    cursor:pointer;
-    transition:.15s;
-  }
-  .lesson-toolbar button:hover{background:var(--gold);color:var(--surface);}
+        .panel {
+            width: 100%;
+            max-width: 640px;
+            background: var(--surface);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+            position: relative;
+            transition: background .25s, border-color .25s;
+        }
+        .panel::before {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 12px;
+            pointer-events: none;
+        }
 
-  .lesson-list{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:8px;
-    max-height:340px;
-    overflow-y:auto;
-    padding-inline-end:4px;
-    margin-bottom:18px;
-  }
-  .lesson-item{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:10px 14px;
-    border-radius:10px;
-    background:var(--surface-alt);
-    border:1px solid transparent;
-    cursor:pointer;
-    transition:.15s;
-    font-size:0.92rem;
-  }
-  .lesson-item:hover{background:var(--surface-alt-hover);}
-  .lesson-item.checked{border-color:var(--gold); background:var(--surface-alt-hover);}
-  .lesson-item .count{
-    color:var(--ink-soft);
-    font-size:0.78rem;
-    white-space:nowrap;
-  }
-  .lesson-item input{accent-color:var(--gold); width:17px; height:17px; cursor:pointer;}
+        /* ---------- Auth Screen Styles ---------- */
+        #authScreen {
+            display: none;
+        }
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 20px;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-soft);
+            background: var(--surface-alt);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .auth-input:focus {
+            border-color: var(--gold);
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            flex-direction: row-reverse;
+        }
+        .auth-message {
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 5px;
+            font-weight: 500;
+        }
 
-  .start-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    flex-wrap:wrap;
-  }
-  .selected-info{color:var(--ink-soft); font-size:0.85rem;}
+        /* ---------- lesson selection ---------- */
+        #selectScreen {
+            display: none;
+        }
+        .panel h2 {
+            font-size: 1.05rem;
+            margin: 0 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .lesson-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .lesson-toolbar button {
+            background: none;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: .15s;
+        }
+        .lesson-toolbar button:hover {
+            background: var(--gold);
+            color: var(--surface);
+        }
 
-  .btn{
-    border:none;
-    border-radius:12px;
-    padding:12px 22px;
-    font-family:inherit;
-    font-size:0.95rem;
-    font-weight:700;
-    cursor:pointer;
-    transition:transform .12s, box-shadow .12s, background .15s;
-  }
-  .btn:active{transform:scale(0.97);}
-  
-  .btn-primary{background:var(--ink); color:var(--surface);}
-  .btn-primary:hover{box-shadow:0 6px 16px rgba(0,0,0,0.25);}
-  .btn-primary:disabled{background:var(--border-soft); color:var(--ink-soft); cursor:not-allowed; box-shadow:none;}
-  
-  .btn-ghost{background:transparent; color:var(--ink-soft); border:1px solid var(--border-soft);}
-  .btn-ghost:hover{background:var(--border-soft-hover);}
+        .lesson-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            max-height: 340px;
+            overflow-y: auto;
+            padding-inline-end: 4px;
+            margin-bottom: 18px;
+        }
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: var(--surface-alt);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: .15s;
+            font-size: 0.92rem;
+        }
+        .lesson-item:hover {
+            background: var(--surface-alt-hover);
+        }
+        .lesson-item.checked {
+            border-color: var(--gold);
+            background: var(--surface-alt-hover);
+        }
+        .lesson-item .count {
+            color: var(--ink-soft);
+            font-size: 0.78rem;
+            white-space: nowrap;
+        }
+        .lesson-item input {
+            accent-color: var(--gold);
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+        }
 
-  .resume-banner{
-    display:none;
-    background:var(--surface-alt);
-    border:1px solid var(--gold-soft);
-    color:var(--ink);
-    border-radius:12px;
-    padding:12px 16px;
-    font-size:0.85rem;
-    margin-bottom:16px;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .resume-banner button{white-space:nowrap;}
+        .start-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .selected-info {
+            color: var(--ink-soft);
+            font-size: 0.85rem;
+        }
 
-  /* ---------- study screen ---------- */
-  #studyScreen{display:none;}
+        .btn {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 22px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .12s, box-shadow .12s, background .15s;
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
 
-  .study-top{
-    width:100%;
-    max-width:640px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:14px;
-    gap:10px;
-  }
-  .study-top .lesson-name{
-    font-size:0.85rem;
-    color:var(--ink-soft);
-  }
+        .btn-primary {
+            background: var(--ink);
+            color: var(--surface);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        }
+        .btn-primary:disabled {
+            background: var(--border-soft);
+            color: var(--ink-soft);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
 
-  .progress-wrap{
-    width:100%;
-    max-width:640px;
-    margin-bottom:22px;
-  }
-  .progress-bar-bg{
-    height:8px;
-    background:var(--track-bg);
-    border-radius:6px;
-    overflow:hidden;
-  }
-  .progress-bar-fill{
-    height:100%;
-    background:linear-gradient(90deg, var(--gold-soft), var(--gold));
-    width:0%;
-    transition:width .35s ease;
-  }
-  .progress-stats{
-    display:flex;
-    justify-content:space-between;
-    font-size:0.78rem;
-    color:var(--ink-soft);
-    margin-top:6px;
-  }
-  .progress-stats span b{color:var(--ink);}
+        .btn-ghost {
+            background: transparent;
+            color: var(--ink-soft);
+            border: 1px solid var(--border-soft);
+        }
+        .btn-ghost:hover {
+            background: var(--border-soft-hover);
+        }
 
-  .card-stage{
-    width:100%;
-    max-width:640px;
-    display:flex;
-    justify-content:center;
-    margin-bottom:22px;
-    perspective:1600px;
-  }
-  .flashcard{
-    width:100%;
-    max-width:420px;
-    height:260px;
-    position:relative;
-    cursor:pointer;
-  }
-  .flashcard .face{
-    position:absolute;
-    inset:0;
-    border-radius:20px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:26px;
-    backface-visibility:hidden;
-    box-shadow:var(--shadow);
-    border:1px solid rgba(59, 130, 246, 0.4);
-    transition:transform .5s cubic-bezier(.4,.2,.2,1);
-  }
-  .flashcard .face::before{
-    content:"";
-    position:absolute;
-    inset:8px;
-    border:1px dashed rgba(59, 130, 246, 0.3);
-    border-radius:13px;
-    pointer-events:none;
-  }
-  .face-front{
-    background:linear-gradient(160deg, var(--card-front-1), var(--card-front-2));
-    transform:rotateY(0deg);
-    z-index:2;
-    transition: transform .5s cubic-bezier(.4,.2,.2,1), background .25s;
-  }
-  .face-back{
-    background:linear-gradient(160deg, var(--card-back-1), var(--card-back-2));
-    color:var(--card-back-text);
-    transform:rotateY(180deg);
-    transition: transform .5s cubic-bezier(.4,.2,.2,1), background .25s, color .25s;
-  }
-  .flashcard.flipped .face-front{transform:rotateY(180deg);}
-  .flashcard.flipped .face-back{transform:rotateY(360deg);}
-  .flashcard.no-anim .face{transition:none !important;}
+        .resume-banner {
+            display: none;
+            background: var(--surface-alt);
+            border: 1px solid var(--gold-soft);
+            color: var(--ink);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .resume-banner button {
+            white-space: nowrap;
+        }
 
-  .card-label{
-    position:absolute;
-    top:14px;
-    inset-inline-start:18px;
-    font-size:0.68rem;
-    letter-spacing:1px;
-    color:var(--gold);
-    opacity:0.85;
-  }
-  .face-back .card-label{color:var(--gold-soft);}
-  .word-text{
-    font-size:2.1rem;
-    font-weight:800;
-    line-height:1.3;
-  }
-  .meaning-text{
-    font-size:1.15rem;
-    font-weight:500;
-    line-height:1.9;
-    max-height:170px;
-    overflow-y:auto;
-    padding:0 4px;
-  }
-  .tap-hint{
-    margin-top:14px;
-    font-size:0.75rem;
-    color:var(--ink-soft);
-    opacity:0.75;
-  }
-  .face-back .tap-hint{color:var(--gold-soft); opacity:0.7;}
+        /* ---------- study screen ---------- */
+        #studyScreen {
+            display: none;
+        }
 
-  .answer-row{
-    width:100%;
-    max-width:640px;
-    display:grid;
-    grid-template-columns:1fr 1fr; 
-    gap:10px;
-    margin-bottom:18px;
-    opacity:0;
-    transform:translateY(6px);
-    pointer-events:none;
-    transition:opacity .25s, transform .25s;
-  }
-  .answer-row.show{opacity:1; transform:translateY(0); pointer-events:auto;}
-  .ans-btn{
-    border:none;
-    border-radius:14px;
-    padding:14px 8px;
-    font-family:inherit;
-    font-weight:700;
-    font-size:0.9rem;
-    cursor:pointer;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:4px;
-    transition:transform .12s, box-shadow .12s;
-  }
-  .ans-btn:active{transform:scale(0.95);}
-  .ans-btn .icon{font-size:1.3rem;}
-  .ans-correct{background:var(--correct-bg); color:var(--correct); border:1.5px solid var(--correct);}
-  .ans-wrong{background:var(--wrong-bg); color:var(--wrong); border:1.5px solid var(--wrong);}
-  .ans-btn:hover{box-shadow:0 6px 14px rgba(0,0,0,0.12);}
+        .study-top {
+            width: 100%;
+            max-width: 640px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 10px;
+        }
+        .study-top .lesson-name {
+            font-size: 0.85rem;
+            color: var(--ink-soft);
+        }
 
-  .study-actions{
-    width:100%;
-    max-width:640px;
-    display:flex;
-    justify-content:center;
-    gap:10px;
-  }
+        .progress-wrap {
+            width: 100%;
+            max-width: 640px;
+            margin-bottom: 22px;
+        }
+        .progress-bar-bg {
+            height: 8px;
+            background: var(--track-bg);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-soft), var(--gold));
+            width: 0%;
+            transition: width .35s ease;
+        }
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            color: var(--ink-soft);
+            margin-top: 6px;
+        }
+        .progress-stats span b {
+            color: var(--ink);
+        }
 
-  /* ---------- completion ---------- */
-  #doneScreen{display:none; text-align:center;}
-  #doneScreen .medal{font-size:3rem; margin-bottom:6px;}
-  #doneScreen h2{margin:4px 0 8px;}
-  #doneScreen p{color:var(--ink-soft); margin:0 0 22px;}
+        .card-stage {
+            width: 100%;
+            max-width: 640px;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 22px;
+            perspective: 1600px;
+        }
+        .flashcard {
+            width: 100%;
+            max-width: 420px;
+            height: 260px;
+            position: relative;
+            cursor: pointer;
+        }
+        .flashcard .face {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 26px;
+            backface-visibility: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            transition: transform .5s cubic-bezier(.4, .2, .2, 1);
+        }
+        .flashcard .face::before {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border: 1px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 13px;
+            pointer-events: none;
+        }
+        .face-front {
+            background: linear-gradient(160deg, var(--card-front-1), var(--card-front-2));
+            transform: rotateY(0deg);
+            z-index: 2;
+            transition: transform .5s cubic-bezier(.4, .2, .2, 1), background .25s;
+        }
+        .face-back {
+            background: linear-gradient(160deg, var(--card-back-1), var(--card-back-2));
+            color: var(--card-back-text);
+            transform: rotateY(180deg);
+            transition: transform .5s cubic-bezier(.4, .2, .2, 1), background .25s, color .25s;
+        }
+        .flashcard.flipped .face-front {
+            transform: rotateY(180deg);
+        }
+        .flashcard.flipped .face-back {
+            transform: rotateY(360deg);
+        }
+        .flashcard.no-anim .face {
+            transition: none !important;
+        }
 
-  ::-webkit-scrollbar{width:6px;}
-  ::-webkit-scrollbar-thumb{background:rgba(59, 130, 246, 0.3); border-radius:6px;}
+        .card-label {
+            position: absolute;
+            top: 14px;
+            inset-inline-start: 18px;
+            font-size: 0.68rem;
+            letter-spacing: 1px;
+            color: var(--gold);
+            opacity: 0.85;
+        }
+        .face-back .card-label {
+            color: var(--gold-soft);
+        }
+        .word-text {
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+        .meaning-text {
+            font-size: 1.15rem;
+            font-weight: 500;
+            line-height: 1.9;
+            max-height: 170px;
+            overflow-y: auto;
+            padding: 0 4px;
+        }
+        .tap-hint {
+            margin-top: 14px;
+            font-size: 0.75rem;
+            color: var(--ink-soft);
+            opacity: 0.75;
+        }
+        .face-back .tap-hint {
+            color: var(--gold-soft);
+            opacity: 0.7;
+        }
 
-  @media (max-width:480px){
-    .flashcard{height:230px;}
-    .word-text{font-size:1.7rem;}
-    .meaning-text{font-size:1.02rem;}
-    .ans-btn{font-size:0.78rem; padding:12px 4px;}
-  }
-</style>
+        .answer-row {
+            width: 100%;
+            max-width: 640px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+            opacity: 0;
+            transform: translateY(6px);
+            pointer-events: none;
+            transition: opacity .25s, transform .25s;
+        }
+        .answer-row.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .ans-btn {
+            border: none;
+            border-radius: 14px;
+            padding: 14px 8px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: transform .12s, box-shadow .12s;
+        }
+        .ans-btn:active {
+            transform: scale(0.95);
+        }
+        .ans-btn .icon {
+            font-size: 1.3rem;
+        }
+        .ans-correct {
+            background: var(--correct-bg);
+            color: var(--correct);
+            border: 1.5px solid var(--correct);
+        }
+        .ans-wrong {
+            background: var(--wrong-bg);
+            color: var(--wrong);
+            border: 1.5px solid var(--wrong);
+        }
+        .ans-btn:hover {
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+        }
+
+        .study-actions {
+            width: 100%;
+            max-width: 640px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* ---------- completion ---------- */
+        #doneScreen {
+            display: none;
+            text-align: center;
+        }
+        #doneScreen .medal {
+            font-size: 3rem;
+            margin-bottom: 6px;
+        }
+        #doneScreen h2 {
+            margin: 4px 0 8px;
+        }
+        #doneScreen p {
+            color: var(--ink-soft);
+            margin: 0 0 22px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+        }
+
+        @media (max-width: 480px) {
+            .flashcard {
+                height: 230px;
+            }
+            .word-text {
+                font-size: 1.7rem;
+            }
+            .meaning-text {
+                font-size: 1.02rem;
+            }
+            .ans-btn {
+                font-size: 0.78rem;
+                padding: 12px 4px;
+            }
+        }
+
+        /* ========== اضافات جدید: ویجت کاربران آنلاین + تایمر مطالعه ========== */
+        .online-users-widget {
+            position: fixed;
+            bottom: 20px;
+            inset-inline-end: 16px;
+            z-index: 30;
+            background: var(--surface);
+            border: 1px solid var(--gold-soft);
+            border-radius: 30px;
+            padding: 6px 16px 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .online-users-widget:hover {
+            background: var(--surface-alt-hover);
+            border-color: var(--gold);
+        }
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4caf50;
+            box-shadow: 0 0 8px #4caf50;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                box-shadow: 0 0 4px #4caf50;
+            }
+            50% {
+                box-shadow: 0 0 12px #4caf50, 0 0 20px rgba(76, 175, 80, 0.4);
+            }
+        }
+        .online-count {
+            font-weight: 700;
+            color: var(--ink);
+        }
+        .online-tooltip {
+            display: none;
+            position: absolute;
+            bottom: 50px;
+            inset-inline-end: 0;
+            background: var(--surface);
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            padding: 12px 16px;
+            min-width: 180px;
+            box-shadow: var(--shadow);
+            font-size: 0.78rem;
+            color: var(--ink);
+            z-index: 31;
+        }
+        .online-users-widget:hover .online-tooltip {
+            display: block;
+        }
+        .online-tooltip .user-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border-soft-hover);
+        }
+        .online-tooltip .user-row:last-child {
+            border-bottom: none;
+        }
+        .user-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+            flex-shrink: 0;
+        }
+        .user-status-dot.studying {
+            background: #ff9800;
+            box-shadow: 0 0 6px #ff9800;
+        }
+
+        .study-timer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface-alt);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--ink);
+            border: 1px solid var(--border-soft);
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .study-timer.inactive {
+            opacity: 0.5;
+            border-color: var(--wrong);
+        }
+        .study-timer .timer-icon {
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
 
-<button class="theme-toggle" id="themeToggle" title="تغییر حالت روشن/تاریک" aria-label="تغییر حالت روشن/تاریک">🌙</button>
+    <button class="theme-toggle" id="themeToggle" title="تغییر حالت روشن/تاریک" aria-label="تغییر حالت روشن/تاریک">🌙</button>
 
-<div class="top-ornament"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
-<header>
-  <h1>فلش‌کارت واژگان عربی</h1>
-  <p>تمرین لغت درس‌به‌درس — کارت را لمس کن، معنی را ببین، خودت را بسنج</p>
-</header>
-
-<div id="authScreen" class="panel">
-  <h2 style="justify-content: center; gap: 8px;"><span style="color: var(--gold);">🔒</span> ورود یا ثبت‌نام با نام کاربری</h2>
-  <p style="text-align: center; color: var(--ink-soft); font-size: 0.9rem; margin: 0;">یک نام کاربری و رمز عبور برای خود تعیین کنید.</p>
-  
-  <div class="auth-form">
-    <input type="text" id="authUsername" class="auth-input" placeholder="نام کاربری (مثال: ali123)..." dir="ltr">
-    <input type="password" id="authPassword" class="auth-input" placeholder="رمز عبور (حداقل ۶ کاراکتر)..." dir="ltr">
-    
-    <div id="authMessage" class="auth-message"></div>
-    
-    <div class="auth-buttons">
-      <button class="btn btn-primary" id="loginBtn" style="min-width: 100px;">ورود</button>
-      <button class="btn btn-ghost" id="signupBtn">ثبت‌نام حساب جدید</button>
+    <!-- ویجت کاربران آنلاین -->
+    <div class="online-users-widget" id="onlineUsersWidget" title="کاربران آنلاین">
+        <span class="online-dot"></span>
+        <span class="online-count" id="onlineCount">0</span>
+        <span style="color:var(--ink-soft);">آنلاین</span>
+        <div class="online-tooltip" id="onlineTooltip">
+            <div style="text-align:center;color:var(--ink-soft);padding:8px;">در حال بارگذاری...</div>
+        </div>
     </div>
-  </div>
-</div>
 
-<div id="selectScreen" class="panel">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-    <h2>📖 انتخاب درس‌ها</h2>
-    <button class="btn btn-ghost" id="logoutBtn" style="padding: 4px 10px; font-size: 0.78rem; color: var(--wrong);">خروج از حساب</button>
-  </div>
-  
-  <div id="resumeBanner" class="resume-banner">
-    <span>یک تمرین ناتمام از قبل ذخیره شده — می‌خوای ادامه بدی؟</span>
-    <div style="display:flex; gap:8px;">
-      <button class="btn btn-primary" style="padding:8px 16px; font-size:0.82rem;" id="resumeBtn">ادامه بده</button>
-      <button class="btn btn-ghost" style="padding:8px 16px; font-size:0.82rem;" id="discardResumeBtn">شروع تازه</button>
+    <div class="top-ornament"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
+    <header>
+        <h1>فلش‌کارت واژگان عربی</h1>
+        <p>تمرین لغت درس‌به‌درس — کارت را لمس کن، معنی را ببین، خودت را بسنج</p>
+    </header>
+
+    <div id="authScreen" class="panel">
+        <h2 style="justify-content: center; gap: 8px;"><span style="color: var(--gold);">🔒</span> ورود یا ثبت‌نام با نام کاربری</h2>
+        <p style="text-align: center; color: var(--ink-soft); font-size: 0.9rem; margin: 0;">یک نام کاربری و رمز عبور برای خود تعیین کنید.</p>
+
+        <div class="auth-form">
+            <input type="text" id="authUsername" class="auth-input" placeholder="نام کاربری (مثال: ali123)..." dir="ltr">
+            <input type="password" id="authPassword" class="auth-input" placeholder="رمز عبور (حداقل ۶ کاراکتر)..." dir="ltr">
+
+            <div id="authMessage" class="auth-message"></div>
+
+            <div class="auth-buttons">
+                <button class="btn btn-primary" id="loginBtn" style="min-width: 100px;">ورود</button>
+                <button class="btn btn-ghost" id="signupBtn">ثبت‌نام حساب جدید</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="lesson-toolbar">
-    <button id="selectAllBtn">انتخاب همه</button>
-    <button id="clearAllBtn">پاک‌کردن انتخاب</button>
-  </div>
-  <div class="lesson-list" id="lessonList"></div>
+    <div id="selectScreen" class="panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h2>📖 انتخاب درس‌ها</h2>
+            <button class="btn btn-ghost" id="logoutBtn" style="padding: 4px 10px; font-size: 0.78rem; color: var(--wrong);">خروج از حساب</button>
+        </div>
 
-  <div class="start-row">
-    <span class="selected-info" id="selectedInfo">هیچ درسی انتخاب نشده</span>
-    <button class="btn btn-primary" id="startBtn" disabled>شروع تمرین</button>
-  </div>
-</div>
+        <div id="resumeBanner" class="resume-banner">
+            <span>یک تمرین ناتمام از قبل ذخیره شده — می‌خوای ادامه بدی؟</span>
+            <div style="display:flex; gap:8px;">
+                <button class="btn btn-primary" style="padding:8px 16px; font-size:0.82rem;" id="resumeBtn">ادامه بده</button>
+                <button class="btn btn-ghost" style="padding:8px 16px; font-size:0.82rem;" id="discardResumeBtn">شروع تازه</button>
+            </div>
+        </div>
 
-<div id="studyScreen">
-  <div class="study-top">
-    <button class="btn btn-ghost" style="padding:8px 16px; font-size:0.8rem;" id="backBtn">‹ بازگشت به انتخاب درس</button>
-    <span class="lesson-name" id="activeLessonsLabel"></span>
-  </div>
+        <div class="lesson-toolbar">
+            <button id="selectAllBtn">انتخاب همه</button>
+            <button id="clearAllBtn">پاک‌کردن انتخاب</button>
+        </div>
+        <div class="lesson-list" id="lessonList"></div>
 
-  <div class="progress-wrap">
-    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
-    <div class="progress-stats">
-      <span>باقی‌مانده در نوبت: <b id="statQueue">0</b></span>
-      <span>یادگرفته‌شده: <b id="statMastered">0</b> از <b id="statTotal">0</b></span>
+        <div class="start-row">
+            <span class="selected-info" id="selectedInfo">هیچ درسی انتخاب نشده</span>
+            <button class="btn btn-primary" id="startBtn" disabled>شروع تمرین</button>
+        </div>
     </div>
-  </div>
 
-  <div class="card-stage">
-    <div class="flashcard" id="flashcard">
-      <div class="face face-front">
-        <span class="card-label">واژه</span>
-        <div class="word-text" id="wordText"></div>
-        <div class="tap-hint">برای دیدن معنی، کارت را لمس کن</div>
-      </div>
-      <div class="face face-back">
-        <span class="card-label">معنی</span>
-        <div class="meaning-text" id="meaningText"></div>
-        <div class="tap-hint">پاسخت را ارزیابی کن ↓</div>
-      </div>
+    <div id="studyScreen">
+        <div class="study-top">
+            <button class="btn btn-ghost" style="padding:8px 16px; font-size:0.8rem;" id="backBtn">‹ بازگشت به انتخاب درس</button>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <span class="lesson-name" id="activeLessonsLabel"></span>
+                <!-- تایمر مطالعه -->
+                <div class="study-timer" id="studyTimerDisplay">
+                    <span class="timer-icon">⏱️</span>
+                    <span id="timerText">00:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+            <div class="progress-stats">
+                <span>باقی‌مانده در نوبت: <b id="statQueue">0</b></span>
+                <span>یادگرفته‌شده: <b id="statMastered">0</b> از <b id="statTotal">0</b></span>
+            </div>
+        </div>
+
+        <div class="card-stage">
+            <div class="flashcard" id="flashcard">
+                <div class="face face-front">
+                    <span class="card-label">واژه</span>
+                    <div class="word-text" id="wordText"></div>
+                    <div class="tap-hint">برای دیدن معنی، کارت را لمس کن</div>
+                </div>
+                <div class="face face-back">
+                    <span class="card-label">معنی</span>
+                    <div class="meaning-text" id="meaningText"></div>
+                    <div class="tap-hint">پاسخت را ارزیابی کن ↓</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="answer-row" id="answerRow">
+            <button class="ans-btn ans-correct" data-result="correct"><span class="icon">✅</span>درست</button>
+            <button class="ans-btn ans-wrong" data-result="wrong"><span class="icon">❌</span>غلط</button>
+        </div>
+
+        <div class="study-actions">
+            <button class="btn btn-ghost" id="resetProgressBtn">پاک‌کردن پیشرفت این تمرین</button>
+        </div>
     </div>
-  </div>
 
-  <div class="answer-row" id="answerRow">
-    <button class="ans-btn ans-correct" data-result="correct"><span class="icon">✅</span>درست</button>
-    <button class="ans-btn ans-wrong" data-result="wrong"><span class="icon">❌</span>غلط</button>
-  </div>
+    <div id="doneScreen" class="panel">
+        <div class="medal">🎉</div>
+        <h2>تبریک! همه لغات یاد گرفته شدن</h2>
+        <p id="doneSummary"></p>
+        <button class="btn btn-primary" id="doneBackBtn">بازگشت به انتخاب درس</button>
+    </div>
 
-  <div class="study-actions">
-    <button class="btn btn-ghost" id="resetProgressBtn">پاک‌کردن پیشرفت این تمرین</button>
-  </div>
-</div>
+    <div class="top-ornament" style="margin-top:26px;"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
 
-<div id="doneScreen" class="panel">
-  <div class="medal">🎉</div>
-  <h2>تبریک! همه لغات یاد گرفته شدن</h2>
-  <p id="doneSummary"></p>
-  <button class="btn btn-primary" id="doneBackBtn">بازگشت به انتخاب درس</button>
-</div>
+    <script>
+        /* ============== DATA ============== */
+        const LESSONS = [
+            { id: 1, title: "درس اول", words: [
+                    ["آمَنَ", "ایمان آورد"],
+                    ["يُؤْمِنُ", "ایمان می‌آوَرَد"],
+                    ["أعلى", "بلندتر، بلندترین"],
+                    ["سِرْوال", "شلوار (جمع: سراویل)"],
+                    ["اِجْتَنَبَ", "پرهیز کرد"],
+                    ["يYَجْتَنِبُ", "پرهیز می‌کند"],
+                    ["جبل", "کوه (جمع: جبال)"],
+                    ["النسائيّ", "زنانه"],
+                    ["الظّنّ", "گمان"],
+                    ["الکبری", "بزرگتر"],
+                    ["الصُّغرى", "کوچکتر"],
+                    ["مَتْجَر", "مغازه (جمع: متاجر)"],
+                    ["آيات", "نشانه‌ها (مفرد: آیة)"],
+                    ["أراذل", "فرومایگان (مفرد: أرذل)"],
+                    ["زَمیل", "همکار، همکلاسی (جمع: زملاء)"],
+                    ["الرحمن", "بخشنده"],
+                    ["أفاضل", "بهترین‌ها (مفرد: أفضل)"],
+                    ["رجاءً / مَنْ فَضْلِک", "لطفاً"],
+                    ["الرّحیم", "مهربان"],
+                    ["سَأَلَ", "پرسید"],
+                    ["يَسْأَلُ", "می‌پرسد"],
+                    ["سُئِلَ", "پرسیده شد"],
+                    ["أعطى", "داد"],
+                    ["يُعْطي", "می‌دهد"],
+                    ["سَخِرَ مِنْ", "مسخره کرد"],
+                    ["يَسْخَرُ", "مسخره می‌کند (مصدر: سُخْريّة)"],
+                    ["أحَبّ", "محبوب‌تر، محبوب‌ترین"],
+                    ["صارَ", "شد"],
+                    ["يَصیرُ", "می‌شود"],
+                    ["لا يَسْخَر", "نباید مسخره کند"],
+                    ["أنْفَع", "سودمندتر، سودمندترین"],
+                    ["مائة", "صد"],
+                    ["عَسى / رُبَّما", "شاید"],
+                    ["السّکینة", "آرامش"],
+                    ["قَبِلَ", "قبول کرد"],
+                    ["يَقْبَلُ", "قبول می‌کند"],
+                    ["کانَ", "بود"],
+                    ["فاعِل", "انجام دهنده"],
+                    ["عباد", "بندگان (مفرد: عبد)"],
+                    ["يَکونُ", "می‌باشد"],
+                    ["قائل", "گوینده"],
+                    ["رَضِيَ", "راضی شد"],
+                    ["يَرْضى", "راضی می‌شود"],
+                    ["أنْ يَکُنَّ", "که باشند"],
+                    ["أوْسَط", "میانه‌تر، میانه‌ترین"],
+                    ["غیاب", "غیبت"]
+                ] },
+            { id: 2, title: "درس دوم", words: [
+                    ["أجَلّ", "گران‌قدرتر، بزرگوارتر"],
+                    ["نَجَحَ", "موفق شد"],
+                    ["يَنْجَحُ", "موفق می‌شود"],
+                    ["أنْقَذَ", "نجات داد"],
+                    ["يُنْقِذُ", "نجات می‌دهد"],
+                    ["اِرْتَبَطَ", "ارتباط داشت"],
+                    ["يَرْتَبِطُ", "ارتباط دارد"],
+                    ["إساءة", "بدی، بدرفتاری"],
+                    ["اِبْتَعَدَ", "دور شد"],
+                    ["يَبْتَعِدُ", "دور می‌شود"],
+                    ["اِسْتَمَعَ", "گوش فرا داد"],
+                    ["يَسْتَمِعُ", "گوش می‌دهد"],
+                    ["هَرَبَ", "فرار کرد"],
+                    ["يَهْرُبُ", "فرار می‌کند"],
+                    ["اِنْسَحَبَ", "عقب‌نشینی کرد"],
+                    ["الرّصيف", "پیاده‌رو"],
+                    ["بِضاعَة", "کالا (جمع: بضائع)"],
+                    ["مَمَرّ", "محل عبور، گذرگاه"],
+                    ["الصِّعاب", "سختی‌ها (مفرد: الصّعْبة)"],
+                    ["تَعايَشَ", "همزیستی کرد"],
+                    ["دَرَّسَ", "درس داد"],
+                    ["يُدَرِّسُ", "درس می‌دهد"],
+                    ["مُتَعايِش", "دارای همزیستی مسالمت‌آمیز"],
+                    ["مَذْهَب", "روش، دین (جمع: مذاهب)"],
+                    ["حِصّة", "زنگ درسی، بخش، سهم"],
+                    ["يَسْلَمُ", "سالم می‌ماند"],
+                    ["وُدّ / حُبّ", "دوستی"],
+                    ["عَداوَة", "دشمنی"],
+                    ["تَأْکید", "استوار کردن"],
+                    ["أخَوانِ", "دو برادر"],
+                    ["الأسْوَد", "سیاه"],
+                    ["الأبْيَض", "سفید"],
+                    ["تَفاصِيل", "جزئیات (مفرد: تفصيل)"],
+                    ["حَذَّرَ", "هشدار داد"],
+                    ["مُجْتَمَع", "جامعه"],
+                    ["اِعْتَبَرَ", "به شمار آورد"]
+                ] },
+            { id: 3, title: "درس سوم", words: [
+                    ["أحَلّ", "حلال‌تر، hلال‌ترین"],
+                    ["العِنَب البرازیليّ", "انگور برزیلی"],
+                    ["غَرَسَ", "کاشت"],
+                    ["يَغْرِسُ", "می‌کارد"],
+                    ["اِشْتِعال", "برافروخته شدن، سوختن (اِشْتَعَلَ، يَشْتَعِلُ)"],
+                    ["اِخْتَلَفَ", "تفاوت داشت، فرق کرد"],
+                    ["يَخْتَلِفُ", "تفاوت دارد"],
+                    ["العَشيرَة", "قبیله، عشیره (جمع: عشائر)"],
+                    ["شابَّ", "پیر شد (همچنین به معنی زن جوان)"],
+                    ["شَعْر", "مو"],
+                    ["رَأْس", "سر (جمع: رؤوس)"],
+                    ["شَيْب", "پیری، سپیدی مو"],
+                    ["اِمْتَلأَ", "پر شد"],
+                    ["يَمْتَلِئُ", "پر می‌شود"],
+                    ["خَشْيَة", "ترس"],
+                    ["تَمْر", "خرما"],
+                    ["جِذْع", "تنه درخت"],
+                    ["النَّخْلَة", "درخت خرما"],
+                    ["ساقِط", "ریزان، افتان"],
+                    ["رُطَب", "خرمای تازه و رسیده"],
+                    ["جَنیّ", "چیده شده"],
+                    ["قُرّي عَيْناً", "چشمت روشن باد، خوشحال باش"],
+                    ["اِقْتَرَبَ", "نزدیک شد"],
+                    ["يَقْتَرِبُ", "نزدیک می‌شود"],
+                    ["اِبْتَلَعَ", "قورت داد، بلعید"],
+                    ["يَبْتَلِعُ", "می‌بلعد"],
+                    ["مَلَأَ", "پر کرد"],
+                    ["يَمْلَأُ", "پر می‌کند"],
+                    ["جَوْف", "درون، شکم"],
+                    ["الصَّیاد", "شکارچی"],
+                    ["حَبَّة", "دانه"],
+                    ["الفَخّ", "دام، تله"],
+                    ["النَّجاة", "رهایی، نجات"],
+                    ["ماتَ", "مُرد"],
+                    ["يَموتُ", "می‌میرد"],
+                    ["الحيلَة", "چاره، مکر (جمع: حِیَل)"],
+                    ["طائِر", "پرنده (جمع: طُیور)"],
+                    ["جَناح", "بال (جمع: أجنحة)"]
+                ] },
+            { id: 4, title: "درس چهارم", words: [
+                    ["اُدْعُ", "فرا بخوان، دعوت کن (دَعا، يَدْعو)"],
+                    ["الإثْم / الذَّنْب / الخَطيئَة", "گناه"],
+                    ["قَفَزَ", "پرید"],
+                    ["يَقْفِزُ", "می‌پرد"],
+                    ["أنْ لا يَتَدَخَّلَ", "که دخالت نکند (تَدَخَّلَ، يَتَدَخَّلُ)"],
+                    ["سَدید", "درست و استوار"],
+                    ["عَصَفَ", "وزید"],
+                    ["يَعْصِفُ", "می‌وزد"],
+                    ["شَبَعَ", "سیر شد"],
+                    ["يَشْبَعُ", "سیر می‌شود"],
+                    ["جاعَ", "گرسنه شد"],
+                    ["يَجوعُ", "گرسنه می‌شود"],
+                    ["جائع", "گرسنه"],
+                    ["شَبْعان", "سیر"],
+                    ["طَرَقَ", "کوبید، در زد"],
+                    ["يَطْرُقُ", "می‌کوبد، در می‌زند"],
+                    ["باب", "در (جمع: أبواب)"],
+                    ["بَخيل", "خسیس (جمع: بُخَلاء)"],
+                    ["مِضْیاف", "مهمان‌نواز"],
+                    ["أطْعَمَ", "غذا داد"],
+                    ["يُطْعِمُ", "غذا می‌دهد"],
+                    ["اِسْتَحى", "خجالت کشید"],
+                    ["يَسْتَحي", "خجالت می‌کشد"],
+                    ["کَفَی", "کافی است"],
+                    ["خَبَزَ", "نان پخت"],
+                    ["يَخْبِزُ", "نان می‌پزد (الخَبّاز: نانوا / الخُبْز: نان)"],
+                    ["الضَّيْف", "مهمان (جمع: ضُيوف)"],
+                    ["حَفَرَ", "کند، حفر کرد"],
+                    ["يَحْفِرُ", "می‌کند"],
+                    ["البِئْر", "چاه"],
+                    ["أعْمَق", "عمیق‌تر"],
+                    ["فَرِحَ", "خوشحال شد"],
+                    ["يَفْرَحُ", "خوشحال می‌شود"],
+                    ["تَرَکَ", "رها کرد، گذاشت"],
+                    ["يَتَتْرُکُ", "رها می‌کند"],
+                    ["حَزِنَ", "غمگین شد"],
+                    ["يَحْزَنُ", "غمگین می‌شود"]
+                ] },
+            { id: 5, title: "درس پنجم", words: [
+                    ["أجَّلَ", "به تأخیر انداخت (يُؤَجِّلُ، تَأْجیل) = أخَّرَ"],
+                    ["تَعَسَّرَ", "دشوار شد"],
+                    ["يَتَعَسَّرُ", "دشوار می‌شود"],
+                    ["تَيَسَّرَ", "آسان شد"],
+                    ["يَتَيَسَّرُ", "آسان می‌شود"],
+                    ["عُسْر", "دشواری، سختی"],
+                    ["يُسْر", "آسانی"],
+                    ["الآخِرَة", "جهان آخرت"],
+                    ["الدُّنْیا", "جهان مادی"],
+                    ["سَتَرَ", "پوشاند"],
+                    ["يَسْتُرُ", "می‌پوشاند"],
+                    ["مُسْلِم", "مسلمان"],
+                    ["اِسْتَغْنى", "بی‌نیاز شد"],
+                    ["يَسْتَغْني", "بی‌نیاز می‌شود"],
+                    ["العَوْن", "کمک، یاری"],
+                    ["الخَبیر", "آگاه"],
+                    ["الصِّراط", "راه"],
+                    ["المُسْتَقِيم", "راست"],
+                    ["الهُدى", "هدایت"],
+                    ["التَّقْوى", "پرهیزکاری"],
+                    ["العَفاف", "پاکدامنی"],
+                    ["الغِنى", "بی‌نیازی"],
+                    ["نَفَس", "جان، نفس (جمع: أنْفُس / نُفوس)"],
+                    ["الخَسارَة", "زیان"],
+                    ["الصِّحَّة", "تندرستی"],
+                    ["الأمان", "امنیت"],
+                    ["النِّعْمَة", "نعمت (جمع: نِعَم)"],
+                    ["مَجْهول", "ناشناخته"],
+                    ["فَقَدَ", "از دست داد"],
+                    ["يَفْقِدُ", "از دست می‌دهد"],
+                    ["الوالِدَيْن", "پدر و مادر"],
+                    ["طاعَة", "فرمانبرداری"],
+                    ["مَغْفِرَة", "آمرزش"],
+                    ["الرِّضا", "خشنودی"],
+                    ["الجَنَّة", "بهشت"]
+                ] },
+            { id: 6, title: "درس ششم", words: [
+                    ["الأُرْدِيَّة", "زبان اردو"],
+                    ["فُتْحَة", "دریچه، روزنه"],
+                    ["بَسَطَ", "گستراند"],
+                    ["يَبْسُطُ", "می‌گستراند"],
+                    ["أشارَ", "اشاره کرد"],
+                    ["يُشیرُ", "اشاره می‌کند"],
+                    ["أشْهَر", "مشهورترین"],
+                    ["العالَم", "جهان"],
+                    ["المُعْجَم", "کتاب لغت، فرهنگ‌نامه"],
+                    ["تَفَسَّحَ", "وسعت یافت، گردش کرد"],
+                    ["يَتَفَسَّحُ", "وسعت می‌یابد"],
+                    ["فَسِيح", "وسیع، پهناور"],
+                    ["الساحِل", "ساحل (جمع: سَواحِل)"],
+                    ["الذَّهَب", "طلا"],
+                    ["الفِضَّة", "نقره"],
+                    ["النَّحاس", "مس"],
+                    ["الحَدید", "آهن"],
+                    ["المَعْدِن", "معدن (جمع: مَعادِن)"],
+                    ["الغالیَة", "گران‌بها"],
+                    ["الرَّخيصَة", "ارزان"],
+                    ["الصِّناعَة", "صنعت"],
+                    ["التِّجارَة", "بازرگانی"],
+                    ["الزِّراعَة", "کشاورزی"],
+                    ["الغابات", "جنگل‌ها (مفرد: غابَة)"],
+                    ["الکَثيفَة", "انبوه، متراکم"],
+                    ["الأشْجار", "درختان (مفرد: شَجَرَة)"],
+                    ["الحَيَوانات", "جانوران"],
+                    ["المُفْتَرِسَة", "درنده"],
+                    ["الأليفَة", "اهلی"],
+                    ["النّادِرَة", "کمیاب، نایاب"],
+                    ["بَنى", "ساخت"],
+                    ["يَبْني", "می‌سازد"],
+                    ["الحِصْن", "دژ، قلعه (جمع: حُصون)"],
+                    ["القَصْر", "کاخ (جمع: قُصور)"],
+                    ["القَدِيمَة", "کهن، قدیمی"],
+                    ["الآثار", "نشانه‌ها، آثار تاریخی"]
+                ] },
+            { id: 7, title: "درس هفتم", words: [
+                    ["اِزْدادَ", "افزایش یافت"],
+                    ["يَزْدادُ", "افزایش می‌یابد"],
+                    ["خاتَم", "انگشتر"],
+                    ["المُسْتَوْصَف", "درمانگاه"],
+                    ["اِشْتَدَّ", "شدت یافت"],
+                    ["يَشْتَدُّ", "شدت می‌یابد"],
+                    ["سریر", "تخت"],
+                    ["تَحَسَّنَ", "خوب شد"],
+                    ["يَتَحَسَّنُ", "خوب می‌شود"],
+                    ["اِشْتَقَّ", "برگرفت، مشتق کرد"],
+                    ["يَشْتَقُّ", "برمی‌گیرد"],
+                    ["خَشَبِيّ", "چوبی"],
+                    ["غزال", "آهو (جمع: غِزلان)"],
+                    ["اِنْضِمام", "پیوستن (اِنْضَمَّ، يَنْضَمُّ)"],
+                    ["مُخْضَرَّة", "سرسبز"],
+                    ["الشَّرْشَف", "ملافه"],
+                    ["بَيَّنَ", "آشکار کرد، توضیح داد"],
+                    ["يُبَيِّنُ", "آشکار می‌کند"],
+                    ["نَظَّفَ", "تمیز کرد"],
+                    ["يُنَظِّفُ", "تمیز می‌کند"],
+                    ["قُماش", "پارچه"],
+                    ["تَغَيَّرَ", "دگرگون شد"],
+                    ["يَتَغَيَّرُ", "دگرگون می‌شود"],
+                    ["فَم", "دهان (جمع: أفْواه)"],
+                    ["الدَّخيلَة", "وارد شده، بیگانه"],
+                    ["کَتَمَ", "پنهان کرد"],
+                    ["يَکْتُمُ", "پنهان می‌کند"],
+                    ["ذات", "دارای، صاحب"],
+                    ["دیباج", "ابریشم"],
+                    ["أوْفوا", "وفا کنید"],
+                    ["جَرى", "جاری شد"],
+                    ["يَجْري", "جاری می‌شود"],
+                    ["شارَکَ", "مشارکت کرد"],
+                    ["يُشارِکُ", "مشارکت می‌کند"]
+                ] }
+        ];
 
-<div class="top-ornament" style="margin-top:26px;"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
+        /* ============== SUPABASE INITIALIZATION ============== */
+        const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co";
+        const SUPABASE_KEY =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
 
-<script>
-/* ============== DATA ============== */
-const LESSONS = [
-{id:1, title:"درس اول", words:[
-["آمَنَ","ایمان آورد"],["يُؤْمِنُ","ایمان می‌آوَرَد"],["أعلى","بلندتر، بلندترین"],["سِرْوال","شلوار (جمع: سراویل)"],["اِجْتَنَبَ","پرهیز کرد"],["يYَجْتَنِبُ","پرهیز می‌کند"],["جبل","کوه (جمع: جبال)"],["النسائيّ","زنانه"],["الظّنّ","گمان"],["الکبری","بزرگتر"],["الصُّغرى","کوچکتر"],["مَتْجَر","مغازه (جمع: متاجر)"],["آيات","نشانه‌ها (مفرد: آیة)"],["أراذل","فرومایگان (مفرد: أرذل)"],["زَمیل","همکار، همکلاسی (جمع: زملاء)"],["الرحمن","بخشنده"],["أفاضل","بهترین‌ها (مفرد: أفضل)"],["رجاءً / مَنْ فَضْلِک","لطفاً"],["الرّحیم","مهربان"],["سَأَلَ","پرسید"],["يَسْأَلُ","می‌پرسد"],["سُئِلَ","پرسیده شد"],["أعطى","داد"],["يُعْطي","می‌دهد"],["سَخِرَ مِنْ","مسخره کرد"],["يَسْخَرُ","مسخره می‌کند (مصدر: سُخْريّة)"],["أحَبّ","محبوب‌تر، محبوب‌ترین"],["صارَ","شد"],["يَصیرُ","می‌شود"],["لا يَسْخَر","نباید مسخره کند"],["أنْفَع","سودمندتر، سودمندترین"],["مائة","صد"],["عَسى / رُبَّما","شاید"],["السّکینة","آرامش"],["قَبِلَ","قبول کرد"],["يَقْبَلُ","قبول می‌کند"],["کانَ","بود"],["فاعِل","انجام دهنده"],["عباد","بندگان (مفرد: عبد)"],["يَکونُ","می‌باشد"],["قائل","گوینده"],["رَضِيَ","راضی شد"],["يَرْضى","راضی می‌شود"],["أنْ يَکُنَّ","که باشند"],["أوْسَط","میانه‌تر، میانه‌ترین"],["غیاب","غیبت"]
-]},
-{id:2, title:"درس دوم", words:[
-["أجَلّ","گران‌قدرتر، بزرگوارتر"],["نَجَحَ","موفق شد"],["يَنْجَحُ","موفق می‌شود"],["أنْقَذَ","نجات داد"],["يُنْقِذُ","نجات می‌دهد"],["اِرْتَبَطَ","ارتباط داشت"],["يَرْتَبِطُ","ارتباط دارد"],["إساءة","بدی، بدرفتاری"],["اِبْتَعَدَ","دور شد"],["يَبْتَعِدُ","دور می‌شود"],["اِسْتَمَعَ","گوش فرا داد"],["يَسْتَمِعُ","گوش می‌دهد"],["هَرَبَ","فرار کرد"],["يَهْرُبُ","فرار می‌کند"],["اِنْسَحَبَ","عقب‌نشینی کرد"],["الرّصيف","پیاده‌رو"],["بِضاعَة","کالا (جمع: بضائع)"],["مَمَرّ","محل عبور، گذرگاه"],["الصِّعاب","سختی‌ها (مفرد: الصّعْبة)"],["تَعايَشَ","همزیستی کرد"],["دَرَّسَ","درس داد"],["يُدَرِّسُ","درس می‌دهد"],["مُتَعايِش","دارای همزیستی مسالمت‌آمیز"],["مَذْهَب","روش، دین (جمع: مذاهب)"],["حِصّة","زنگ درسی، بخش، سهم"],["يَسْلَمُ","سالم می‌ماند"],["وُدّ / حُبّ","دوستی"],["عَداوَة","دشمنی"],["تَأْکید","استوار کردن"],["أخَوانِ","دو برادر"],["الأسْوَد","سیاه"],["الأبْيَض","سفید"],["تَفاصِيل","جزئیات (مفرد: تفصيل)"],["حَذَّرَ","هشدار داد"],["مُجْتَمَع","جامعه"],["اِعْتَبَرَ","به شمار آورد"]
-]},
-{id:3, title:"درس سوم", words:[
-["أحَلّ","حلال‌تر، hلال‌ترین"],["العِنَب البرازیليّ","انگور برزیلی"],["غَرَسَ","کاشت"],["يَغْرِسُ","می‌کارد"],["اِشْتِعال","برافروخته شدن، سوختن (اِشْتَعَلَ، يَشْتَعِلُ)"],["اِخْتَلَفَ","تفاوت داشت، فرق کرد"],["يَخْتَلِفُ","تفاوت دارد"],["العَشيرَة","قبیله، عشیره (جمع: عشائر)"],["شابَّ","پیر شد (همچنین به معنی زن جوان)"],["شَعْر","مو"],["رَأْس","سر (جمع: رؤوس)"],["شَيْب","پیری، سپیدی مو"],["اِمْتَلأَ","پر شد"],["يَمْتَلِئُ","پر می‌شود"],["خَشْيَة","ترس"],["تَمْر","خرما"],["جِذْع","تنه درخت"],["النَّخْلَة","درخت خرما"],["ساقِط","ریزان، افتان"],["رُطَب","خرمای تازه و رسیده"],["جَنیّ","چیده شده"],["قُرّي عَيْناً","چشمت روشن باد، خوشحال باش"],["اِقْتَرَبَ","نزدیک شد"],["يَقْتَرِبُ","نزدیک می‌شود"],["اِبْتَلَعَ","قورت داد، بلعید"],["يَبْتَلِعُ","می‌بلعد"],["مَلَأَ","پر کرد"],["يَمْلَأُ","پر می‌کند"],["جَوْف","درون، شکم"],["الصَّیاد","شکارچی"],["حَبَّة","دانه"],["الفَخّ","دام، تله"],["النَّجاة","رهایی، نجات"],["ماتَ","مُرد"],["يَموتُ","می‌میرد"],["الحيلَة","چاره، مکر (جمع: حِیَل)"],["طائِر","پرنده (جمع: طُیور)"],["جَناح","بال (جمع: أجنحة)"]
-]},
-{id:4, title:"درس چهارم", words:[
-["اُدْعُ","فرا بخوان، دعوت کن (دَعا، يَدْعو)"],["الإثْم / الذَّنْب / الخَطيئَة","گناه"],["قَفَزَ","پرید"],["يَقْفِزُ","می‌پرد"],["أنْ لا يَتَدَخَّلَ","که دخالت نکند (تَدَخَّلَ، يَتَدَخَّلُ)"],["سَدید","درست و استوار"],["عَصَفَ","وزید"],["يَعْصِفُ","می‌وزد"],["شَبَعَ","سیر شد"],["يَشْبَعُ","سیر می‌شود"],["جاعَ","گرسنه شد"],["يَجوعُ","گرسنه می‌شود"],["جائع","گرسنه"],["شَبْعان","سیر"],["طَرَقَ","کوبید، در زد"],["يَطْرُقُ","می‌کوبد، در می‌زند"],["باب","در (جمع: أبواب)"],["بَخيل","خسیس (جمع: بُخَلاء)"],["مِضْیاف","مهمان‌نواز"],["أطْعَمَ","غذا داد"],["يُطْعِمُ","غذا می‌دهد"],["اِسْتَحى","خجالت کشید"],["يَسْتَحي","خجالت می‌کشد"],["کَفَی","کافی است"],["خَبَزَ","نان پخت"],["يَخْبِزُ","نان می‌پزد (الخَبّاز: نانوا / الخُبْز: نان)"],["الضَّيْف","مهمان (جمع: ضُيوف)"],["حَفَرَ","کند، حفر کرد"],["يَحْفِرُ","می‌کند"],["البِئْر","چاه"],["أعْمَق","عمیق‌تر"],["فَرِحَ","خوشحال شد"],["يَفْرَحُ","خوشحال می‌شود"],["تَرَکَ","رها کرد، گذاشت"],["يَتَتْرُکُ","رها می‌کند"],["حَزِنَ","غمگین شد"],["يَحْزَنُ","غمگین می‌شود"]
-]},
-{id:5, title:"درس پنجم", words:[
-["أجَّلَ","به تأخیر انداخت (يُؤَجِّلُ، تَأْجیل) = أخَّرَ"],["تَعَسَّرَ","دشوار شد"],["يَتَعَسَّرُ","دشوار می‌شود"],["تَيَسَّرَ","آسان شد"],["يَتَيَسَّرُ","آسان می‌شود"],["عُسْر","دشواری، سختی"],["يُسْر","آسانی"],["الآخِرَة","جهان آخرت"],["الدُّنْیا","جهان مادی"],["سَتَرَ","پوشاند"],["يَسْتُرُ","می‌پوشاند"],["مُسْلِم","مسلمان"],["اِسْتَغْنى","بی‌نیاز شد"],["يَسْتَغْني","بی‌نیاز می‌شود"],["العَوْن","کمک، یاری"],["الخَبیر","آگاه"],["الصِّراط","راه"],["المُسْتَقِيم","راست"],["الهُدى","هدایت"],["التَّقْوى","پرهیزکاری"],["العَفاف","پاکدامنی"],["الغِنى","بی‌نیازی"],["نَفَس","جان، نفس (جمع: أنْفُس / نُفوس)"],["الخَسارَة","زیان"],["الصِّحَّة","تندرستی"],["الأمان","امنیت"],["النِّعْمَة","نعمت (جمع: نِعَم)"],["مَجْهول","ناشناخته"],["فَقَدَ","از دست داد"],["يَفْقِدُ","از دست می‌دهد"],["الوالِدَيْن","پدر و مادر"],["طاعَة","فرمانبرداری"],["مَغْفِرَة","آمرزش"],["الرِّضا","خشنودی"],["الجَنَّة","بهشت"]
-]},
-{id:6, title:"درس ششم", words:[
-["الأُرْدِيَّة","زبان اردو"],["فُتْحَة","دریچه، روزنه"],["بَسَطَ","گستراند"],["يَبْسُطُ","می‌گستراند"],["أشارَ","اشاره کرد"],["يُشیرُ","اشاره می‌کند"],["أشْهَر","مشهورترین"],["العالَم","جهان"],["المُعْجَم","کتاب لغت، فرهنگ‌نامه"],["تَفَسَّحَ","وسعت یافت، گردش کرد"],["يَتَفَسَّحُ","وسعت می‌یابد"],["فَسِيح","وسیع، پهناور"],["الساحِل","ساحل (جمع: سَواحِل)"],["الذَّهَب","طلا"],["الفِضَّة","نقره"],["النَّحاس","مس"],["الحَدید","آهن"],["المَعْدِن","معدن (جمع: مَعادِن)"],["الغالیَة","گران‌بها"],["الرَّخيصَة","ارزان"],["الصِّناعَة","صنعت"],["التِّجارَة","بازرگانی"],["الزِّراعَة","کشاورزی"],["الغابات","جنگل‌ها (مفرد: غابَة)"],["الکَثيفَة","انبوه، متراکم"],["الأشْجار","درختان (مفرد: شَجَرَة)"],["الحَيَوانات","جانوران"],["المُفْتَرِسَة","درنده"],["الأليفَة","اهلی"],["النّادِرَة","کمیاب، نایاب"],["بَنى","ساخت"],["يَبْني","می‌سازد"],["الحِصْن","دژ، قلعه (جمع: حُصون)"],["القَصْر","کاخ (جمع: قُصور)"],["القَدِيمَة","کهن، قدیمی"],["الآثار","نشانه‌ها، آثار تاریخی"]
-]},
-{id:7, title:"درس هفتم", words:[
-["اِزْدادَ","افزایش یافت"],["يَزْدادُ","افزایش می‌یابد"],["خاتَم","انگشتر"],["المُسْتَوْصَف","درمانگاه"],["اِشْتَدَّ","شدت یافت"],["يَشْتَدُّ","شدت می‌یابد"],["سریر","تخت"],["تَحَسَّنَ","خوب شد"],["يَتَحَسَّنُ","خوب می‌شود"],["اِشْتَقَّ","برگرفت، مشتق کرد"],["يَشْتَقُّ","برمی‌گیرد"],["خَشَبِيّ","چوبی"],["غزال","آهو (جمع: غِزلان)"],["اِنْضِمام","پیوستن (اِنْضَمَّ، يَنْضَمُّ)"],["مُخْضَرَّة","سرسبز"],["الشَّرْشَف","ملافه"],["بَيَّنَ","آشکار کرد، توضیح داد"],["يُبَيِّنُ","آشکار می‌کند"],["نَظَّفَ","تمیز کرد"],["يُنَظِّفُ","تمیز می‌کند"],["قُماش","پارچه"],["تَغَيَّرَ","دگرگون شد"],["يَتَغَيَّرُ","دگرگون می‌شود"],["فَم","دهان (جمع: أفْواه)"],["الدَّخيلَة","وارد شده، بیگانه"],["کَتَمَ","پنهان کرد"],["يَکْتُمُ","پنهان می‌کند"],["ذات","دارای، صاحب"],["دیباج","ابریشم"],["أوْفوا","وفا کنید"],["جَرى","جاری شد"],["يَجْري","جاری می‌شود"],["شارَکَ","مشارکت کرد"],["يُشارِکُ","مشارکت می‌کند"]
-]}
-];
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* ============== SUPABASE INITIALIZATION ============== */
-// تصحیح خطا با قراردادن متغیرها داخل گیومه
-const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
+        /* ============== STORAGE & SYNC ============== */
+        const STORAGE_KEY = "arabic_flashcards_state_v1";
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        function saveState(state) {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+        }
 
-/* ============== STORAGE & SYNC ============== */
-const STORAGE_KEY = "arabic_flashcards_state_v1";
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
 
-function saveState(state){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
-}
-function loadState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  }catch(e){ return null; }
-}
-function clearState(){
-  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
-}
+        function clearState() {
+            try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        }
 
-// همگام‌سازی ابری با دیتای کلاود کاربران سوپابیس
-async function syncProgressToCloud() {
-  if (!session) return;
-  const { data: { user } } = await supabaseClient.auth.getUser();
-  if (user) {
-    const stateToSave = {
-      lessonIds: session.lessonIds,
-      queue: session.queue,
-      mastered: session.mastered,
-      total: session.total
-    };
-    await supabaseClient.auth.updateUser({
-      data: { flashcard_progress: stateToSave }
-    });
-  }
-}
+        // همگام‌سازی ابری با دیتای کلاود کاربران سوپابیس
+        async function syncProgressToCloud() {
+            if (!session) return;
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                const stateToSave = {
+                    lessonIds: session.lessonIds,
+                    queue: session.queue,
+                    mastered: session.mastered,
+                    total: session.total
+                };
+                await supabaseClient.auth.updateUser({
+                    data: { flashcard_progress: stateToSave }
+                });
+            }
+        }
 
-function shuffle(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
+        function shuffle(arr) {
+            const a = arr.slice();
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
 
-function buildWordPool(lessonIds){
-  const pool = [];
-  LESSONS.filter(l=>lessonIds.includes(l.id)).forEach(l=>{
-    l.words.forEach((w,idx)=>{
-      pool.push({id:l.id+"-"+idx, lessonId:l.id, word:w[0], meaning:w[1]});
-    });
-  });
-  return pool;
-}
+        function buildWordPool(lessonIds) {
+            const pool = [];
+            LESSONS.filter(l => lessonIds.includes(l.id)).forEach(l => {
+                l.words.forEach((w, idx) => {
+                    pool.push({ id: l.id + "-" + idx, lessonId: l.id, word: w[0], meaning: w[1] });
+                });
+            });
+            return pool;
+        }
 
-/* ============== APP STATE ============== */
-let session = null; 
+        /* ============== APP STATE ============== */
+        let session = null;
 
-/* ============== DOM ELEMENTS ============== */
-const authScreen = document.getElementById('authScreen');
-const selectScreen = document.getElementById('selectScreen');
-const studyScreen = document.getElementById('studyScreen');
-const doneScreen = document.getElementById('doneScreen');
-const lessonListEl = document.getElementById('lessonList');
-const selectedInfo = document.getElementById('selectedInfo');
-const startBtn = document.getElementById('startBtn');
-const resumeBanner = document.getElementById('resumeBanner');
-const authUsernameInput = document.getElementById('authUsername');
-const authPasswordInput = document.getElementById('authPassword');
-const authMessageEl = document.getElementById('authMessage');
+        /* ============== DOM ELEMENTS ============== */
+        const authScreen = document.getElementById('authScreen');
+        const selectScreen = document.getElementById('selectScreen');
+        const studyScreen = document.getElementById('studyScreen');
+        const doneScreen = document.getElementById('doneScreen');
+        const lessonListEl = document.getElementById('lessonList');
+        const selectedInfo = document.getElementById('selectedInfo');
+        const startBtn = document.getElementById('startBtn');
+        const resumeBanner = document.getElementById('resumeBanner');
+        const authUsernameInput = document.getElementById('authUsername');
+        const authPasswordInput = document.getElementById('authPassword');
+        const authMessageEl = document.getElementById('authMessage');
 
-let checkedLessons = new Set();
+        let checkedLessons = new Set();
 
-/* ============== AUTHENTICATION LOGIC ============== */
-// تبدیل نام کاربری به قالب ایمیل فرضی برای کارکرد راحت با سیستم Auth سوپابیس
-function getFakeEmail(username) {
-  return `${username.trim().toLowerCase()}@arabicflashcards.local`;
-}
+        /* ============== AUTHENTICATION LOGIC ============== */
+        function getFakeEmail(username) {
+            return `${username.trim().toLowerCase()}@arabicflashcards.local`;
+        }
 
-function showAuthMessage(text, isError = true) {
-  authMessageEl.textContent = text;
-  authMessageEl.style.color = isError ? "var(--wrong)" : "var(--correct)";
-}
+        function showAuthMessage(text, isError = true) {
+            authMessageEl.textContent = text;
+            authMessageEl.style.color = isError ? "var(--wrong)" : "var(--correct)";
+        }
 
-document.getElementById('signupBtn').addEventListener('click', async () => {
-  const username = authUsernameInput.value.trim();
-  const password = authPasswordInput.value;
-  
-  if (!username || password.length < 6) {
-    showAuthMessage("نام کاربری نباید خالی باشد و رمز عبور باید حداقل ۶ کاراکتر باشد.");
-    return;
-  }
-  
-  showAuthMessage("در حال ثبت‌نام...", false);
-  
-  const { data, error } = await supabaseClient.auth.signUp({
-    email: getFakeEmail(username),
-    password: password,
-    options: { data: { display_username: username } }
-  });
-  
-  if (error) {
-    showAuthMessage("خطا در ثبت‌نام: " + error.message);
-  } else {
-    showAuthMessage("ثبت‌نام با موفقیت انجام شد! در حال ورود...", false);
-    checkAuthStatus();
-  }
-});
+        document.getElementById('signupBtn').addEventListener('click', async () => {
+            const username = authUsernameInput.value.trim();
+            const password = authPasswordInput.value;
 
-document.getElementById('loginBtn').addEventListener('click', async () => {
-  const username = authUsernameInput.value.trim();
-  const password = authPasswordInput.value;
-  
-  if (!username || !password) {
-    showAuthMessage("لطفاً نام کاربری و رمز عبور را وارد کنید.");
-    return;
-  }
-  
-  showAuthMessage("در حال بررسی...", false);
-  
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email: getFakeEmail(username),
-    password: password
-  });
-  
-  if (error) {
-    showAuthMessage("نام کاربری یا رمز عبور اشتباه است.");
-  } else {
-    showAuthMessage("ورود موفقیت‌آمیز!", false);
-    checkAuthStatus();
-  }
-});
+            if (!username || password.length < 6) {
+                showAuthMessage("نام کاربری نباید خالی باشد و رمز عبور باید حداقل ۶ کاراکتر باشد.");
+                return;
+            }
 
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  await supabaseClient.auth.signOut();
-  clearState();
-  checkAuthStatus();
-});
+            showAuthMessage("در حال ثبت‌نام...", false);
 
-async function checkAuthStatus() {
-  const { data: { session: authSession } } = await supabaseClient.auth.getSession();
-  
-  if (authSession) {
-    authScreen.style.display = 'none';
-    selectScreen.style.display = 'block';
-    
-    // دریافت اطلاعات ذخیره شده کاربر از اببر در صورت وجود
-    const user = authSession.user;
-    if (user.user_metadata && user.user_metadata.flashcard_progress) {
-      saveState(user.user_metadata.flashcard_progress);
-    }
-    
-    renderLessonList();
-    checkForResume();
-  } else {
-    authScreen.style.display = 'block';
-    selectScreen.style.display = 'none';
-    studyScreen.style.display = 'none';
-    doneScreen.style.display = 'none';
-    authUsernameInput.value = "";
-    authPasswordInput.value = "";
-    authMessageEl.textContent = "";
-  }
-}
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: getFakeEmail(username),
+                password: password,
+                options: { data: { display_username: username } }
+            });
 
-/* ============== LESSON SELECTION ============== */
-function renderLessonList(){
-  lessonListEl.innerHTML = "";
-  LESSONS.forEach(l=>{
-    const item = document.createElement('div');
-    item.className = 'lesson-item' + (checkedLessons.has(l.id) ? ' checked' : '');
-    item.innerHTML = `
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;">
-        <input type="checkbox" data-id="${l.id}" ${checkedLessons.has(l.id)?'checked':''}/>
-        <span>${l.title}</span>
-      </label>
-      <span class="count">${l.words.length} واژه</span>
-    `;
-    lessonListEl.appendChild(item);
-    const checkbox = item.querySelector('input');
-    item.addEventListener('click', (e)=>{
-      if(e.target.tagName !== 'INPUT'){
-        checkbox.checked = !checkbox.checked;
-      }
-      toggleLesson(l.id, checkbox.checked);
-    });
-  });
-  updateSelectionUI();
-}
+            if (error) {
+                showAuthMessage("خطا در ثبت‌نام: " + error.message);
+            } else {
+                showAuthMessage("ثبت‌نام با موفقیت انجام شد! در حال ورود...", false);
+                checkAuthStatus();
+            }
+        });
 
-function toggleLesson(id, checked){
-  if(checked) checkedLessons.add(id);
-  else checkedLessons.delete(id);
-  document.querySelectorAll('.lesson-item').forEach(el=>{
-    const cb = el.querySelector('input');
-    if(parseInt(cb.dataset.id)===id) el.classList.toggle('checked', checked);
-  });
-  updateSelectionUI();
-}
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const username = authUsernameInput.value.trim();
+            const password = authPasswordInput.value;
 
-function updateSelectionUI(){
-  const count = checkedLessons.size;
-  const totalWords = LESSONS.filter(l=>checkedLessons.has(l.id)).reduce((s,l)=>s+l.words.length,0);
-  if(count===0){
-    selectedInfo.textContent = "هیچ درسی انتخاب نشده";
-    startBtn.disabled = true;
-  } else {
-    selectedInfo.textContent = `${count} درس انتخاب شده — ${totalWords} واژه`;
-    startBtn.disabled = false;
-  }
-}
+            if (!username || !password) {
+                showAuthMessage("لطفاً نام کاربری و رمز عبور را وارد کنید.");
+                return;
+            }
 
-document.getElementById('selectAllBtn').addEventListener('click', () => {
-  LESSONS.forEach(l=>checkedLessons.add(l.id));
-  renderLessonList();
-});
-document.getElementById('clearAllBtn').addEventListener('click', () => {
-  checkedLessons.clear();
-  renderLessonList();
-});
+            showAuthMessage("در حال بررسی...", false);
 
-startBtn.addEventListener('click', () => {
-  startNewSession(Array.from(checkedLessons));
-});
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: getFakeEmail(username),
+                password: password
+            });
 
-/* ---- resume banner ---- */
-function checkForResume(){
-  const saved = loadState();
-  if(saved && saved.queue && saved.queue.length>0){
-    resumeBanner.style.display = 'flex';
-    resumeBanner.dataset.hasSave = "1";
-  } else {
-    resumeBanner.style.display = 'none';
-  }
-}
-document.getElementById('resumeBtn').addEventListener('click', () => {
-  const saved = loadState();
-  if(saved){
-    resumeSession(saved);
-  }
-});
-document.getElementById('discardResumeBtn').addEventListener('click', () => {
-  clearState();
-  resumeBanner.style.display = 'none';
-});
+            if (error) {
+                showAuthMessage("نام کاربری یا رمز عبور اشتباه است.");
+            } else {
+                showAuthMessage("ورود موفقیت‌آمیز!", false);
+                checkAuthStatus();
+            }
+        });
 
-/* ============== SESSION LOGIC ============== */
-function startNewSession(lessonIds){
-  const pool = buildWordPool(lessonIds);
-  const ids = shuffle(pool.map(w=>w.id));
-  session = {
-    lessonIds,
-    poolMap: Object.fromEntries(pool.map(w=>[w.id, w])),
-    queue: ids,
-    mastered: [],
-    total: ids.length
-  };
-  persist();
-  enterStudyScreen();
-}
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            // پاک کردن حضور کاربر قبل از خروج
+            await removePresence();
+            await supabaseClient.auth.signOut();
+            clearState();
+            checkAuthStatus();
+        });
 
-function resumeSession(saved){
-  const pool = buildWordPool(saved.lessonIds);
-  const poolMap = Object.fromEntries(pool.map(w=>[w.id, w]));
-  session = {
-    lessonIds: saved.lessonIds,
-    poolMap,
-    queue: saved.queue.filter(id=>poolMap[id]),
-    mastered: saved.mastered.filter(id=>poolMap[id]),
-    total: saved.total
-  };
-  enterStudyScreen();
-}
+        async function checkAuthStatus() {
+            const { data: { session: authSession } } = await supabaseClient.auth.getSession();
 
-function persist(){
-  if(!session) return;
-  saveState({
-    lessonIds: session.lessonIds,
-    queue: session.queue,
-    mastered: session.mastered,
-    total: session.total
-  });
-  syncProgressToCloud(); // ذخیره‌سازی ابری پس از هر تغییر پیشرفت
-}
+            if (authSession) {
+                authScreen.style.display = 'none';
+                selectScreen.style.display = 'block';
 
-function enterStudyScreen(){
-  selectScreen.style.display = 'none';
-  doneScreen.style.display = 'none';
-  studyScreen.style.display = 'flex';
-  studyScreen.style.flexDirection = 'column';
-  studyScreen.style.alignItems = 'center';
-  document.getElementById('activeLessonsLabel').textContent =
-    LESSONS.filter(l=>session.lessonIds.includes(l.id)).map(l=>l.title.split('：')[0].split(':')[0]).join('، ');
-  renderCurrentCard();
-}
+                const user = authSession.user;
+                if (user.user_metadata && user.user_metadata.flashcard_progress) {
+                    saveState(user.user_metadata.flashcard_progress);
+                }
 
-function backToSelection(){
-  selectScreen.style.display = 'block';
-  studyScreen.style.display = 'none';
-  doneScreen.style.display = 'none';
-  checkForResume();
-}
+                renderLessonList();
+                checkForResume();
+                // شروع سیستم حضور و نمایش کاربران آنلاین
+                initPresence();
+            } else {
+                authScreen.style.display = 'block';
+                selectScreen.style.display = 'none';
+                studyScreen.style.display = 'none';
+                doneScreen.style.display = 'none';
+                authUsernameInput.value = "";
+                authPasswordInput.value = "";
+                authMessageEl.textContent = "";
+                // توقف سیستم حضور
+                stopPresence();
+            }
+        }
 
-document.getElementById('backBtn').addEventListener('click', backToSelection);
-document.getElementById('doneBackBtn').addEventListener('click', () => {
-  clearState();
-  backToSelection();
-});
-document.getElementById('resetProgressBtn').addEventListener('click', () => {
-  if(!session) return;
-  if(confirm('پیشرفت این تمرین پاک شود و از نو شروع شود؟')){
-    startNewSession(session.lessonIds);
-  }
-});
+        /* ============== LESSON SELECTION ============== */
+        function renderLessonList() {
+            lessonListEl.innerHTML = "";
+            LESSONS.forEach(l => {
+                const item = document.createElement('div');
+                item.className = 'lesson-item' + (checkedLessons.has(l.id) ? ' checked' : '');
+                item.innerHTML = `
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;">
+                        <input type="checkbox" data-id="${l.id}" ${checkedLessons.has(l.id)?'checked':''}/>
+                        <span>${l.title}</span>
+                    </label>
+                    <span class="count">${l.words.length} واژه</span>
+                `;
+                lessonListEl.appendChild(item);
+                const checkbox = item.querySelector('input');
+                item.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT') {
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    toggleLesson(l.id, checkbox.checked);
+                });
+            });
+            updateSelectionUI();
+        }
 
-/* ---- card rendering ---- */
-const flashcard = document.getElementById('flashcard');
-const wordText = document.getElementById('wordText');
-const meaningText = document.getElementById('meaningText');
-const answerRow = document.getElementById('answerRow');
-const progressFill = document.getElementById('progressFill');
-const statQueue = document.getElementById('statQueue');
-const statMastered = document.getElementById('statMastered');
-const statTotal = document.getElementById('statTotal');
+        function toggleLesson(id, checked) {
+            if (checked) checkedLessons.add(id);
+            else checkedLessons.delete(id);
+            document.querySelectorAll('.lesson-item').forEach(el => {
+                const cb = el.querySelector('input');
+                if (parseInt(cb.dataset.id) === id) el.classList.toggle('checked', checked);
+            });
+            updateSelectionUI();
+        }
 
-function renderCurrentCard(){
-  if(!session) return;
-  if(session.queue.length === 0){
-    showDoneScreen();
-    return;
-  }
-  answerRow.classList.remove('show');
-  const currentId = session.queue[0];
-  const w = session.poolMap[currentId];
+        function updateSelectionUI() {
+            const count = checkedLessons.size;
+            const totalWords = LESSONS.filter(l => checkedLessons.has(l.id)).reduce((s, l) => s + l.words.length, 0);
+            if (count === 0) {
+                selectedInfo.textContent = "هیچ درسی انتخاب نشده";
+                startBtn.disabled = true;
+            } else {
+                selectedInfo.textContent = `${count} درس انتخاب شده — ${totalWords} واژه`;
+                startBtn.disabled = false;
+            }
+        }
 
-  flashcard.classList.add('no-anim');
-  flashcard.classList.remove('flipped');
-  void flashcard.offsetWidth; 
-  wordText.textContent = w.word;
-  meaningText.textContent = w.meaning;
-  void flashcard.offsetWidth;
-  flashcard.classList.remove('no-anim');
+        document.getElementById('selectAllBtn').addEventListener('click', () => {
+            LESSONS.forEach(l => checkedLessons.add(l.id));
+            renderLessonList();
+        });
+        document.getElementById('clearAllBtn').addEventListener('click', () => {
+            checkedLessons.clear();
+            renderLessonList();
+        });
 
-  updateProgress();
-}
+        startBtn.addEventListener('click', () => {
+            startNewSession(Array.from(checkedLessons));
+        });
 
-function updateProgress(){
-  const masteredCount = session.mastered.length;
-  const total = session.total;
-  const pct = total>0 ? Math.round((masteredCount/total)*100) : 0;
-  progressFill.style.width = pct + '%';
-  statQueue.textContent = session.queue.length;
-  statMastered.textContent = masteredCount;
-  statTotal.textContent = total;
-}
+        /* ---- resume banner ---- */
+        function checkForResume() {
+            const saved = loadState();
+            if (saved && saved.queue && saved.queue.length > 0) {
+                resumeBanner.style.display = 'flex';
+                resumeBanner.dataset.hasSave = "1";
+            } else {
+                resumeBanner.style.display = 'none';
+            }
+        }
+        document.getElementById('resumeBtn').addEventListener('click', () => {
+            const saved = loadState();
+            if (saved) {
+                resumeSession(saved);
+            }
+        });
+        document.getElementById('discardResumeBtn').addEventListener('click', () => {
+            clearState();
+            resumeBanner.style.display = 'none';
+        });
 
-let flipShowTimer = null;
-flashcard.addEventListener('click', () => {
-  if(!flashcard.classList.contains('flipped')){
-    flashcard.classList.add('flipped');
-    flipShowTimer = setTimeout(()=>answerRow.classList.add('show'), 200);
-  } else {
-    if(flipShowTimer){ clearTimeout(flipShowTimer); flipShowTimer = null; }
-    answerRow.classList.remove('show');
-    flashcard.classList.remove('flipped');
-  }
-});
+        /* ============== SESSION LOGIC ============== */
+        function startNewSession(lessonIds) {
+            const pool = buildWordPool(lessonIds);
+            const ids = shuffle(pool.map(w => w.id));
+            session = {
+                lessonIds,
+                poolMap: Object.fromEntries(pool.map(w => [w.id, w])),
+                queue: ids,
+                mastered: [],
+                total: ids.length
+            };
+            persist();
+            enterStudyScreen();
+        }
 
-answerRow.addEventListener('click', (e) => {
-  const btn = e.target.closest('.ans-btn');
-  if(!btn) return;
-  const result = btn.dataset.result;
-  handleAnswer(result);
-});
+        function resumeSession(saved) {
+            const pool = buildWordPool(saved.lessonIds);
+            const poolMap = Object.fromEntries(pool.map(w => [w.id, w]));
+            session = {
+                lessonIds: saved.lessonIds,
+                poolMap,
+                queue: saved.queue.filter(id => poolMap[id]),
+                mastered: saved.mastered.filter(id => poolMap[id]),
+                total: saved.total
+            };
+            enterStudyScreen();
+        }
 
-function handleAnswer(result){
-  if(!session || session.queue.length===0) return;
-  if(flipShowTimer){ clearTimeout(flipShowTimer); flipShowTimer = null; }
-  const currentId = session.queue.shift();
-  if(result === 'correct'){
-    session.mastered.push(currentId);
-  } else {
-    session.queue.push(currentId);
-  }
-  persist();
-  renderCurrentCard();
-}
+        function persist() {
+            if (!session) return;
+            saveState({
+                lessonIds: session.lessonIds,
+                queue: session.queue,
+                mastered: session.mastered,
+                total: session.total
+            });
+            syncProgressToCloud();
+        }
 
-function showDoneScreen(){
-  studyScreen.style.display = 'none';
-  doneScreen.style.display = 'block';
-  document.getElementById('doneSummary').textContent =
-    `${session.total} واژه از درس‌های انتخابی را با موفقیت تمرین کردی 👏`;
-  clearState();
-}
+        function enterStudyScreen() {
+            selectScreen.style.display = 'none';
+            doneScreen.style.display = 'none';
+            studyScreen.style.display = 'flex';
+            studyScreen.style.flexDirection = 'column';
+            studyScreen.style.alignItems = 'center';
+            document.getElementById('activeLessonsLabel').textContent =
+                LESSONS.filter(l => session.lessonIds.includes(l.id)).map(l => l.title.split('：')[0].split(':')[0]).join('، ');
+            renderCurrentCard();
+            // شروع تایمر مطالعه و اعلام وضعیت مطالعه
+            startStudyTimer();
+            updatePresence(true);
+        }
 
-/* ============== THEME ============== */
-const THEME_KEY = "arabic_flashcards_theme";
-const themeToggleBtn = document.getElementById('themeToggle');
+        function backToSelection() {
+            selectScreen.style.display = 'block';
+            studyScreen.style.display = 'none';
+            doneScreen.style.display = 'none';
+            // توقف تایمر و اعلام پایان مطالعه
+            stopStudyTimer();
+            updatePresence(false);
+            checkForResume();
+        }
 
-function applyTheme(theme){
-  document.documentElement.setAttribute('data-theme', theme);
-  themeToggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
-}
-function initTheme(){
-  let theme = null;
-  try{ theme = localStorage.getItem(THEME_KEY); }catch(e){}
-  if(!theme){
-    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-  }
-  applyTheme(theme);
-}
-themeToggleBtn.addEventListener('click', () => {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  applyTheme(next);
-  try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
-});
+        document.getElementById('backBtn').addEventListener('click', backToSelection);
+        document.getElementById('doneBackBtn').addEventListener('click', () => {
+            clearState();
+            backToSelection();
+        });
+        document.getElementById('resetProgressBtn').addEventListener('click', () => {
+            if (!session) return;
+            if (confirm('پیشرفت این تمرین پاک شود و از نو شروع شود؟')) {
+                startNewSession(session.lessonIds);
+            }
+        });
 
-/* ============== INIT ============== */
-initTheme();
-checkAuthStatus(); // بررسی اولیه وضعیت ورود کاربر به جای اجرای مستقیم لیست درس‌ها
-</script>
+        /* ---- card rendering ---- */
+        const flashcard = document.getElementById('flashcard');
+        const wordText = document.getElementById('wordText');
+        const meaningText = document.getElementById('meaningText');
+        const answerRow = document.getElementById('answerRow');
+        const progressFill = document.getElementById('progressFill');
+        const statQueue = document.getElementById('statQueue');
+        const statMastered = document.getElementById('statMastered');
+        const statTotal = document.getElementById('statTotal');
+
+        function renderCurrentCard() {
+            if (!session) return;
+            if (session.queue.length === 0) {
+                showDoneScreen();
+                return;
+            }
+            answerRow.classList.remove('show');
+            const currentId = session.queue[0];
+            const w = session.poolMap[currentId];
+
+            flashcard.classList.add('no-anim');
+            flashcard.classList.remove('flipped');
+            void flashcard.offsetWidth;
+            wordText.textContent = w.word;
+            meaningText.textContent = w.meaning;
+            void flashcard.offsetWidth;
+            flashcard.classList.remove('no-anim');
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const masteredCount = session.mastered.length;
+            const total = session.total;
+            const pct = total > 0 ? Math.round((masteredCount / total) * 100) : 0;
+            progressFill.style.width = pct + '%';
+            statQueue.textContent = session.queue.length;
+            statMastered.textContent = masteredCount;
+            statTotal.textContent = total;
+        }
+
+        let flipShowTimer = null;
+        flashcard.addEventListener('click', () => {
+            if (!flashcard.classList.contains('flipped')) {
+                flashcard.classList.add('flipped');
+                flipShowTimer = setTimeout(() => answerRow.classList.add('show'), 200);
+            } else {
+                if (flipShowTimer) { clearTimeout(flipShowTimer);
+                    flipShowTimer = null; }
+                answerRow.classList.remove('show');
+                flashcard.classList.remove('flipped');
+            }
+        });
+
+        answerRow.addEventListener('click', (e) => {
+            const btn = e.target.closest('.ans-btn');
+            if (!btn) return;
+            const result = btn.dataset.result;
+            handleAnswer(result);
+        });
+
+        function handleAnswer(result) {
+            if (!session || session.queue.length === 0) return;
+            if (flipShowTimer) { clearTimeout(flipShowTimer);
+                flipShowTimer = null; }
+            const currentId = session.queue.shift();
+            if (result === 'correct') {
+                session.mastered.push(currentId);
+            } else {
+                session.queue.push(currentId);
+            }
+            persist();
+            renderCurrentCard();
+        }
+
+        function showDoneScreen() {
+            studyScreen.style.display = 'none';
+            doneScreen.style.display = 'block';
+            document.getElementById('doneSummary').textContent =
+                `${session.total} واژه از درس‌های انتخابی را با موفقیت تمرین کردی 👏`;
+            // توقف تایمر و اعلام پایان مطالعه
+            stopStudyTimer();
+            updatePresence(false);
+            clearState();
+        }
+
+        /* ============== THEME ============== */
+        const THEME_KEY = "arabic_flashcards_theme";
+        const themeToggleBtn = document.getElementById('themeToggle');
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            themeToggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function initTheme() {
+            let theme = null;
+            try { theme = localStorage.getItem(THEME_KEY); } catch (e) {}
+            if (!theme) {
+                theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+            }
+            applyTheme(theme);
+        }
+        themeToggleBtn.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+        });
+
+        /* =================================================================
+           ============== امکانات جدید: حضور و تایمر مطالعه ==============
+           ================================================================= */
+
+        // ---------- متغیرهای سیستم حضور ----------
+        let presenceInterval = null;
+        let onlineUsersInterval = null;
+        let currentUsername = null;
+
+        // ---------- متغیرهای تایمر مطالعه ----------
+        let studyTimerInterval = null;
+        let inactivityTimeout = null;
+        let studySeconds = 0;
+        let isStudyActive = true;
+        const INACTIVITY_LIMIT = 30; // ثانیه
+        let lastActivityTime = Date.now();
+
+        // ---------- UI elements جدید ----------
+        const onlineUsersWidget = document.getElementById('onlineUsersWidget');
+        const onlineCount = document.getElementById('onlineCount');
+        const onlineTooltip = document.getElementById('onlineTooltip');
+        const studyTimerDisplay = document.getElementById('studyTimerDisplay');
+        const timerText = document.getElementById('timerText');
+
+        /**
+         * راه‌اندازی سیستم حضور پس از ورود موفق
+         */
+        async function initPresence() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) return;
+
+            currentUsername = user.user_metadata?.display_username || user.email?.split('@')[0] || 'کاربر';
+
+            // ارسال heartbeat اولیه
+            await updatePresence(false);
+
+            // heartbeat هر ۲۰ ثانیه
+            if (presenceInterval) clearInterval(presenceInterval);
+            presenceInterval = setInterval(async () => {
+                // فقط heartbeat می‌فرستیم، وضعیت مطالعه را تغییر نمی‌دهیم
+                await sendHeartbeat();
+            }, 20000);
+
+            // دریافت لیست کاربران آنلاین هر ۱۰ ثانیه
+            if (onlineUsersInterval) clearInterval(onlineUsersInterval);
+            onlineUsersInterval = setInterval(fetchOnlineUsers, 10000);
+            fetchOnlineUsers(); // دریافت اولیه
+        }
+
+        /**
+         * توقف کامل سیستم حضور (موقع خروج)
+         */
+        function stopPresence() {
+            if (presenceInterval) clearInterval(presenceInterval);
+            if (onlineUsersInterval) clearInterval(onlineUsersInterval);
+            presenceInterval = null;
+            onlineUsersInterval = null;
+        }
+
+        /**
+         * حذف رکورد حضور کاربر از دیتابیس
+         */
+        async function removePresence() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) return;
+            try {
+                await supabaseClient
+                    .from('user_presence')
+                    .delete()
+                    .eq('user_id', user.id);
+            } catch (e) {
+                console.error('خطا در حذف حضور:', e);
+            }
+        }
+
+        /**
+         * ارسال heartbeat ساده (فقط به‌روزرسانی last_heartbeat)
+         */
+        async function sendHeartbeat() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) return;
+            try {
+                await supabaseClient
+                    .from('user_presence')
+                    .upsert({
+                        user_id: user.id,
+                        username: currentUsername,
+                        last_heartbeat: new Date().toISOString(),
+                        // is_studying و study_session_start را تغییر نمی‌دهیم
+                    }, { onConflict: 'user_id' });
+            } catch (e) {
+                console.error('خطا در ارسال heartbeat:', e);
+            }
+        }
+
+        /**
+         * به‌روزرسانی وضعیت مطالعه کاربر
+         * @param {boolean} isStudying - آیا کاربر در حال مطالعه است؟
+         */
+        async function updatePresence(isStudying) {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) return;
+            try {
+                const payload = {
+                    user_id: user.id,
+                    username: currentUsername,
+                    last_heartbeat: new Date().toISOString(),
+                    is_studying: isStudying,
+                };
+                if (isStudying) {
+                    payload.study_session_start = new Date().toISOString();
+                } else {
+                    payload.study_session_start = null;
+                }
+                await supabaseClient
+                    .from('user_presence')
+                    .upsert(payload, { onConflict: 'user_id' });
+            } catch (e) {
+                console.error('خطا در به‌روزرسانی حضور:', e);
+            }
+        }
+
+        /**
+         * دریافت لیست کاربران آنلاین از جدول user_presence
+         * کاربرانی که در ۳۰ ثانیه گذشته heartbeat داشته‌اند "آنلاین" محسوب می‌شوند
+         */
+        async function fetchOnlineUsers() {
+            try {
+                const thirtySecondsAgo = new Date(Date.now() - 30000).toISOString();
+                const { data, error } = await supabaseClient
+                    .from('user_presence')
+                    .select('*')
+                    .gte('last_heartbeat', thirtySecondsAgo);
+
+                if (error) {
+                    console.error('خطا در دریافت کاربران آنلاین:', error);
+                    return;
+                }
+
+                renderOnlineUsers(data || []);
+            } catch (e) {
+                console.error('خطا:', e);
+            }
+        }
+
+        /**
+         * نمایش کاربران آنلاین در ویجت
+         */
+        function renderOnlineUsers(users) {
+            const count = users.length;
+            onlineCount.textContent = count;
+
+            if (count === 0) {
+                onlineTooltip.innerHTML =
+                    '<div style="text-align:center;color:var(--ink-soft);padding:8px;">کاربر آنلاینی وجود ندارد</div>';
+            } else {
+                let html = '';
+                users.forEach(u => {
+                    const studyingClass = u.is_studying ? ' studying' : '';
+                    const statusLabel = u.is_studying ? ' 📖 در حال مطالعه' : '';
+                    html += `
+                        <div class="user-row">
+                            <span class="user-status-dot${studyingClass}"></span>
+                            <span>${escapeHtml(u.username || 'ناشناس')}${statusLabel}</span>
+                        </div>`;
+                });
+                onlineTooltip.innerHTML = html;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /* ---------- تایمر مطالعه با تشخیص فعالیت ---------- */
+
+        /**
+         * شروع تایمر مطالعه
+         */
+        function startStudyTimer() {
+            studySeconds = 0;
+            isStudyActive = true;
+            lastActivityTime = Date.now();
+            updateTimerDisplay();
+            studyTimerDisplay.classList.remove('inactive');
+
+            // به‌روزرسانی تایمر هر ثانیه
+            if (studyTimerInterval) clearInterval(studyTimerInterval);
+            studyTimerInterval = setInterval(() => {
+                const now = Date.now();
+                const idleSeconds = Math.floor((now - lastActivityTime) / 1000);
+
+                if (idleSeconds >= INACTIVITY_LIMIT) {
+                    // کاربر غیرفعال شده است
+                    if (isStudyActive) {
+                        isStudyActive = false;
+                        studyTimerDisplay.classList.add('inactive');
+                        updatePresence(false); // اعلام توقف مطالعه به دلیل inactivity
+                    }
+                } else {
+                    // کاربر فعال است
+                    if (!isStudyActive) {
+                        isStudyActive = true;
+                        studyTimerDisplay.classList.remove('inactive');
+                        updatePresence(true); // اعلام شروع مجدد مطالعه
+                    }
+                    studySeconds++;
+                    updateTimerDisplay();
+
+                    // هر ۵ ثانیه زمان مطالعه را در دیتابیس ذخیره کن
+                    if (studySeconds % 5 === 0) {
+                        syncStudyTime();
+                    }
+                }
+            }, 1000);
+
+            // listener های فعالیت کاربر
+            setupActivityListeners();
+        }
+
+        /**
+         * توقف تایمر مطالعه و ذخیره زمان نهایی
+         */
+        function stopStudyTimer() {
+            if (studyTimerInterval) {
+                clearInterval(studyTimerInterval);
+                studyTimerInterval = null;
+            }
+            removeActivityListeners();
+            // ذخیره زمان نهایی
+            syncStudyTime();
+            studyTimerDisplay.classList.add('inactive');
+        }
+
+        /**
+         * ذخیره accumulated study time در دیتابیس
+         */
+        async function syncStudyTime() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user || studySeconds === 0) return;
+            try {
+                // دریافت مقدار قبلی و اضافه کردن زمان جدید
+                const { data: existing } = await supabaseClient
+                    .from('user_presence')
+                    .select('accumulated_study_seconds')
+                    .eq('user_id', user.id)
+                    .single();
+
+                const previous = existing?.accumulated_study_seconds || 0;
+                const newTotal = previous + studySeconds;
+
+                await supabaseClient
+                    .from('user_presence')
+                    .upsert({
+                        user_id: user.id,
+                        username: currentUsername,
+                        last_heartbeat: new Date().toISOString(),
+                        accumulated_study_seconds: newTotal,
+                    }, { onConflict: 'user_id' });
+
+                // ریست شمارنده محلی
+                studySeconds = 0;
+            } catch (e) {
+                console.error('خطا در ذخیره زمان مطالعه:', e);
+            }
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(studySeconds / 60);
+            const secs = studySeconds % 60;
+            timerText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        /**
+         * تنظیم listener های تشخیص فعالیت کاربر
+         */
+        function setupActivityListeners() {
+            removeActivityListeners(); // پاک‌سازی قبلی
+            window.addEventListener('mousemove', activityHandler);
+            window.addEventListener('keydown', activityHandler);
+            window.addEventListener('click', activityHandler);
+            window.addEventListener('touchstart', activityHandler);
+            window.addEventListener('scroll', activityHandler);
+        }
+
+        function removeActivityListeners() {
+            window.removeEventListener('mousemove', activityHandler);
+            window.removeEventListener('keydown', activityHandler);
+            window.removeEventListener('click', activityHandler);
+            window.removeEventListener('touchstart', activityHandler);
+            window.removeEventListener('scroll', activityHandler);
+        }
+
+        function activityHandler() {
+            lastActivityTime = Date.now();
+        }
+
+        /* ============== پاک‌سازی موقع بستن صفحه ============== */
+        window.addEventListener('beforeunload', () => {
+            if (studyTimerInterval) {
+                syncStudyTime();
+            }
+            // send heartbeat نهایی برای ماندگاری کوتاه
+            sendHeartbeat();
+        });
+
+        /* ============== INIT ============== */
+        initTheme();
+        checkAuthStatus();
+    </script>
 </body>
 </html>
