@@ -1,803 +1,501 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فلش‌کارت هوشمند عربی</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
-    <style>
-        :root {
-            /* Light Theme (Desert & Cream) */
-            --bg-color: #Fdfbf7;
-            --surface-color: #F4ebd8;
-            --text-main: #2b3a4a;
-            --text-muted: #6b7a8a;
-            --accent-primary: #c19a5b; /* Desert Gold */
-            --accent-secondary: #8b6b43;
-            --card-front: #ffffff;
-            --card-back: #1d3557;
-            --card-text-back: #fcf8f2;
-            --success: #2a9d8f;
-            --danger: #e76f51;
-            --badge-glow: rgba(193, 154, 91, 0.4);
-        }
-
-        [data-theme="dark"] {
-            /* Dark Theme (Dark Blue & Gold) */
-            --bg-color: #0a1120;
-            --surface-color: #111d32;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
-            --accent-primary: #d4af37; /* Royal Gold */
-            --accent-secondary: #fcd34d;
-            --card-front: #1e293b;
-            --card-back: #0f172a;
-            --card-text-back: #d4af37;
-            --success: #10b981;
-            --danger: #ef4444;
-            --badge-glow: rgba(212, 175, 55, 0.4);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Vazirmatn', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .arabic-text {
-            font-family: 'Amiri', serif;
-            font-size: 2.5rem;
-            line-height: 1.5;
-        }
-
-        /* --- Auth Section --- */
-        #auth-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        
-        .auth-box {
-            background-color: var(--surface-color);
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            border: 1px solid var(--accent-primary);
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-            text-align: right;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 1px solid var(--text-muted);
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-size: 1rem;
-            outline: none;
-            margin-top: 5px;
-        }
-        
-        input:focus, select:focus {
-            border-color: var(--accent-primary);
-        }
-
-        .btn {
-            background-color: var(--accent-primary);
-            color: var(--bg-color);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 700;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-
-        .btn:hover {
-            background-color: var(--accent-secondary);
-            transform: translateY(-2px);
-        }
-
-        /* --- Main App Layout --- */
-        #app-section {
-            display: none;
-            flex: 1;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--text-muted);
-            margin-bottom: 20px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .badge-icon {
-            color: var(--accent-primary);
-            text-shadow: 0 0 10px var(--badge-glow);
-            font-size: 1.5rem;
-            display: none; /* Shows when 20 mins reached */
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            color: var(--text-main);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* --- Tabs --- */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--surface-color);
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 10px 20px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            font-weight: 700;
-            border-bottom: 3px solid transparent;
-        }
-
-        .tab-btn.active {
-            color: var(--accent-primary);
-            border-bottom: 3px solid var(--accent-primary);
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* --- Study Section --- */
-        .lesson-selector {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        /* Flashcard */
-        .flashcard-container {
-            perspective: 1000px;
-            width: 100%;
-            max-width: 500px;
-            height: 350px;
-            margin: 0 auto 30px;
-            cursor: pointer;
-        }
-
-        .flashcard {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-
-        .flashcard.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            border: 2px solid var(--accent-primary);
-        }
-
-        .card-front {
-            background-color: var(--card-front);
-        }
-
-        .card-back {
-            background-color: var(--card-back);
-            color: var(--card-text-back);
-            transform: rotateY(180deg);
-        }
-
-        .card-hint {
-            position: absolute;
-            bottom: 20px;
-            font-size: 0.85rem;
-            opacity: 0.6;
-        }
-
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .btn-correct { background-color: var(--success); }
-        .btn-false { background-color: var(--danger); }
-        .btn-correct:hover, .btn-false:hover { filter: brightness(1.1); }
-
-        /* --- Live Progress Section --- */
-        .live-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .user-card {
-            background-color: var(--surface-color);
-            padding: 20px;
-            border-radius: 15px;
-            border-top: 4px solid var(--accent-primary);
-            position: relative;
-        }
-
-        .user-card h3 {
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--success);
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px var(--success);
-        }
-        
-        .status-dot.idle { background-color: var(--text-muted); box-shadow: none; }
-
-        .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            background: var(--bg-color);
-            padding: 8px;
-            border-radius: 8px;
-            flex: 1;
-            margin: 0 5px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Helpers */
-        .hidden { display: none !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>واژه‌نامه عربی - میز مطالعه هوشمند</title>
+  <!-- Tailwind CSS برای ظاهر مینیمال و تم دارک دپ (Midnight Dark) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- کتابخانه رسمی سوپابیس -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://cdn.jsdelivr.net/npm/vazirmatn-font@3.3.0/dist/font-face.css" rel="stylesheet" type="text/css" />
+  <style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: #090d16;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #1e293b;
+      border-radius: 3px;
+    }
+  </style>
 </head>
-<body data-theme="dark"> <div id="auth-section">
-        <div class="auth-box">
-            <h2 style="margin-bottom: 20px; color: var(--accent-primary);">ورود به سیستم مطالعه</h2>
-            <div class="input-group">
-                <label>نام کاربری:</label>
-                <input type="text" id="login-username" placeholder="مثال: sti" required>
-            </div>
-            <div class="input-group">
-                <label>رمز عبور:</label>
-                <input type="password" id="login-password" placeholder="***" required>
-            </div>
-            <button class="btn" onclick="login()">ورود</button>
-            <p id="auth-error" style="color: var(--danger); margin-top: 15px; display: none;"></p>
+<body class="text-slate-200 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+  <!-- ========================================== -->
+  <!-- ۱. بخش احراز هویت (ورود / ثبت‌نام) -->
+  <!-- ========================================== -->
+  <div id="authSection" class="flex-1 flex items-center justify-center p-4">
+    <div class="bg-[#111827] border border-slate-800 p-8 rounded-2xl w-full max-w-md shadow-2xl transition-all duration-300">
+      <h2 id="authTitle" class="text-2xl font-bold text-center text-white mb-2">خوش آمدید</h2>
+      <p id="authSubtitle" class="text-sm text-slate-400 text-center mb-6">جهت ورود مشخصات خود را وارد کنید</p>
+      
+      <form id="authForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">ایمیل یا نام کاربری</label>
+          <input type="email" id="inputUsername" required placeholder="name@gmail.com" 
+            class="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-left dir-ltr">
         </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">رمز عبور</label>
+          <input type="password" id="inputPassword" required placeholder="••••••••" 
+            class="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-left dir-ltr">
+        </div>
+        
+        <button type="submit" id="btnAuthSubmit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl shadow-lg hover:shadow-amber-500/20 transition-all duration-200 cursor-pointer mt-2">
+          ورود به حساب
+        </button>
+      </form>
+      
+      <p id="authToggleText" class="text-sm text-slate-400 text-center mt-6">
+        عضو نیستید؟ <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ایجاد حساب جدید</span>
+      </p>
     </div>
+  </div>
 
-    <div id="app-section">
-        <header>
-            <div class="user-info">
-                <i class="ri-medal-fill badge-icon" id="user-badge" title="نشان افتخار مطالعه طولانی"></i>
-                <div>
-                    <h3 id="display-name">کاربر</h3>
-                    <small id="study-timer">زمان مطالعه: 0 دقیقه</small>
-                </div>
-            </div>
-            <div class="controls">
-                <button class="icon-btn" onclick="toggleTheme()" title="تغییر پوسته"><i class="ri-moon-fill" id="theme-icon"></i></button>
-                <button class="icon-btn" onclick="logout()" title="خروج"><i class="ri-logout-box-r-line"></i></button>
-            </div>
-        </header>
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('study')">مطالعه</button>
-            <button class="tab-btn" onclick="switchTab('live')">پیشرفت زنده</button>
-        </div>
-
-        <div id="study-tab" class="tab-content active">
-            <div class="lesson-selector">
-                <label>انتخاب درس:</label>
-                <select id="lesson-select" onchange="loadLesson()">
-                    <option value="all">همه درس‌ها</option>
-                    <option value="درس اول">درس اول</option>
-                    <option value="درس دوم">درس دوم</option>
-                    <option value="درس سوم">درس سوم</option>
-                    <option value="درس چهارم">درس چهارم</option>
-                    <option value="درس پنجم">درس پنجم</option>
-                    <option value="درس ششم">درس ششم</option>
-                    <option value="درس هفتم">درس هفتم</option>
-                </select>
-                <small id="loop-counter" style="color: var(--accent-primary);"></small>
-            </div>
-
-            <div class="flashcard-container" onclick="flipCard()">
-                <div class="flashcard" id="flashcard-inner">
-                    <div class="card-face card-front">
-                        <h2 class="arabic-text" id="card-arabic">در حال بارگذاری...</h2>
-                        <span class="card-hint">برای دیدن معنی کلیک کنید</span>
-                    </div>
-                    <div class="card-face card-back">
-                        <h2 id="card-persian">...</h2>
-                        <span class="card-hint">برای بازگشت کلیک کنید</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="btn btn-false" onclick="handleCardAnswer(false)" id="btn-false" disabled>نیاز به تمرین (ماندن در چرخه)</button>
-                <button class="btn btn-correct" onclick="handleCardAnswer(true)" id="btn-correct" disabled>یاد گرفتم (حذف از چرخه)</button>
-            </div>
-        </div>
-
-        <div id="live-tab" class="tab-content">
-            <h2 style="margin-bottom: 20px;">وضعیت کاربران آنلاین</h2>
-            <div class="live-grid" id="live-users-container">
-                </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- ========================================== -->
+  <!-- ۲. بخش اصلی اپلیکیشن (میز مطالعه) -->
+  <!-- ========================================== -->
+  <main id="appSection" class="hidden flex-1 w-full max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
     
-    <script>
-        // ==========================================
-        // تنظیمات Supabase (کلیدها را اینجا قرار دهید)
-        // ==========================================
-        const SUPABASE_URL = 'https://objayssyopmkzhsboulv.supabase.co/rest/v1/';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <!-- پنل راست: مدیریت درس‌ها و وضعیت آنلاین -->
+    <div class="lg:col-span-1 space-y-6">
+      <!-- مشخصات کاربر و خروج -->
+      <div class="bg-[#111827] border border-slate-800 p-4 rounded-xl flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400">کاربر فعال:</p>
+          <h4 id="userDisplayName" class="text-sm font-bold text-white">در حال لود...</h4>
+        </div>
+        <button onclick="handleLogout()" class="text-xs bg-rose-950/40 text-rose-400 border border-rose-900/50 px-3 py-1.5 rounded-lg hover:bg-rose-900 hover:text-white transition-all cursor-pointer">خروج</button>
+      </div>
 
-        // ==========================================
-        // متغیرهای سراسری وضعیت
-        // ==========================================
-        let currentUser = null;
-        let userProfile = null;
-        let studyWords = [];
-        let currentIndex = 0;
-        let isFlipped = false;
+      <!-- انتخاب درس -->
+      <div class="bg-[#111827] border border-slate-800 p-5 rounded-xl">
+        <h3 class="text-sm font-bold text-slate-300 mb-3 border-b border-slate-800 pb-2">📚 لیست درس‌ها</h3>
+        <div class="space-y-1" id="lessonList">
+          <!-- درس‌ها به صورت پویا با جاوااسکریپت ساخته می‌شوند -->
+        </div>
+      </div>
+
+      <!-- وضعیت کاربران آنلاین -->
+      <div class="bg-[#111827] border border-slate-800 p-5 rounded-xl">
+        <h3 class="text-sm font-bold text-slate-300 mb-3 border-b border-slate-800 pb-2 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> وضعیت زنده کاربران
+        </h3>
+        <div id="liveProgressRows" class="space-y-3 max-h-60 overflow-y-auto custom-scroll text-xs text-slate-400">
+          <p class="text-center py-4">در حال اتصال به شبکه زنده...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- پنل چپ: واژه‌ها و تمرین -->
+    <div class="lg:col-span-3 space-y-6">
+      <!-- هدر وضعیت درس -->
+      <div class="bg-[#111827] border border-slate-800 p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 id="currentLessonTitle" class="text-xl font-bold text-white">لطفاً یک درس را انتخاب کنید</h2>
+          <p class="text-xs text-slate-400 mt-1">تعداد کلمات موجود در این درس: <span id="wordCount" class="text-amber-400 font-bold">0</span></p>
+        </div>
+        <!-- زمان‌سنج -->
+        <div class="bg-[#1f2937] px-4 py-2 rounded-xl border border-slate-700 text-center">
+          <p class="text-[10px] text-slate-400 uppercase tracking-wider">مدت مطالعه این نشست</p>
+          <p id="studyTimer" class="text-lg font-mono font-bold text-emerald-400">00:00</p>
+        </div>
+      </div>
+
+      <!-- باکس تست و تمرین کلمات -->
+      <div id="quizBox" class="bg-[#111827] border border-slate-800 p-6 rounded-xl hidden">
+        <h3 class="text-sm font-bold text-slate-400 mb-4 flex justify-between">
+          <span>📝 خودآزمایی هوشمند</span>
+          <span id="quizProgress" class="font-mono text-blue-400">0/0</span>
+        </h3>
+        <div class="text-center py-6">
+          <p class="text-xs text-slate-500 mb-2">معنی کلمه زیر چیست؟</p>
+          <h1 id="quizArabicWord" class="text-3xl font-bold text-amber-400 tracking-wide mb-6">...</h1>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-xl mx-auto" id="quizOptions">
+            <!-- گزینه‌ها اینجا لود می‌شوند -->
+          </div>
+        </div>
+      </div>
+
+      <!-- جدول نمایش کلمات درس -->
+      <div class="bg-[#111827] border border-slate-800 rounded-xl overflow-hidden">
+        <div class="p-4 bg-[#1f2937]/30 border-b border-slate-800 flex justify-between items-center">
+          <h3 class="text-sm font-bold text-slate-300">📋 واژگان این درس</h3>
+        </div>
+        <div class="overflow-x-auto max-h-[500px] overflow-y-auto custom-scroll">
+          <table class="w-full text-right border-collapse">
+            <thead>
+              <tr class="bg-[#1f2937]/60 text-slate-400 text-xs uppercase border-b border-slate-800">
+                <th class="p-4 font-semibold">کلمه عربی</th>
+                <th class="p-4 font-semibold">معنی فارسی</th>
+              </tr>
+            </thead>
+            <tbody id="wordsTableBody" class="text-sm divide-y divide-slate-800/60">
+              <tr>
+                <td colspan="2" class="p-8 text-center text-slate-500">هنوز درسی انتخاب نشده است.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- فوتر سیستم -->
+  <footer class="py-4 text-center text-[11px] text-slate-600 border-t border-slate-900/40">
+    سامانه واژه‌نامه اختصاصی عربی متصل به شبکه‌ی یکپارچه‌ی سوپابیس و ورسل
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- ۳. منطق، هسته پایداری و جاوااسکریپت اپلیکیشن -->
+  <!-- ========================================== -->
+  <script>
+    // تنظیمات مستقیم و بدون ایراد کلاینت سوپابیس
+    const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co"; 
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // وضعیت‌های داخلی اپلیکیشن
+    let currentUser = null;
+    let isSignUpMode = false;
+    let allWords = [];
+    let currentLessonWords = [];
+    let currentWordIndex = 0;
+    
+    // متغیرهای تایمر نشست
+    let sessionSeconds = 0;
+    let timerInterval = null;
+
+    // لود اولیه برنامه
+    document.addEventListener('DOMContentLoaded', () => {
+      initApp();
+      setupAuthToggle();
+      setupAuthForm();
+    });
+
+    // بررسی وضعیت نشست کاربر در بدو ورود
+    async function initApp() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+        showDashboard();
+      } else {
+        showAuthForm();
+      }
+    }
+
+    function showAuthForm() {
+      document.getElementById('authSection').classList.remove('hidden');
+      document.getElementById('appSection').classList.add('hidden');
+    }
+
+    function showDashboard() {
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('appSection').classList.remove('hidden');
+      document.getElementById('userDisplayName').textContent = currentUser.email;
+      
+      startStudyTimer();
+      loadLessonsList();
+      fetchAndSetupRealtime();
+    }
+
+    // جابه‌جایی ظاهری فرم ورود و ثبت‌نام
+    function setupAuthToggle() {
+      const toggleLink = document.getElementById('authToggleLink');
+      toggleLink.addEventListener('click', () => {
+        isSignUpMode = !isSignUpMode;
         
-        let correctCount = 0;
-        let incorrectCount = 0;
+        const title = document.getElementById('authTitle');
+        const subtitle = document.getElementById('authSubtitle');
+        const submitBtn = document.getElementById('btnAuthSubmit');
+        const toggleText = document.getElementById('authToggleText');
+
+        if (isSignUpMode) {
+          title.textContent = "ایجاد حساب جدید";
+          subtitle.textContent = "یک ایمیل و رمز عبور (حداقل ۶ کاراکتر) وارد کنید";
+          submitBtn.textContent = "ثبت‌نام در سامانه";
+          toggleText.innerHTML = 'حساب کاربری دارید؟ <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ورود به حساب</span>';
+        } else {
+          title.textContent = "خوش آمدید";
+          subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
+          submitBtn.textContent = "ورود به حساب";
+          toggleText.innerHTML = 'عضو نیستید؟ <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ایجاد حساب جدید</span>';
+        }
+        // اتصال مجدد ایونت کلیک بعد از بازنویسی innerHTML
+        setupAuthToggle();
+      });
+    }
+
+    // هندل کردن زدن فرم احراز هویت
+    function setupAuthForm() {
+      const form = document.getElementById('authForm');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        let sessionStartTime = null;
-        let timerInterval = null;
-        let hasBadge = false;
-        let realtimeChannel = null;
+        const email = document.getElementById('inputUsername').value.trim();
+        const password = document.getElementById('inputPassword').value;
+        const submitBtn = document.getElementById('btnAuthSubmit');
 
-        // ==========================================
-        // مدیریت احراز هویت
-        // ==========================================
-        async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                await initApp();
-            }
+        if (password.length < 6) {
+          alert('رمز عبور باید حداقل ۶ کاراکتر باشد.');
+          return;
         }
 
-        async function login() {
-            const username = document.getElementById('login-username').value.trim();
-            const password = document.getElementById('login-password').value;
-            const errorEl = document.getElementById('auth-error');
-            
-            if(!username || !password) {
-                errorEl.innerText = "لطفا فرم را کامل کنید.";
-                errorEl.style.display = 'block';
-                return;
-            }
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'در حال پردازش...';
 
-            // ترفند تبدیل یوزرنیم به ایمیل طبق دیتابیس Supabase
-            const fakeEmail = `${username}@flashcard.local`;
-            
-            errorEl.style.display = 'none';
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: fakeEmail,
-                password: password,
+        try {
+          if (isSignUpMode) {
+            // فرآیند ثبت نام کاربر جدید
+            const { data, error } = await supabase.auth.signUp({
+              email: email,
+              password: password,
+              options: { data: { display_name: email.split('@')[0] } }
             });
-
-            if (error) {
-                errorEl.innerText = "نام کاربری یا رمز عبور اشتباه است.";
-                errorEl.style.display = 'block';
-            } else {
-                currentUser = data.user;
-                await initApp();
-            }
-        }
-
-        async function logout() {
-            await updateLiveStatus('idle'); // قبل از خروج وضعیت را غیرفعال میکنیم
-            await supabase.auth.signOut();
-            window.location.reload();
-        }
-
-        // ==========================================
-        // راه‌اندازی اپلیکیشن پس از ورود
-        // ==========================================
-        async function initApp() {
-            document.getElementById('auth-section').style.display = 'none';
-            document.getElementById('app-section').style.display = 'flex';
-
-            // دریافت اطلاعات پروفایل
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
-            if(profile) {
-                userProfile = profile;
-                document.getElementById('display-name').innerText = profile.display_name;
-            } else {
-                // اگر پروفایل در دیتابیس نبود، با نام کاربری ایمیل میسازیم
-                const defaultName = currentUser.email.split('@')[0];
-                await supabase.from('profiles').insert([{ id: currentUser.id, display_name: defaultName }]);
-                document.getElementById('display-name').innerText = defaultName;
-                userProfile = { display_name: defaultName };
-            }
-
-            // مکانیزم پاکسازی خودکار دیتای قدیمی‌تر از ۷ روز
-            cleanUpOldSessions();
-
-            // شروع نشست مطالعه
-            startStudySession();
+            if (error) throw error;
+            alert('ثبت‌نام موفقیت‌آمیز بود! اکنون سیستم تلاش می‌کند وارد حساب شود.');
             
-            // بارگذاری کلمات
-            loadLesson();
+            // تلاش برای ورود خودکار پس از ثبت‌نام
+            const { data: logData, error: logErr } = await supabase.auth.signInWithPassword({ email, password });
+            if (logErr) throw logErr;
+            currentUser = logData.user;
+          } else {
+            // فرآیند ورود به حساب کاربری
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            currentUser = data.user;
+          }
+          
+          showDashboard();
+        } catch (err) {
+          alert('خطا در احراز هویت: ' + (err.message || 'مشکلی پیش آمده است.'));
+          console.error(err);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = isSignUpMode ? "ثبت‌نام در سامانه" : "ورود به حساب";
+        }
+      });
+    }
 
-            // فعال‌سازی ریل‌تایم
-            setupRealtime();
+    // خروج از حساب کاربری
+    async function handleLogout() {
+      clearInterval(timerInterval);
+      await supabase.auth.signOut();
+      currentUser = null;
+      window.location.reload();
+    }
+
+    // ساخت لیست درس‌ها به صورت داینامیک
+    function loadLessonsList() {
+      const listContainer = document.getElementById('lessonList');
+      listContainer.innerHTML = '';
+      
+      const lessons = ['درس اول', 'درس دوم', 'درس سوم', 'درس چهارم', 'درس پنجم', 'درس ششم', 'درس هفتم'];
+      
+      lessons.forEach(lesson => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-right px-3 py-2 rounded-lg text-slate-400 hover:bg-[#1f2937] hover:text-white transition-all text-xs cursor-pointer flex justify-between items-center";
+        btn.innerHTML = `<span>📖 ${lesson}</span> <span class="text-[10px] opacity-60">مشاهده</span>`;
+        btn.onclick = () => selectLesson(lesson, btn);
+        listContainer.appendChild(btn);
+      });
+    }
+
+    // انتخاب درس و واکشی اطلاعات آن از جدول کلمات سوپابیس
+    async function selectLesson(lessonName, element) {
+      // استایل دکمه فعال
+      document.querySelectorAll('#lessonList button').forEach(b => b.classList.remove('bg-blue-950', 'text-blue-400', 'font-bold'));
+      if (element) element.classList.add('bg-blue-950', 'text-blue-400', 'font-bold');
+
+      document.getElementById('currentLessonTitle').textContent = `در حال لود کلمات ${lessonName}...`;
+
+      try {
+        const { data, error } = await supabase
+          .from('words')
+          .select('*')
+          .eq('lesson', lessonName);
+
+        if (error) throw error;
+
+        currentLessonWords = data || [];
+        document.getElementById('currentLessonTitle').textContent = lessonName;
+        document.getElementById('wordCount').textContent = currentLessonWords.length;
+
+        // آپدیت وضعیت در جدول لایو دیتابیس
+        updateLiveStatus(lessonName);
+
+        // رندر جدول و شروع کوییز
+        renderWordsTable();
+        if (currentLessonWords.length > 0) {
+          currentWordIndex = 0;
+          document.getElementById('quizBox').classList.remove('hidden');
+          loadQuizQuestion();
+        } else {
+          document.getElementById('quizBox').classList.add('hidden');
         }
 
-        // ==========================================
-        // منطق فلش‌کارت
-        // ==========================================
-        async function loadLesson() {
-            const lesson = document.getElementById('lesson-select').value;
-            let query = supabase.from('words').select('*');
-            if (lesson !== 'all') {
-                query = query.eq('lesson', lesson);
-            }
-            
-            const { data, error } = await query;
-            if (data && data.length > 0) {
-                // Shuffle array (Randomize)
-                studyWords = data.sort(() => Math.random() - 0.5);
-                currentIndex = 0;
-                updateLiveStatus('studying', lesson, studyWords[0].id);
-                showCard();
-            } else {
-                studyWords = [];
-                document.getElementById('card-arabic').innerText = "کلمه‌ای یافت نشد.";
-                document.getElementById('card-persian').innerText = "";
-            }
+      } catch (err) {
+        alert('خطا در دریافت کلمات: ' + err.message);
+        console.error(err);
+      }
+    }
+
+    // رندر کردن اطلاعات دیتابیس در جدول کلمات فرانت
+    function renderWordsTable() {
+      const tbody = document.getElementById('wordsTableBody');
+      tbody.innerHTML = '';
+
+      if (currentLessonWords.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="2" class="p-8 text-center text-slate-500">هیچ کلمه‌ای پیدا نشد.</td></tr>`;
+        return;
+      }
+
+      currentLessonWords.forEach(w => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[#1f2937]/20 border-b border-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="p-4 font-bold text-amber-400 tracking-wide">${w.arabic_word}</td>
+          <td class="p-4 text-slate-300">${w.persian_meaning}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // لود کردن سوالات تستی چهار گزینه‌ای هوشمند
+    function loadQuizQuestion() {
+      if (currentLessonWords.length === 0) return;
+      
+      const progress = document.getElementById('quizProgress');
+      progress.textContent = `${currentWordIndex + 1}/${currentLessonWords.length}`;
+
+      const currentWord = currentLessonWords[currentWordIndex];
+      document.getElementById('quizArabicWord').textContent = currentWord.arabic_word;
+
+      // ساخت گزینه‌ها (یک گزینه صحیح و ۳ گزینه غلت تصادفی از کل درس‌ها)
+      let options = [currentWord.persian_meaning];
+      
+      // تلاش برای پیدا کردن گزینه‌های انحرافی
+      const otherMeanings = currentLessonWords
+        .filter(w => w.persian_meaning !== currentWord.persian_meaning)
+        .map(w => w.persian_meaning);
+      
+      // مخلوط کردن گزینه‌ها
+      while(options.length < Math.min(4, currentLessonWords.length)) {
+        if (otherMeanings.length === 0) break;
+        const randomIdx = Math.floor(Math.random() * otherMeanings.length);
+        const item = otherMeanings.splice(randomIdx, 1)[0];
+        if (!options.includes(item)) options.push(item);
+      }
+      options.sort(() => Math.random() - 0.5);
+
+      const optionsContainer = document.getElementById('quizOptions');
+      optionsContainer.innerHTML = '';
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "w-full bg-[#1f2937] hover:bg-slate-700 text-slate-200 py-3 px-4 rounded-xl text-xs font-semibold text-right transition-all duration-150 cursor-pointer border border-slate-800 hover:border-slate-600";
+        btn.textContent = opt;
+        btn.onclick = () => handleAnswer(opt, currentWord.persian_meaning);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    // هندل کردن پاسخ کاربر به تست
+    function handleAnswer(selected, correct) {
+      if (selected === correct) {
+        alert('🎉 بارک‌الله! پاسخ صحیح است.');
+      } else {
+        alert(`❌ اشتباه بود! معنی درست: "${correct}" است.`);
+      }
+      
+      // رفتن به کلمه بعدی به صورت چرخشی
+      currentWordIndex = (currentWordIndex + 1) % currentLessonWords.length;
+      loadQuizQuestion();
+    }
+
+    // آپدیت کردن وضعیت آنلاین کاربر در سوپابیس
+    async function updateLiveStatus(lessonName) {
+      if (!currentUser) return;
+      try {
+        await supabase
+          .from('live_status')
+          .upsert({ 
+            user_id: currentUser.id, 
+            status: 'studying', 
+            current_lesson: lessonName,
+            updated_at: new Date().toISOString()
+          });
+      } catch (err) {
+        console.error('خطای بروزرسانی وضعیت زنده:', err);
+      }
+    }
+
+    // اتصال به سیستم ریل‌تایم سوپابیس برای پایش آنلاین کاربران
+    function fetchAndSetupRealtime() {
+      // بارگذاری اولیه کاربران آنلاین
+      fetchOnlineUsers();
+
+      // گوش دادن به تغییرات جدول برای رندر ریل‌تایم آنلاین‌ها بدون رفرش
+      supabase
+        .channel('schema-db-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'live_status' }, () => {
+          fetchOnlineUsers();
+        })
+        .subscribe();
+    }
+
+    async function fetchOnlineUsers() {
+      try {
+        const { data, error } = await supabase
+          .from('live_status')
+          .select('user_id, status, current_lesson, updated_at');
+        
+        if (error) throw error;
+
+        const rowsContainer = document.getElementById('liveProgressRows');
+        rowsContainer.innerHTML = '';
+
+        if (!data || data.length === 0) {
+          rowsContainer.innerHTML = '<p class="text-center py-2 opacity-50">هیچ کاربری فعال نیست.</p>';
+          return;
         }
 
-        function showCard() {
-            const counter = document.getElementById('loop-counter');
-            if (studyWords.length === 0) {
-                document.getElementById('card-arabic').innerText = "پایان کلمات این درس! 🎉";
-                document.getElementById('card-persian').innerText = "عالی بود!";
-                document.getElementById('btn-correct').disabled = true;
-                document.getElementById('btn-false').disabled = true;
-                counter.innerText = "";
-                return;
-            }
-
-            const word = studyWords[currentIndex];
-            document.getElementById('card-arabic').innerText = word.arabic_word;
-            document.getElementById('card-persian').innerText = word.persian_meaning;
-            counter.innerText = `کلمات باقی‌مانده: ${studyWords.length}`;
-            
-            document.getElementById('btn-correct').disabled = false;
-            document.getElementById('btn-false').disabled = false;
-        }
-
-        function flipCard() {
-            if (studyWords.length === 0) return;
-            const card = document.getElementById('flashcard-inner');
-            isFlipped = !isFlipped;
-            if (isFlipped) {
-                card.classList.add('flipped');
-            } else {
-                card.classList.remove('flipped');
-            }
-        }
-
-        async function handleCardAnswer(isCorrect) {
-            if (studyWords.length === 0) return;
-
-            if (isCorrect) {
-                correctCount++;
-                // کلمه از لوپ حذف می‌شود
-                studyWords.splice(currentIndex, 1);
-                // چون آرایه شیفت پیدا کرده، نیاز نیست currentIndex را اضافه کنیم، مگر اینکه به انتهای آرایه رسیده باشیم
-                if (currentIndex >= studyWords.length) currentIndex = 0;
-            } else {
-                incorrectCount++;
-                // کلمه در لوپ باقی می‌ماند، میرویم کلمه بعدی
-                currentIndex = (currentIndex + 1) % studyWords.length;
-            }
-
-            // آپدیت وضعیت زنده در دیتابیس (آسنکرون تا رابط کاربری گیر نکند)
-            const currentLesson = document.getElementById('lesson-select').value;
-            const nextWordId = studyWords.length > 0 ? studyWords[currentIndex].id : null;
-            updateLiveStatus('studying', currentLesson, nextWordId);
-
-            // رفع باگ نمایش لحظه‌ای معنی در هنگام تعویض کارت
-            const cardInner = document.getElementById('flashcard-inner');
-            if (isFlipped) {
-                // انیمیشن را موقتا قطع میکنیم
-                cardInner.style.transition = 'none';
-                cardInner.classList.remove('flipped');
-                isFlipped = false;
-                
-                // رفرش اجباری مروگر برای اعمال تغییر بدون انیمیشن
-                void cardInner.offsetWidth; 
-                
-                showCard();
-                
-                // برگرداندن انیمیشن
-                setTimeout(() => {
-                    cardInner.style.transition = 'transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1)';
-                }, 50);
-            } else {
-                showCard();
-            }
-        }
-
-        // ==========================================
-        // سیستم زمان سنج و نشان ۲۰ دقیقه
-        // ==========================================
-        function startStudySession() {
-            sessionStartTime = new Date();
-            hasBadge = false;
-
-            // ساخت ریکورد نشست در دیتابیس
-            supabase.from('study_sessions').insert([{
-                user_id: currentUser.id,
-                started_at: sessionStartTime.toISOString(),
-                total_minutes: 0,
-                earned_badge: false
-            }]).then();
-
-            timerInterval = setInterval(() => {
-                const now = new Date();
-                const diffMs = now - sessionStartTime;
-                const totalMinutes = Math.floor(diffMs / 60000);
-                
-                document.getElementById('study-timer').innerText = `زمان مطالعه: ${totalMinutes} دقیقه`;
-
-                if (totalMinutes >= 20 && !hasBadge) {
-                    hasBadge = true;
-                    document.getElementById('user-badge').style.display = 'inline-block';
-                    updateSessionRecord(totalMinutes, true);
-                    updateLiveStatus('studying'); // تریگر برای نمایش بج در لایو بقیه
-                } else if (totalMinutes % 5 === 0) {
-                    // ذخیره دوره‌ای زمان در دیتابیس هر ۵ دقیقه
-                    updateSessionRecord(totalMinutes, hasBadge);
-                }
-            }, 60000); // هر یک دقیقه
-        }
-
-        async function updateSessionRecord(mins, badge) {
-            // آپدیت جدیدترین نشست کابر
-            await supabase.from('study_sessions')
-                .update({ total_minutes: mins, earned_badge: badge })
-                .eq('user_id', currentUser.id)
-                .gte('started_at', sessionStartTime.toISOString()); // آپدیت نشست فعلی
-        }
-
-        async function cleanUpOldSessions() {
-            // حذف اطلاعات نشست‌های قدیمی تر از ۷ روز (طبق کانفیگ RLS، هر کاربر فقط سشن‌های خودش را پاک می‌کند)
-            const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-            await supabase.from('study_sessions')
-                .delete()
-                .eq('user_id', currentUser.id)
-                .lt('started_at', sevenDaysAgo);
-        }
-
-        // ==========================================
-        // سیستم Realtime (وضعیت زنده کاربران)
-        // ==========================================
-        async function updateLiveStatus(status, lesson = null, wordId = null) {
-            if(!currentUser) return;
-            const payload = {
-                user_id: currentUser.id,
-                status: status,
-                current_lesson: lesson || document.getElementById('lesson-select').value,
-                current_word_id: wordId,
-                correct_count: correctCount,
-                incorrect_count: incorrectCount,
-                earned_badge: hasBadge,
-                updated_at: new Date().toISOString()
-            };
-            await supabase.from('live_status').upsert(payload);
-        }
-
-        async function setupRealtime() {
-            fetchLiveUsers(); // بارگیری اولیه
-            
-            realtimeChannel = supabase.channel('live-updates')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'live_status' }, payload => {
-                    fetchLiveUsers();
-                })
-                .subscribe();
-        }
-
-        async function fetchLiveUsers() {
-            // دریافت اطلاعات استاتوس به همراه جوین با پروفایل
-            // در supabase-js برای جوین زدن از سینتکس زیر استفاده میشود
-            const { data, error } = await supabase
-                .from('live_status')
-                .select(`
-                    *,
-                    profiles ( display_name )
-                `)
-                .order('updated_at', { ascending: false })
-                .limit(5); // نمایش حداکثر ۵ کاربر
-
-            if (data) {
-                renderLiveUsers(data);
-            }
-        }
-
-        function renderLiveUsers(users) {
-            const container = document.getElementById('live-users-container');
-            container.innerHTML = ''; // پاکسازی
-            
-            // فیلتر کردن کاربرانی که وضعیت idle دارند اگر خیلی وقت پیش آپدیت شده‌اند
-            const now = new Date();
-            const activeUsers = users.filter(u => {
-                const lastUpdate = new Date(u.updated_at);
-                const diffMins = (now - lastUpdate) / 60000;
-                // اگر کاربر بیشتر از ۶۰ دقیقه فعالیتی نداشته نشونش نده
-                return diffMins < 60; 
-            });
-
-            if(activeUsers.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted);">کاربری در حال مطالعه نیست.</p>';
-                return;
-            }
-
-            activeUsers.forEach(u => {
-                const isOnline = u.status === 'studying';
-                const badgeHtml = u.earned_badge ? `<i class="ri-medal-fill badge-icon" style="display:inline-block; font-size:1.2rem;"></i>` : '';
-                
-                const cardHtml = `
-                    <div class="user-card">
-                        <h3>
-                            <span class="status-dot ${isOnline ? '' : 'idle'}"></span>
-                            ${u.profiles.display_name}
-                            ${badgeHtml}
-                        </h3>
-                        <p style="font-size:0.9rem; color:var(--text-muted);">
-                            ${isOnline ? `در حال مطالعه: ${u.current_lesson}` : 'غیرفعال'}
-                        </p>
-                        <div class="progress-stats">
-                            <div class="stat-item">
-                                <i class="ri-check-line" style="color:var(--success);"></i> ${u.correct_count}
-                            </div>
-                            <div class="stat-item">
-                                <i class="ri-close-line" style="color:var(--danger);"></i> ${u.incorrect_count}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += cardHtml;
-            });
-        }
-
-        // ==========================================
-        // توابع رابط کاربری (UI)
-        // ==========================================
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            if (tabName === 'study') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('study-tab').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('live-tab').classList.add('active');
-                fetchLiveUsers(); // بروزرسانی دستی هنگام ورود به تب
-            }
-        }
-
-        function toggleTheme() {
-            const body = document.body;
-            const icon = document.getElementById('theme-icon');
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.setAttribute('data-theme', 'light');
-                icon.classList.replace('ri-moon-fill', 'ri-sun-fill');
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                icon.classList.replace('ri-sun-fill', 'ri-moon-fill');
-            }
-        }
-
-        // بررسی نشست در هنگام لود صفحه
-        document.addEventListener('DOMContentLoaded', checkSession);
-
-        // مدیریت بستن صفحه برای ثبت وضعیت idle
-        window.addEventListener('beforeunload', () => {
-            if (currentUser) {
-                // ارسال درخواست همگام (Beacon) به دیتابیس برای این کار در مرورگرهای جدید نیازمند api خاصی است
-                // اما upsert سریع قبل از خروج در بیشتر مواقع کار میکند
-                supabase.from('live_status').upsert({
-                    user_id: currentUser.id,
-                    status: 'idle',
-                    updated_at: new Date().toISOString()
-                }).then();
-            }
+        data.forEach(user => {
+          const div = document.createElement('div');
+          div.className = "bg-[#1f2937]/40 border border-slate-800/80 p-2.5 rounded-lg flex items-center justify-between gap-2";
+          div.innerHTML = `
+            <div class="truncate">
+              <p class="font-bold text-slate-300 truncate text-[11px]">${user.user_id.substring(0,8)}... (دانش‌آموز)</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">وضعیت: <span class="text-blue-400">${user.current_lesson || 'میز مطالعه'}</span></p>
+            </div>
+            <span class="w-2 h-2 rounded-full ${user.status === 'studying' ? 'bg-emerald-500 shadow-emerald-500/50 shadow' : 'bg-amber-500'} flex-shrink-0"></span>
+          `;
+          rowsContainer.appendChild(div);
         });
-    </script>
+
+      } catch (err) {
+        console.error('خطا در واکشی کاربران آنلاین:', err);
+      }
+    }
+
+    // تایمر محاسبه زمان نشست مطالعه
+    function startStudyTimer() {
+      sessionSeconds = 0;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        sessionSeconds++;
+        const mins = String(Math.floor(sessionSeconds / 60)).padStart(2, '0');
+        const secs = String(sessionSeconds % 60).padStart(2, '0');
+        document.getElementById('studyTimer').textContent = `${mins}:${secs}`;
+      }, 1000);
+    }
+  </script>
 </body>
 </html>
