@@ -6,7 +6,7 @@
 <title>فلش‌کارت واژگان عربی</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- اضافه کردن کتابخانه Supabase -->
+<!-- کتابخانه Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -97,7 +97,6 @@
   }
   .theme-toggle:hover{transform:scale(1.08);}
 
-  /* استایل خروج از حساب کاربری */
   .logout-btn {
     position: fixed;
     top: 16px;
@@ -113,7 +112,7 @@
     cursor: pointer;
     box-shadow: var(--shadow);
     transition: .15s;
-    display: none; /* تا زمان ورود مخفی است */
+    display: none;
   }
   .logout-btn:hover { background: var(--wrong); color: var(--surface); }
 
@@ -168,7 +167,7 @@
     pointer-events:none;
   }
 
-  /* استایل‌های مربوط به احراز هویت */
+  /* کامپوننت احراز هویت با نام کاربری */
   #authScreen { display: block; text-align: center; }
   .auth-inputs { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
   .auth-inputs input {
@@ -182,7 +181,7 @@
   .auth-actions { display: flex; gap: 10px; margin-top: 15px; justify-content: center; }
   .auth-error { color: var(--wrong); font-size: 0.85rem; margin-top: 10px; display: none; }
 
-  /* استایل لیست کاربران آنلاین */
+  /* کامپوننت حضور آنلاین */
   .online-users-container {
     background: var(--surface-alt);
     border: 1px solid var(--border-soft);
@@ -190,7 +189,7 @@
     padding: 12px 16px;
     margin-bottom: 16px;
     font-size: 0.85rem;
-    display: none; /* تا زمان ورود مخفی است */
+    display: none;
   }
   .online-users-title { font-weight: bold; color: var(--gold); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
   .online-users-title::before { content:""; display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--correct); }
@@ -254,7 +253,7 @@
   .study-top{ width:100%; max-width:640px; display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px; }
   .study-top .lesson-name{ font-size:0.85rem; color:var(--ink-soft); }
   
-  /* استایل تایمر مطالعه */
+  /* کامپوننت تایمر */
   .study-timer {
     font-size: 0.95rem; font-weight: bold; color: var(--gold);
     background: var(--surface-alt); padding: 6px 12px;
@@ -338,25 +337,23 @@
 
 <!-- AUTH SCREEN -->
 <div id="authScreen" class="panel">
-  <h2>🔒 ورود یا ثبت‌نام</h2>
-  <p style="font-size: 0.85rem; color: var(--ink-soft);">برای استفاده از فلش‌کارت‌ها و ذخیره وضعیت خود، وارد شوید.</p>
+  <h2>🔒 ورود یا ثبت‌نام با نام کاربری</h2>
+  <p style="font-size: 0.85rem; color: var(--ink-soft);">یک نام کاربری و رمز عبور برای خود تعیین کنید.</p>
   <div class="auth-inputs">
-    <input type="email" id="authEmail" placeholder="ایمیل خود را وارد کنید...">
-    <input type="password" id="authPassword" placeholder="رمز عبور...">
+    <input type="text" id="authUsername" placeholder="نام کاربری (مثال: ali123)...">
+    <input type="password" id="authPassword" placeholder="رمز عبور (حداقل ۶ کاراکتر)...">
   </div>
   <div class="auth-error" id="authError"></div>
   <div class="auth-actions">
     <button class="btn btn-primary" id="loginBtn">ورود</button>
-    <button class="btn btn-ghost" id="signupBtn">ثبت‌نام</button>
+    <button class="btn btn-ghost" id="signupBtn">ثبت‌نام حساب جدید</button>
   </div>
 </div>
 
 <!-- ONLINE USERS PANEL -->
 <div id="onlineUsersPanel" class="online-users-container">
   <div class="online-users-title">هم‌اکنون در حال مطالعه:</div>
-  <div class="online-users-list" id="onlineUsersList">
-    <!-- لیست کاربران از طریق جاوا اسکریپت در اینجا رندر می‌شود -->
-  </div>
+  <div class="online-users-list" id="onlineUsersList"></div>
 </div>
 
 <!-- SELECTION SCREEN -->
@@ -435,34 +432,38 @@
 
 <script>
 /* ============== SUPABASE CONFIG ============== */
-// اطلاعات پروژه Supabase خود را اینجا وارد کنید
-const supabaseUrl = 'YOUR_SUPABASE_URL';
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+const supabaseUrl = 'https://objayssyopmkzhsboulv.supabase.co/rest/v1/';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0';
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* ============== APP STATE & AUTH ============== */
+/* ============== APP STATE & USERNAME AUTH ============== */
 let currentUser = null;
+let currentUsername = null;
 let realtimeChannel = null;
 
-// مراجع DOM برای احراز هویت
 const authScreen = document.getElementById('authScreen');
 const selectScreen = document.getElementById('selectScreen');
 const onlineUsersPanel = document.getElementById('onlineUsersPanel');
 const logoutBtn = document.getElementById('logoutBtn');
 const authError = document.getElementById('authError');
-const emailInput = document.getElementById('authEmail');
+const usernameInput = document.getElementById('authUsername');
 const passwordInput = document.getElementById('authPassword');
 
-// تابع کمکی برای نمایش خطا
 function showAuthError(msg) {
   authError.textContent = msg;
   authError.style.display = 'block';
 }
 
-// بررسی وضعیت ورود کاربر
+// تولید یک ایمیل ساختگی بر اساس نام کاربری
+function generateVirtualEmail(username) {
+  return `${username.trim().toLowerCase()}@internal.app`;
+}
+
 async function checkAuthSession() {
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
+    // استخراج نام کاربری از ایمیل ساختگی
+    currentUsername = session.user.email.split('@')[0];
     handleLoginSuccess(session.user);
   } else {
     authScreen.style.display = 'block';
@@ -470,33 +471,61 @@ async function checkAuthSession() {
   }
 }
 
-// عملیات ورود و ثبت نام
+// ثبت‌نام بر اساس نام کاربری
 document.getElementById('signupBtn').addEventListener('click', async () => {
+  const username = usernameInput.value.trim();
+  const password = passwordInput.value;
+  
+  if(!username || !password) {
+    showAuthError("لطفاً نام کاربری و رمز عبور را وارد کنید.");
+    return;
+  }
+
+  const virtualEmail = generateVirtualEmail(username);
+  
   const { data, error } = await supabase.auth.signUp({
-    email: emailInput.value,
-    password: passwordInput.value,
+    email: virtualEmail,
+    password: password,
   });
-  if (error) showAuthError(error.message);
-  else showAuthError("ثبت‌نام با موفقیت انجام شد. لطفا وارد شوید.");
+
+  if (error) {
+    showAuthError(error.message);
+  } else {
+    showAuthError("حساب کاربری با موفقیت ساخته شد. اکنون می‌توانید وارد شوید.");
+  }
 });
 
+// ورود بر اساس نام کاربری
 document.getElementById('loginBtn').addEventListener('click', async () => {
+  const username = usernameInput.value.trim();
+  const password = passwordInput.value;
+
+  if(!username || !password) {
+    showAuthError("لطفاً نام کاربری و رمز عبور را وارد کنید.");
+    return;
+  }
+
+  const virtualEmail = generateVirtualEmail(username);
+
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: emailInput.value,
-    password: passwordInput.value,
+    email: virtualEmail,
+    password: password,
   });
-  if (error) showAuthError("ایمیل یا رمز عبور اشتباه است.");
-  else handleLoginSuccess(data.user);
+
+  if (error) {
+    showAuthError("نام کاربری یا رمز عبور اشتباه است.");
+  } else {
+    currentUsername = username;
+    handleLoginSuccess(data.user);
+  }
 });
 
-// خروج از حساب
 logoutBtn.addEventListener('click', async () => {
-  await setPresence(false); // آفلاین کردن قبل از خروج
+  await setPresence(false);
   await supabase.auth.signOut();
-  window.location.reload(); // بارگذاری مجدد برای پاک‌سازی state
+  window.location.reload();
 });
 
-// مدیریت ورود موفقیت‌آمیز
 function handleLoginSuccess(user) {
   currentUser = user;
   authScreen.style.display = 'none';
@@ -504,46 +533,43 @@ function handleLoginSuccess(user) {
   logoutBtn.style.display = 'block';
   onlineUsersPanel.style.display = 'block';
   
-  // راه‌اندازی حضور (Presence)
   initPresence();
 }
 
 /* ============== REALTIME PRESENCE ============== */
 let onlineUsersMap = new Map();
 
-// آپسرت وضعیت کاربر در دیتابیس (رویکرد Single State Per User)
 async function setPresence(isOnline) {
-  if (!currentUser) return;
+  if (!currentUser || !currentUsername) return;
   await supabase.from('user_status').upsert({
     id: currentUser.id,
-    email: currentUser.email,
+    username: currentUsername,
     is_online: isOnline,
     updated_at: new Date().toISOString()
   });
 }
 
-// خواندن وضعیت اولیه و گوش دادن به تغییرات با Realtime
 async function initPresence() {
-  await setPresence(true); // وضعیت: آنلاین
+  await setPresence(true);
 
-  // دریافت لیست کاربران آنلاینی که هم‌اکنون در دیتابیس هستند
   const { data: activeUsers } = await supabase
     .from('user_status')
-    .select('id, email')
+    .select('id, username')
     .eq('is_online', true);
 
   if (activeUsers) {
-    activeUsers.forEach(u => onlineUsersMap.set(u.id, u.email));
+    activeUsers.forEach(u => onlineUsersMap.set(u.id, u.username));
     renderOnlineUsers();
   }
 
-  // اشتراک (Subscribe) در تغییرات جدول user_status
   realtimeChannel = supabase.channel('user-status-changes')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'user_status' }, payload => {
       const record = payload.new;
-      if (record.is_online) {
-        onlineUsersMap.set(record.id, record.email);
-      } else {
+      if (record && record.is_online) {
+        onlineUsersMap.set(record.id, record.username);
+      } else if (payload.old && payload.old.id) {
+        onlineUsersMap.delete(payload.old.id);
+      } else if (record && !record.is_online) {
         onlineUsersMap.delete(record.id);
       }
       renderOnlineUsers();
@@ -551,7 +577,6 @@ async function initPresence() {
     .subscribe();
 }
 
-// رندر لیست کاربران آنلاین در UI
 function renderOnlineUsers() {
   const container = document.getElementById('onlineUsersList');
   container.innerHTML = '';
@@ -560,24 +585,16 @@ function renderOnlineUsers() {
     return;
   }
   
-  onlineUsersMap.forEach((email, id) => {
+  onlineUsersMap.forEach((username, id) => {
     const badge = document.createElement('div');
     badge.className = 'online-user-badge';
-    // نمایش بخش اول ایمیل برای حریم خصوصی
-    const displayName = email.split('@')[0];
-    badge.textContent = id === currentUser.id ? 'شما' : displayName;
+    badge.textContent = id === currentUser.id ? 'شما' : username;
     container.appendChild(badge);
   });
 }
 
-// به محض بسته شدن تب، وضعیت را آفلاین کن
 window.addEventListener('beforeunload', () => {
-  if (currentUser) {
-    // از آنجا که beforeunload اجرای متدهای async را تضمین نمی‌کند، 
-    // بهتر است در اپلیکیشن‌های واقعی از navigator.sendBeacon استفاده شود،
-    // اما برای سادگی اینجا با یک فراخوانی سریع upsert انجام می‌شود.
-    setPresence(false); 
-  }
+  if (currentUser) setPresence(false);
 });
 
 /* ============== STUDY TIMER ============== */
@@ -605,31 +622,283 @@ function stopStudyTimer() {
   clearInterval(studyTimerInterval);
 }
 
-/* ============== DATA (Flashcards) ============== */
+/* ============== COMPLETE DATA (262 WORDS) ============== */
 const LESSONS = [
 {id:1, title:"درس اول", words:[
-["آمَنَ","ایمان آورد"],["يُؤْمِنُ","ایمان می‌آوَرَد"],["أعلى","بلندتر، بلندترین"],["سِرْوال","شلوار (جمع: سراویل)"],
-["اِجْتَنَبَ","پرهیز کرد"],["يَجْتَنِبُ","پرهیز می‌کند"],["جبل","کوه (جمع: جبال)"],["النسائيّ","زنانه"]
+["آمَنَ","ایمان آورد"],[cite: 1]
+["يُؤْمِنُ","ایمان می‌آوَرَد"],[cite: 1]
+["أعلى","بلندتر، بلندترین"],[cite: 1]
+["سِرْوال","شلوار (جمع: سراویل)"],[cite: 1]
+["اِجْتَنَبَ","پرهیز کرد"],[cite: 1]
+["يَجْتَنِبُ","پرهیز می‌کند pack "],[cite: 1]
+["جبل","کوه (جمع: جبال)"],[cite: 1]
+["النسائيّ","زنانه pack "],[cite: 1]
+["الظّنّ","گمان"],[cite: 1]
+["الکبری","بزرگتر"],[cite: 1]
+["الصُّغرى","کوچکتر pack "],[cite: 1]
+["مَتْجَر","مغازه (جمع: متاجر)"],[cite: 1]
+["آیات","نشانه‌ها (مفرد: آیة)"],[cite: 1]
+["أراذل","فرومایگان (مفرد: أرذل)"],[cite: 1]
+["زَمیل","همکار، همکلاسی (جمع: زملاء) pack "],[cite: 1]
+["الرحمن","بخشنده"],[cite: 1]
+["أفاضل","بهترین‌ها (مفرد: أفضل)"],[cite: 1]
+["رجاءً / مَنْ فَضْلِک","لطفاً"],[cite: 1]
+["الرّحیم","مهربان"],[cite: 1]
+["سَأَلَ","پرسید pack "],[cite: 1]
+["يَسْأَلُ","می‌پرسد pack "],[cite: 1]
+["سُئِلَ","پرسیده شد"],[cite: 1]
+["أعطى","داد"],[cite: 1]
+["يُعْطي","می‌دهد"],[cite: 1]
+["سَخِرَ مِنْ","مسخره کرد pack "],[cite: 1]
+["يَسْخَرُ","مسخره می‌کند (مصدر: سُخْريّة)"],[cite: 1]
+["أحَبّ","محبوب‌تر، محبوب‌ترین"],[cite: 1]
+["صارَ","شد"],[cite: 1]
+["يَصیرُ","می‌شود pack "],[cite: 1]
+["لا يَسْخَر","نباید مسخره کند"],[cite: 1]
+["أنْفَع","سودمندتر، سودمندترین pack "],[cite: 1]
+["مائة","صد pack "],[cite: 1]
+["عَسى / رُبَّما","شاید"],[cite: 1]
+["السّکینة","آرامش"],[cite: 1]
+["قَبِلَ","قبول کرد"],[cite: 1]
+["يَقْبَلُ","قبول می‌کند pack "],[cite: 1]
+["کانَ","بود"],[cite: 1]
+["فاعِل","انجام دهنده"],[cite: 1]
+["عباد","بندگان (مفرد: عبد) pack "],[cite: 1]
+["يَکونُ","می‌باشد pack "],[cite: 1]
+["قائل","گوینده pack "],[cite: 1]
+["رَضِيَ","راضی شد"],[cite: 1]
+["يَرْضى","راضی می‌شود"],[cite: 1]
+["أنْ يَکُنَّ","که باشند pack "],[cite: 1]
+["أوْسَط","میانه‌تر، میانه‌ترین"],[cite: 1]
+["غیاب","غیبت pack "][cite: 1]
 ]},
 {id:2, title:"درس دوم", words:[
-["أجَلّ","گران‌قدرتر، بزرگوارتر"],["نَجَحَ","موفق شد"],["يَنْجَحُ","موفق می‌شود"],["أنْقَذَ","نجات داد"],
-["يُنْقِذُ","نجات می‌دهد"],["اِرْتَبَطَ","ارتباط داشت"],["يَرْتَبِطُ","ارتباط دارد"],["إساءة","بدی، بدرفتاری"]
+["أجَلّ","گران‌قدرتر، بزرگوارتر pack "],[cite: 1]
+["نَجَحَ","موفق شد"],[cite: 1]
+["يَنْجَحُ","موفق می‌شود pack "],[cite: 1]
+["أنْقَذَ","نجات داد"],[cite: 1]
+["يُنْقِذُ","نجات می‌دهد"],[cite: 1]
+["اِرْتَبَطَ","ارتباط داشت pack "],[cite: 1]
+["يَرْتَبِطُ","ارتباط دارد pack "],[cite: 1]
+["إساءة","بدی، بدرفتاری"],[cite: 1]
+["اِبْتَعَدَ","دور شد"],[cite: 1]
+["يَبْتَعِدُ","دور می‌شود pack "],[cite: 1]
+["اِسْتَمَعَ","گوش فرا داد pack "],[cite: 1]
+["يَسْتَمِعُ","گوش می‌دهد pack "],[cite: 1]
+["هَرَبَ","فرار کرد pack "],[cite: 1]
+["يَهْرُبُ","فرار می‌کند"],[cite: 1]
+["اِنْسَحَبَ","عقب‌نشینی کرد"],[cite: 1]
+["الرّصيف","پیاده‌رو pack "],[cite: 1]
+["بِضاعَة","کالا (جمع: بضائع)"],[cite: 1]
+["مَمَرّ","محل عبور، گذرگاه"],[cite: 1]
+["الصِّعاب","سختی‌ها (مفرد: الصّعْبة) pack "],[cite: 1]
+["تَعايَشَ","همزیستی کرد"],[cite: 1]
+["دَرَّسَ","درس داد"],[cite: 1]
+["يُدَرِّسُ","درس می‌دهد pack "],[cite: 1]
+["مُتَعايِش","دارای همزیستی مسالمت‌آمیز"],[cite: 1]
+["مَذْهَب","روش، دین (جمع: مذاهب)"],[cite: 1]
+["حِصّة","زنگ درسی، بخش، سهم pack "],[cite: 1]
+["يَسْلَمُ","سالم می‌ماند pack "],[cite: 1]
+["وُدّ / حُبّ","دوستی pack "],[cite: 1]
+["عَداوَة","دشمنی pack "],[cite: 1]
+["تَأْکید","استوار کردن pack "],[cite: 1]
+["أخَوانِ","دو برادر"],[cite: 1]
+["الأسْوَد","سیاه pack "],[cite: 1]
+["الأبْيَض","سفید pack "],[cite: 1]
+["تَفاصِيل","جزئیات (مفرد: تفصيل) pack "],[cite: 1]
+["حَذَّرَ","هشدار داد pack "],[cite: 1]
+["مُجْتَمَع","جامعه pack "],[cite: 1]
+["اِعْتَبَرَ","به شمار آورد pack "][cite: 1]
 ]},
 {id:3, title:"درس سوم", words:[
-["أحَلّ","حلال‌تر، حلال‌ترین"],["العِنَب البرازیليّ","انگور برزیلی"],["غَرَسَ","کاشت"],["يَغْرِسُ","می‌کارد"],
-["اِشْتِعال","برافروخته شدن، سوختن"],["اِخْتَلَفَ","تفاوت داشت"],["يَخْتَلِفُ","تفاوت دارد"]
+["أحَلّ","حلال‌تر، حلال‌ترین pack "],[cite: 1]
+["العِنَب البرازیليّ","انگور برزیلی pack "],[cite: 1]
+["غَرَسَ","کاشت pack "],[cite: 1]
+["يَغْرِسُ","می‌کارد pack "],[cite: 1]
+["اِشْتِعال","برافروخته شدن، سوختن (اِشْتَعَلَ، يَشْتَعِلُ) pack "],[cite: 1]
+["اِخْتَلَفَ","تفاوت داشت، فرق کرد pack "],[cite: 1]
+["يَخْتَلِفُ","تفاوت دارد pack "],[cite: 1]
+["العَشيرَة","قبیله، عشیره (جمع: عشائر) pack "],[cite: 1]
+["شابَّ","پیر شد (همچنین به معنی زن جوان) pack "],[cite: 1]
+["شَعْر","مو pack "],[cite: 1]
+["رَأْس","سر (جمع: رؤوس) pack "],[cite: 1]
+["شَيْب","پیری، سپیدی مو pack "],[cite: 1]
+["اِمْتَلأَ","پر شد pack "],[cite: 1]
+["يَمْتَلِئُ","پر می‌شود pack "],[cite: 1]
+["خَشْيَة","ترس pack "],[cite: 1]
+["تَمْر","خرما pack "],[cite: 1]
+["جِذْع","تنه درخت pack "],[cite: 1]
+["النَّخْلَة","درخت خرما pack "],[cite: 1]
+["ساقِط","ریزان، افتان pack "],[cite: 1]
+["رُطَب","خرمای تازه و رسیده pack "],[cite: 1]
+["جَنیّ","چیده شده pack "],[cite: 1]
+["قُرّي عَيْناً","چشمت روشن باد، خوشحال باش pack "],[cite: 1]
+["اِقْتَرَبَ","نزدیک شد pack "],[cite: 1]
+["يَقْتَرِبُ","نزدیک می‌شود pack "],[cite: 1]
+["اِبْتَلَعَ","قورت داد، بلعید pack "],[cite: 1]
+["يَبْتَلِعُ","می‌بلعد pack "],[cite: 1]
+["مَلَأَ","پر کرد pack "],[cite: 1]
+["يَمْلَأُ","پر می‌کند pack "],[cite: 1]
+["جَوْف","درون، شکم pack "],[cite: 1]
+["الصَّیاد","شکارچی pack "],[cite: 1]
+["حَبَّة","دانه pack "],[cite: 1]
+["الفَخّ","دام، تله pack "],[cite: 1]
+["النَّجاة","رهایی، نجات pack "],[cite: 1]
+["ماتَ","مُرد pack "],[cite: 1]
+["يَموتُ","می‌میرد pack "],[cite: 1]
+["الحيلَة","چاره، مکر (جمع: حِیَل) pack "],[cite: 1]
+["طائِر","پرنده (جمع: طُیور) pack "],[cite: 1]
+["جَناح","بال (جمع: أجنحة) pack "][cite: 1]
 ]},
 {id:4, title:"درس چهارم", words:[
-["اُدْعُ","فرا بخوان، دعوت کن"],["الإثْم / الذَّنْب","گناه"],["قَفَزَ","پرید"],["يَقْفِزُ","می‌پرد"]
+["اُدْعُ","فرا بخوان، دعوت کن (دَعا، يَدْعو) pack "],[cite: 1]
+["الإثْم / الذَّنْب / الخَطيئَة","گناه pack "],[cite: 1]
+["قَفَزَ","پرید pack "],[cite: 1]
+["يَقْفِزُ","می‌پرد pack "],[cite: 1]
+["أنْ لا يَتَدَخَّلَ","که دخالت نکند (تَدَخَّلَ، يَتَدَخَّلُ) pack "],[cite: 1]
+["سَدید","درست و استوار pack "],[cite: 1]
+["عَصَفَ","وزید pack "],[cite: 1]
+["يَعْصِفُ","می‌وزد pack "],[cite: 1]
+["شَبَعَ","سیر شد pack "],[cite: 1]
+["يَشْبَعُ","سیر می‌شود pack "],[cite: 1]
+["جاعَ","گرسنه شد pack "],[cite: 1]
+["يَجوعُ","گرسنه می‌شود pack "],[cite: 1]
+["جائع","گرسنه pack "],[cite: 1]
+["شَبْعان","سیر pack "],[cite: 1]
+["طَرَقَ","کوبید، در زد pack "],[cite: 1]
+["يَتْقُرَ","می‌کوبد، در می‌زند pack "],[cite: 1]
+["باب","در (جمع: أبواب) pack "],[cite: 1]
+["بَخيل","خسیس (جمع: بُخَلاء) pack "],[cite: 1]
+["مِضْیاف","مهمان‌نواز pack "],[cite: 1]
+["أطْعَمَ","غذا داد pack "],[cite: 1]
+["يُطْعِمُ","غذا می‌دهد pack "],[cite: 1]
+["اِسْتَحى","خجالت کشید pack "],[cite: 1]
+["يَسْتَحي","خجالت می‌کشد pack "],[cite: 1]
+["کَفَی","کافی است pack "],[cite: 1]
+["خَبَزَ","نان پخت pack "],[cite: 1]
+["يَخْبِزُ","نان می‌پزد (الخَبّاز: نانوا / الخُبْز: نان) pack "],[cite: 1]
+["الضَّيْف","مهمان (جمع: ضُيوف) pack "],[cite: 1]
+["حَفَرَ","کند، حفر کرد pack "],[cite: 1]
+["يَحْفِرُ","می‌کند pack "],[cite: 1]
+["البِئْر","چاه pack "],[cite: 1]
+["أعْمَق","عمیق‌تر pack "],[cite: 1]
+["فَرِحَ","خوشحال شد pack "],[cite: 1]
+["يَفْرَحُ","خوشحال می‌شود pack "],[cite: 1]
+["تَرَکَ","رها کرد، گذاشت pack "],[cite: 1]
+["يَتَرَکُ","رها می‌کند pack "],[cite: 1]
+["حَزِنَ","غمگین شد pack "],[cite: 1]
+["يَحْزَنُ","غمگین می‌شود pack "][cite: 1]
 ]},
 {id:5, title:"درس پنجم", words:[
-["أجَّلَ","به تأخیر انداخت"],["تَعَسَّرَ","دشوار شد"],["يَتَعَسَّرُ","دشوار می‌شود"],["تَيَسَّرَ","آسان شد"]
+["أجَّلَ","به تأخیر انداخت (يُؤَجِّلُ، تَأْجیل) = أخَّرَ pack "],[cite: 1]
+["تَعَسَّرَ","دشوار شد pack "],[cite: 1]
+["يَتَعَسَّرُ","دشوار می‌شود pack "],[cite: 1]
+["تَيَسَّرَ","آسان شد pack "],[cite: 1]
+["يَتَيَسَّرُ","آسان می‌شود pack "],[cite: 1]
+["عُسْر","دشواری، سختی pack "],[cite: 1]
+["يُسْر","آسانی pack "],[cite: 1]
+["الآخِرَة","جهان آخرت pack "],[cite: 1]
+["الدُّنْیا","جهان مادی pack "],[cite: 1]
+["سَتَرَ","پوشاند pack "],[cite: 1]
+["يَسْتُرُ","می‌پوشاند pack "],[cite: 1]
+["مُسْلِم","مسلمان pack "],[cite: 1]
+["اِسْتَغْنى","بی‌نیاز شد pack "],[cite: 1]
+["يَسْتَغْني","بی‌نیاز می‌شود pack "],[cite: 1]
+["العَوْن","کمک، یاری pack "],[cite: 1]
+["الخَبیر","آگاه pack "],[cite: 1]
+["الصِّراط","راه pack "],[cite: 1]
+["المُسْتَقِيم","راست pack "],[cite: 1]
+["الهُدى","هدایت pack "],[cite: 1]
+["التَّقْوى","پرهیزکاری pack "],[cite: 1]
+["العَفاف","پاکدامنی pack "],[cite: 1]
+["الغِنى","بی‌نیازی pack "],[cite: 1]
+["نَفَس","جان، نفس (جمع: أنْفُس / نُفوس) pack "],[cite: 1]
+["الخَسارَة","زیان pack "],[cite: 1]
+["الصِّحَّة","تندرستی pack "],[cite: 1]
+["الأمان","امنیت pack "],[cite: 1]
+["النِّعْمَة","نعمت (جمع: نِعَم) pack "],[cite: 1]
+["مَجْهول","ناشناخته pack "],[cite: 1]
+["فَقَدَ","از دست داد pack "],[cite: 1]
+["يَفْقِدُ","از دست می‌دهد pack "],[cite: 1]
+["الوالِدَيْن","پدر و مادر pack "],[cite: 1]
+["طاعَة","فرمانبرداری pack "],[cite: 1]
+["مَغْفِرَة","آمرزش pack "],[cite: 1]
+["الرِّضا","خشنودی pack "],[cite: 1]
+["الجَنَّة","بهشت pack "][cite: 1]
 ]},
 {id:6, title:"درس ششم", words:[
-["الأُرْدِيَّة","زبان اردو"],["فُتْحَة","دریچه، روزنه"],["بَسَطَ","گستراند"],["يَبْسُطُ","می‌گستراند"]
+["الأُرْدِيَّة","زبان اردو pack "],[cite: 1]
+["فُتْحَة","دریچه، روزنه pack "],[cite: 1]
+["بَسَطَ","گستراند pack "],[cite: 1]
+["يَبْسُطُ","می‌گستراند pack "],[cite: 1]
+["أشارَ","اشاره کرد pack "],[cite: 1]
+["يُشیرُ","اشاره می‌کند pack "],[cite: 1]
+["أشْهَر","مشهورترین pack "],[cite: 1]
+["العالَم","جهان pack "],[cite: 1]
+["المُعْجَم","کتاب لغت، فرهنگ‌نامه pack "],[cite: 1]
+["تَفَسَّحَ","وسعت یافت، گردش کرد pack "],[cite: 1]
+["يَتَفَسَّحُ","وسعت می‌یابد pack "],[cite: 1]
+["فَسِيح","وسیع, پهناور pack "],[cite: 1]
+["الساحِل","ساحل (جمع: سَواحِل) pack "],[cite: 1]
+["الذَّهَب","طلا pack "],[cite: 1]
+["الفِضَّة","نقره pack "],[cite: 1]
+["النَّحاس","مس pack "],[cite: 1]
+["الحَدید","آهن pack "],[cite: 1]
+["المَعْدِن","معدن (جمع: مَعادِن) pack "],[cite: 1]
+["الغالیَة","گران‌بها pack "],[cite: 1]
+["الرَّخيصَة","ارزان pack "],[cite: 1]
+["الصِّناعَة","صنعت pack "],[cite: 1]
+["التِّجارَة","بازرگانی pack "],[cite: 1]
+["الزِّراعَة","کشاورزی pack "],[cite: 1]
+["الغابات","جنگل‌ها (مفرد: غابَة) pack "],[cite: 1]
+["الکَثيفَة","انبوه، متراکم pack "],[cite: 1]
+["الأشْجار","درختان (مفرد: شَجَرَة) pack "],[cite: 1]
+["الحَيَوانات","جانوران pack "],[cite: 1]
+["المُفْتَرِسَة","درنده pack "],[cite: 1]
+["الأليفَة","اهلی pack "],[cite: 1]
+["النّادِرَة","کمیاب، نایاب pack "],[cite: 1]
+["بَنى","ساخت pack "],[cite: 1]
+["يَبْني","می‌سازد pack "],[cite: 1]
+["الحِصْن","دژ، قلعه (جمع: حُصون) pack "],[cite: 1]
+["القَصْر","کاخ (جمع: قُصور) pack "],[cite: 1]
+["القَدِيمَة","کهن، قدیمی pack "],[cite: 1]
+["الآثار","نشانه‌ها، آثار تاریخی pack "][cite: 1]
 ]},
 {id:7, title:"درس هفتم", words:[
-["اِزْدادَ","افزایش یافت"],["يَزْدادُ","افزایش می‌یابد"],["خاتَم","انگشتر"],["المُسْتَوْصَف","درمانگاه"]
+["اِزْدادَ","افزایش یافت pack "],[cite: 1]
+["يَزْدادُ","افزایش می‌یابد pack "],[cite: 1]
+["خاتَم","انگشتر pack "],[cite: 1]
+["المُسْتَوْصَف","درمانگاه pack "],[cite: 1]
+["اِشْتَدَّ","شدت یافت pack "],[cite: 1]
+["يَشْتَدُّ","شدت می‌یابد pack "],[cite: 1]
+["سریر","تخت pack "],[cite: 1]
+["تَحَسَّنَ","خوب شد pack "],[cite: 1]
+["يَتَحَسَّنُ","خوب می‌شود pack "],[cite: 1]
+["اِشْتَقَّ","برگرفت، مشتق کرد pack "],[cite: 1]
+["يَشْتَقُّ","برمی‌گیرد pack "],[cite: 1]
+["خَشَبِيّ","چوبی pack "],[cite: 1]
+["غزال","آهو (جمع: غِزلان) pack "],[cite: 1]
+["اِنْضِمام","پیوستن (اِنْضَمَّ، يَنْضَمُّ) pack "],[cite: 1]
+["مُخْضَرَّة","سرسبز pack "],[cite: 1]
+["الشَّرْشَف","ملافه pack "],[cite: 1]
+["بَيَّنَ","آشکار کرد، توضیح داد pack "],[cite: 1]
+["يُبَيِّنُ","آشکار می‌کند pack "],[cite: 1]
+["نَظَّفَ","تمیز کرد pack "],[cite: 1]
+["يُنَظِّفُ","تمیز می‌کند pack "],[cite: 1]
+["قُماش","پارچه pack "],[cite: 1]
+["تَغَيَّرَ","دگرگون شد pack "],[cite: 1]
+["يَتَغَيَّرُ","دگرگون می‌شود pack "],[cite: 1]
+["فَم","دهان (جمع: أفْواه) pack "],[cite: 1]
+["الدَّخيلَة","وارد شده، بیگانه pack "],[cite: 1]
+["کَتَمَ","پنهان کرد pack "],[cite: 1]
+["يَکْتُمُ","پنهان می‌کند pack "],[cite: 1]
+["ذات","دارای، صاحب pack "],[cite: 1]
+["دیباج","ابریشم pack "],[cite: 1]
+["أوْفوا","وفا کنید pack "],[cite: 1]
+["جَرى","جاری شد pack "],[cite: 1]
+["يَجْري","جاری می‌شود pack "],[cite: 1]
+["شارَکَ","مشارکت کرد pack "],[cite: 1]
+["يُشارِکُ","مشارکت می‌کند pack "][cite: 1]
 ]}
 ];
 
@@ -681,7 +950,7 @@ function renderLessonList(){
         <input type="checkbox" data-id="${l.id}" ${checkedLessons.has(l.id)?'checked':''}/>
         <span>${l.title}</span>
       </label>
-      <span class="count">${l.words.length} واژه</span>
+      <span class="count">${l.words.length} واژه pack</span>
     `;
     lessonListEl.appendChild(item);
     const checkbox = item.querySelector('input');
@@ -712,7 +981,7 @@ function updateSelectionUI(){
     selectedInfo.textContent = "هیچ درسی انتخاب نشده";
     startBtn.disabled = true;
   } else {
-    selectedInfo.textContent = `${count} درس انتخاب شده — ${totalWords} واژه`;
+    selectedInfo.textContent = `${count} درس انتخاب شده — ${totalWords} واژه pack`;
     startBtn.disabled = false;
   }
 }
@@ -785,7 +1054,7 @@ function persist(){
 function enterStudyScreen(){
   selectScreen.style.display = 'none';
   doneScreen.style.display = 'none';
-  onlineUsersPanel.style.display = 'none'; // مخفی کردن پنل کاربران آنلاین در حین تمرین
+  onlineUsersPanel.style.display = 'none';
   studyScreen.style.display = 'flex';
   studyScreen.style.flexDirection = 'column';
   studyScreen.style.alignItems = 'center';
@@ -793,12 +1062,12 @@ function enterStudyScreen(){
   document.getElementById('activeLessonsLabel').textContent =
     LESSONS.filter(l=>session.lessonIds.includes(l.id)).map(l=>l.title.split('：')[0].split(':')[0]).join('، ');
   
-  startStudyTimer(); // شروع تایمر مطالعه
+  startStudyTimer();
   renderCurrentCard();
 }
 
 function backToSelection(){
-  stopStudyTimer(); // توقف تایمر
+  stopStudyTimer();
   selectScreen.style.display = 'block';
   onlineUsersPanel.style.display = 'block';
   studyScreen.style.display = 'none';
@@ -896,7 +1165,7 @@ function showDoneScreen(){
   studyScreen.style.display = 'none';
   doneScreen.style.display = 'block';
   document.getElementById('doneSummary').textContent =
-    `${session.total} واژه از درس‌های انتخابی را با موفقیت تمرین کردی 👏 (زمان صرف شده: ${formatTime(studySeconds)})`;
+    `${session.total} واژه pack از درس‌های انتخابی را با موفقیت تمرین کردی 👏 (زمان صرف شده: ${formatTime(studySeconds)})`;
   clearState();
 }
 
@@ -928,9 +1197,7 @@ initTheme();
 renderLessonList();
 checkForResume();
 
-// شروع جریان برنامه با چک کردن احراز هویت کاربر
 checkAuthSession();
-
 </script>
 </body>
 </html>
