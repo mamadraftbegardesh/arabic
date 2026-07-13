@@ -199,7 +199,9 @@
         <span class="online-dot"></span>
         <span class="online-count" id="onlineCount">0</span>
         <span style="color:var(--ink-soft);">آنلاین</span>
-        <div class="online-tooltip" id="onlineTooltip"><div style="text-align:center;color:var(--ink-soft);padding:8px;">در حال بارگذاری...</div></div>
+        <div class="online-tooltip" id="onlineTooltip">
+            <div style="text-align:center;color:var(--ink-soft);padding:8px;">در حال بارگذاری...</div>
+        </div>
     </div>
 
     <div class="top-ornament"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
@@ -483,7 +485,7 @@
         function initTheme() { let theme = localStorage.getItem(THEME_KEY); if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; applyTheme(theme); }
         themeToggleBtn.addEventListener('click', () => { const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; applyTheme(next); localStorage.setItem(THEME_KEY, next); });
 
-        /* حضور و تایمر */
+        /* حضور و تایمر مطالعه */
         let presenceInterval = null, onlineUsersInterval = null, currentUsername = null;
         let studyTimerInterval = null, unsyncedSeconds = 0, sessionTotalSeconds = 0;
         let isStudyActive = true, lastActivityTime = Date.now(); const INACTIVITY_LIMIT = 30;
@@ -517,20 +519,13 @@
 
         async function fetchOnlineUsers() {
             try {
-                // ابتدا سعی می‌کنیم از تابع امن سرور استفاده کنیم
-                const { data, error } = await supabaseClient.rpc('get_online_users');
-                if (!error && data) {
-                    renderOnlineUsers(data);
-                    return;
-                }
-                // اگر خطا بود یا داده‌ای برگشت نکرد، fallback به کوئری مستقیم
-                console.warn('Fallback to direct query due to:', error);
-                const thirtySecAgo = new Date(Date.now() - 30000).toISOString();
-                const { data: fallbackData } = await supabaseClient.from('user_presence').select('*').gte('last_heartbeat', thirtySecAgo);
-                renderOnlineUsers(fallbackData || []);
+                const { data, error } = await supabaseClient
+                    .from('online_users_view')
+                    .select('*');
+                if (error) { console.error('خطا در دریافت کاربران:', error); onlineCount.textContent = '!'; return; }
+                renderOnlineUsers(data || []);
             } catch (e) {
                 console.error('fetchOnlineUsers error:', e);
-                // در نهایت اگر همه چی خطا داد، علامت سوال نشون می‌دیم
                 onlineCount.textContent = '?';
             }
         }
