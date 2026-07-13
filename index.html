@@ -1,744 +1,501 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>واژه‌نامه عربی</title>
-<script>
-  (function () {
-    var saved = localStorage.getItem('fc-theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', saved);
-  })();
-</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root[data-theme="dark"] {
-    --bg: #090d16;
-    --bg-elevated: #101622;
-    --bg-card: #172033;
-    --accent: #dca54c;
-    --accent-soft: rgba(220, 165, 76, 0.1);
-    --accent-strong: #f3be6b;
-    --text: #f3f4f6;
-    --text-muted: #9ca3af;
-    --border: #263147;
-    --card-shadow: 0 20px 40px -15px rgba(0,0,0,0.7);
-    --success: #10b981;
-    --success-soft: rgba(16, 185, 129, 0.1);
-    --error: #ef4444;
-    --error-soft: rgba(239, 68, 68, 0.1);
-  }
-  :root[data-theme="light"] {
-    --bg: #f8fafc;
-    --bg-elevated: #ffffff;
-    --bg-card: #ffffff;
-    --accent: #c2882b;
-    --accent-soft: rgba(194, 136, 43, 0.06);
-    --accent-strong: #966418;
-    --text: #0f172a;
-    --text-muted: #64748b;
-    --border: #e2e8f0;
-    --card-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
-    --success: #059669;
-    --success-soft: rgba(5, 150, 105, 0.06);
-    --error: #dc2626;
-    --error-soft: rgba(220, 38, 38, 0.06);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Vazirmatn', 'Inter', sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    transition: background 0.3s, color 0.3s;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  header {
-    background-color: var(--bg-elevated);
-    border-bottom: 1px solid var(--border);
-    padding: 1.25rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-  .brand-group { display: flex; align-items: center; gap: 0.75rem; }
-  .brand-logo { font-size: 1.5rem; color: var(--accent); }
-  .brand-title { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; }
-  .header-actions { display: flex; align-items: center; gap: 1.25rem; }
-  .nav-tabs {
-    display: flex;
-    background: var(--bg);
-    padding: 0.25rem;
-    border-radius: 0.75rem;
-    border: 1px solid var(--border);
-  }
-  .nav-tab {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    padding: 0.5rem 1.25rem;
-    font-size: 0.85rem;
-    font-weight: 700;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-  .nav-tab.active {
-    background: var(--bg-elevated);
-    color: var(--accent);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  }
-  button.btn-icon {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.6rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
-  button.btn-icon:hover {
-    background: var(--accent-soft);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  .user-badge {
-    background-color: var(--bg);
-    border: 1px solid var(--border);
-    padding: 0.4rem 1rem;
-    border-radius: 0.75rem;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .btn-logout {
-    background: transparent;
-    border: none;
-    color: var(--error);
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 700;
-  }
-  main { flex: 1; max-width: 800px; width: 100%; margin: 2.5rem auto; padding: 0 1.5rem; }
-  .view-panel { display: none; }
-  .view-panel.active { display: block; }
-  .auth-card {
-    background-color: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 1.25rem;
-    padding: 3rem 2.5rem;
-    box-shadow: var(--card-shadow);
-    max-width: 420px;
-    margin: 4rem auto;
-  }
-  .auth-card h2 { margin-bottom: 0.5rem; font-weight: 800; text-align: center; font-size: 1.5rem; }
-  .auth-subtitle { color: var(--text-muted); text-align: center; font-size: 0.85rem; margin-bottom: 2.5rem; }
-  .form-group { margin-bottom: 1.5rem; }
-  .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
-  .form-group input {
-    width: 100%;
-    padding: 0.85rem 1.25rem;
-    background-color: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 0.95rem;
-    transition: all 0.2s;
-  }
-  .form-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .btn-primary {
-    width: 100%;
-    padding: 0.9rem;
-    background-color: var(--accent);
-    color: #0b0f19;
-    border: none;
-    border-radius: 0.75rem;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-primary:hover { background-color: var(--accent-strong); transform: translateY(-1px); }
-  .auth-toggle { text-align: center; margin-top: 1.75rem; font-size: 0.85rem; color: var(--text-muted); }
-  .auth-toggle span { color: var(--accent); cursor: pointer; font-weight: 700; margin-right: 0.25rem; text-decoration: underline; }
-  .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-  .card { background-color: var(--bg-elevated); border: 1px solid var(--border); border-radius: 1.25rem; padding: 2rem; box-shadow: var(--card-shadow); }
-  .card h2 { font-size: 1.25rem; font-weight: 800; margin-bottom: 1.5rem; }
-  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; }
-  .stat-box { background-color: var(--bg); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem 1rem; text-align: center; }
-  .stat-val { font-size: 1.75rem; font-weight: 800; color: var(--accent); font-family: 'Inter', 'Vazirmatn', sans-serif; }
-  .stat-lbl { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 700; }
-  .badge-container { display: flex; align-items: center; gap: 1rem; background: var(--accent-soft); border: 1px solid var(--accent); padding: 1.25rem; border-radius: 0.75rem; margin-top: 1.5rem; }
-  .badge-icon { font-size: 2rem; }
-  .badge-text h4 { font-weight: 800; color: var(--accent-strong); font-size: 0.95rem; }
-  .badge-text p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
-  .lesson-browser { display: flex; flex-direction: column; gap: 1rem; }
-  .lesson-row { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; background-color: var(--bg); border: 1px solid var(--border); border-radius: 0.75rem; transition: all 0.2s; }
-  .lesson-row:hover { border-color: var(--accent); background-color: var(--bg-card); }
-  .lesson-info h3 { font-size: 1rem; font-weight: 800; }
-  .lesson-info p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
-  .btn-sm { padding: 0.5rem 1.25rem; background: var(--accent); border: none; color: #0b0f19; border-radius: 0.6rem; font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-  .btn-sm:hover { background: var(--accent-strong); }
-  .study-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-  .study-header h2 { font-size: 1.5rem; font-weight: 800; }
-  .btn-back { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 0.6rem; font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-  .btn-back:hover { background: var(--bg); border-color: var(--text-muted); }
-  .flashcard-wrapper { perspective: 1000px; width: 100%; max-width: 480px; height: 300px; margin: 2.5rem auto; }
-  .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-  .flashcard.flipped { transform: rotateY(180deg); }
-  .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 1.25rem; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; box-shadow: var(--card-shadow); }
-  .card-front { background-color: var(--bg-card); }
-  .card-back { background-color: var(--bg-elevated); transform: rotateY(180deg); border-color: var(--accent); }
-  .card-label { position: absolute; top: 1.25rem; font-size: 0.75rem; font-weight: 800; color: var(--accent); letter-spacing: 0.05em; }
-  .word-arabic { font-size: 2.75rem; font-weight: 800; margin-bottom: 1rem; text-align: center; }
-  .word-persian { font-size: 1.75rem; font-weight: 700; text-align: center; color: var(--accent-strong); }
-  .card-hint { position: absolute; bottom: 1.25rem; font-size: 0.8rem; color: var(--text-muted); }
-  .action-row { display: flex; justify-content: center; gap: 1.25rem; margin-top: 2.5rem; max-width: 480px; margin-left: auto; margin-right: auto; }
-  .btn-action { flex: 1; padding: 1rem; border: none; border-radius: 0.75rem; font-family: inherit; font-size: 0.95rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; }
-  .btn-correct { background-color: var(--success-soft); color: var(--success); border: 1px solid var(--success); }
-  .btn-correct:hover { background-color: var(--success); color: #ffffff; }
-  .btn-incorrect { background-color: var(--error-soft); color: var(--error); border: 1px solid var(--error); }
-  .btn-incorrect:hover { background-color: var(--error); color: #ffffff; }
-  .keyboard-guide { text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted); }
-  .keyboard-key { background: var(--bg-elevated); border: 1px solid var(--border); padding: 0.1rem 0.4rem; border-radius: 0.35rem; font-family: monospace; }
-  .progress-container { display: flex; flex-direction: column; gap: 1rem; }
-  .progress-row { background-color: var(--bg-elevated); border: 1px solid var(--border); border-radius: 0.85rem; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
-  .progress-row .user-info h4 { font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; }
-  .progress-row .user-info p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
-  .progress-row .user-info p.active-status { color: var(--accent); font-weight: 600; }
-  .progress-row .time-elapsed { font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--text-muted); background: var(--bg); padding: 0.25rem 0.6rem; border-radius: 0.4rem; border: 1px solid var(--border); font-weight: 600; }
-  .live-indicator { display: inline-block; width: 8px; height: 8px; background-color: var(--success); border-radius: 50%; margin-left: 0.5rem; animation: pulse 2s infinite; }
-  @keyframes pulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-  }
-  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 0.9rem; }
-  .toast { position: fixed; bottom: 2rem; left: 2rem; background-color: var(--bg-elevated); color: var(--text); padding: 1rem 1.75rem; border-radius: 0.85rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); display: flex; align-items: center; z-index: 100; transform: translateY(200%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 0.9rem; font-weight: 700; border-left: 4px solid var(--accent); }
-  .toast.show { transform: translateY(0); }
-  .toast.toast-error { border-left-color: var(--error); }
-  .toast.toast-success { border-left-color: var(--success); }
-  @media (max-width: 640px) {
-    header { padding: 1rem; flex-direction: column; gap: 1rem; }
-    .header-actions { width: 100%; justify-content: space-between; }
-    main { margin: 1.5rem auto; }
-    .flashcard-wrapper { height: 260px; }
-    .word-arabic { font-size: 2.25rem; }
-  }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>واژه‌نامه عربی - میز مطالعه هوشمند</title>
+  <!-- Tailwind CSS برای ظاهر مینیمال و تم دارک دپ (Midnight Dark) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- کتابخانه رسمی سوپابیس -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://cdn.jsdelivr.net/npm/vazirmatn-font@3.3.0/dist/font-face.css" rel="stylesheet" type="text/css" />
+  <style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: #090d16;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #1e293b;
+      border-radius: 3px;
+    }
+  </style>
 </head>
-<body>
+<body class="text-slate-200 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
 
-<header id="appHeader" style="display: none;">
-  <div class="brand-group">
-    <span class="brand-logo">✨</span>
-    <span class="brand-title">واژه‌نامه عربی</span>
-  </div>
-  <div class="header-actions">
-    <nav class="nav-tabs">
-      <button class="nav-tab active" data-target="viewDashboard">میز مطالعه</button>
-      <button class="nav-tab" data-target="viewLive">اتاق آنلاین</button>
-    </nav>
-    <button class="btn-icon" id="themeToggle">🌓</button>
-    <div class="user-badge">
-      <span id="userDisplayName">...</span>
-      <button class="btn-logout" id="btnLogout">خروج</button>
-    </div>
-  </div>
-</header>
-
-<main>
-  <div id="viewAuth" class="view-panel active">
-    <div class="auth-card">
-      <h2 id="authTitle">خوش آمدید</h2>
-      <p id="authSubtitle" class="auth-subtitle">جهت ورود مشخصات خود را وارد کنید</p>
+  <!-- ========================================== -->
+  <!-- ۱. بخش احراز هویت (ورود / ثبت‌نام) -->
+  <!-- ========================================== -->
+  <div id="authSection" class="flex-1 flex items-center justify-center p-4">
+    <div class="bg-[#111827] border border-slate-800 p-8 rounded-2xl w-full max-w-md shadow-2xl transition-all duration-300">
+      <h2 id="authTitle" class="text-2xl font-bold text-center text-white mb-2">خوش آمدید</h2>
+      <p id="authSubtitle" class="text-sm text-slate-400 text-center mb-6">جهت ورود مشخصات خود را وارد کنید</p>
       
-      <form id="authForm">
-        <div class="form-group">
-          <label for="inputUsername">نام کاربری</label>
-          <input type="text" id="inputUsername" placeholder="Username" required autocomplete="username" dir="ltr" />
+      <form id="authForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">ایمیل یا نام کاربری</label>
+          <input type="email" id="inputUsername" required placeholder="name@gmail.com" 
+            class="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-left dir-ltr">
         </div>
-        <div class="form-group">
-          <label for="inputPassword">رمز عبور</label>
-          <input type="password" id="inputPassword" placeholder="••••••••" required autocomplete="current-password" dir="ltr" />
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">رمز عبور</label>
+          <input type="password" id="inputPassword" required placeholder="••••••••" 
+            class="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-left dir-ltr">
         </div>
-        <button type="submit" class="btn-primary" id="btnAuthSubmit">ورود به حساب</button>
+        
+        <button type="submit" id="btnAuthSubmit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl shadow-lg hover:shadow-amber-500/20 transition-all duration-200 cursor-pointer mt-2">
+          ورود به حساب
+        </button>
       </form>
       
-      <div class="auth-toggle">
-        <p id="authToggleText">عضو نیستید؟ <span id="authToggleLink" style="color: var(--accent); cursor: pointer; font-weight: 700; text-decoration: underline;">ایجاد حساب جدید</span></p>
-      </div>
+      <p id="authToggleText" class="text-sm text-slate-400 text-center mt-6">
+        عضو نیستید؟ <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ایجاد حساب جدید</span>
+      </p>
     </div>
   </div>
 
-  <div id="viewDashboard" class="view-panel">
-    <div class="dashboard-grid">
-      <div class="card">
-        <h2>کارنامه فعالیت شما</h2>
-        <div class="stats-row">
-          <div class="stat-box">
-            <div class="stat-val" id="statCorrect">0</div>
-            <div class="stat-lbl">به‌خاطر سپرده شده</div>
+  <!-- ========================================== -->
+  <!-- ۲. بخش اصلی اپلیکیشن (میز مطالعه) -->
+  <!-- ========================================== -->
+  <main id="appSection" class="hidden flex-1 w-full max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+    
+    <!-- پنل راست: مدیریت درس‌ها و وضعیت آنلاین -->
+    <div class="lg:col-span-1 space-y-6">
+      <!-- مشخصات کاربر و خروج -->
+      <div class="bg-[#111827] border border-slate-800 p-4 rounded-xl flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400">کاربر فعال:</p>
+          <h4 id="userDisplayName" class="text-sm font-bold text-white">در حال لود...</h4>
+        </div>
+        <button onclick="handleLogout()" class="text-xs bg-rose-950/40 text-rose-400 border border-rose-900/50 px-3 py-1.5 rounded-lg hover:bg-rose-900 hover:text-white transition-all cursor-pointer">خروج</button>
+      </div>
+
+      <!-- انتخاب درس -->
+      <div class="bg-[#111827] border border-slate-800 p-5 rounded-xl">
+        <h3 class="text-sm font-bold text-slate-300 mb-3 border-b border-slate-800 pb-2">📚 لیست درس‌ها</h3>
+        <div class="space-y-1" id="lessonList">
+          <!-- درس‌ها به صورت پویا با جاوااسکریپت ساخته می‌شوند -->
+        </div>
+      </div>
+
+      <!-- وضعیت کاربران آنلاین -->
+      <div class="bg-[#111827] border border-slate-800 p-5 rounded-xl">
+        <h3 class="text-sm font-bold text-slate-300 mb-3 border-b border-slate-800 pb-2 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> وضعیت زنده کاربران
+        </h3>
+        <div id="liveProgressRows" class="space-y-3 max-h-60 overflow-y-auto custom-scroll text-xs text-slate-400">
+          <p class="text-center py-4">در حال اتصال به شبکه زنده...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- پنل چپ: واژه‌ها و تمرین -->
+    <div class="lg:col-span-3 space-y-6">
+      <!-- هدر وضعیت درس -->
+      <div class="bg-[#111827] border border-slate-800 p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 id="currentLessonTitle" class="text-xl font-bold text-white">لطفاً یک درس را انتخاب کنید</h2>
+          <p class="text-xs text-slate-400 mt-1">تعداد کلمات موجود در این درس: <span id="wordCount" class="text-amber-400 font-bold">0</span></p>
+        </div>
+        <!-- زمان‌سنج -->
+        <div class="bg-[#1f2937] px-4 py-2 rounded-xl border border-slate-700 text-center">
+          <p class="text-[10px] text-slate-400 uppercase tracking-wider">مدت مطالعه این نشست</p>
+          <p id="studyTimer" class="text-lg font-mono font-bold text-emerald-400">00:00</p>
+        </div>
+      </div>
+
+      <!-- باکس تست و تمرین کلمات -->
+      <div id="quizBox" class="bg-[#111827] border border-slate-800 p-6 rounded-xl hidden">
+        <h3 class="text-sm font-bold text-slate-400 mb-4 flex justify-between">
+          <span>📝 خودآزمایی هوشمند</span>
+          <span id="quizProgress" class="font-mono text-blue-400">0/0</span>
+        </h3>
+        <div class="text-center py-6">
+          <p class="text-xs text-slate-500 mb-2">معنی کلمه زیر چیست؟</p>
+          <h1 id="quizArabicWord" class="text-3xl font-bold text-amber-400 tracking-wide mb-6">...</h1>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-xl mx-auto" id="quizOptions">
+            <!-- گزینه‌ها اینجا لود می‌شوند -->
           </div>
-          <div class="stat-box">
-            <div class="stat-val" id="statIncorrect">0</div>
-            <div class="stat-lbl">نیازمند تکرار</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-val" id="statTotalStudied">0</div>
-            <div class="stat-lbl">مجموع کارت‌ها</div>
-          </div>
-        </div>
-        <div id="badgeContainer" class="badge-container" style="display: none;">
-          <span class="badge-icon">🏅</span>
-          <div class="badge-text">
-            <h4>نشان تمرکز طلایی ارتقا یافت!</h4>
-            <p>شما بیش از ۵ دقیقه به طور مستمر در این جلسه به مطالعه پرداختید.</p>
-          </div>
         </div>
       </div>
 
-      <div class="card">
-        <h2>سرفصل‌های آموزشی</h2>
-        <div class="lesson-browser" id="lessonList">
-          <p class="empty-state">در حال فراخوانی سرور...</p>
+      <!-- جدول نمایش کلمات درس -->
+      <div class="bg-[#111827] border border-slate-800 rounded-xl overflow-hidden">
+        <div class="p-4 bg-[#1f2937]/30 border-b border-slate-800 flex justify-between items-center">
+          <h3 class="text-sm font-bold text-slate-300">📋 واژگان این درس</h3>
+        </div>
+        <div class="overflow-x-auto max-h-[500px] overflow-y-auto custom-scroll">
+          <table class="w-full text-right border-collapse">
+            <thead>
+              <tr class="bg-[#1f2937]/60 text-slate-400 text-xs uppercase border-b border-slate-800">
+                <th class="p-4 font-semibold">کلمه عربی</th>
+                <th class="p-4 font-semibold">معنی فارسی</th>
+              </tr>
+            </thead>
+            <tbody id="wordsTableBody" class="text-sm divide-y divide-slate-800/60">
+              <tr>
+                <td colspan="2" class="p-8 text-center text-slate-500">هنوز درسی انتخاب نشده است.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+
     </div>
-  </div>
+  </main>
 
-  <div id="viewStudy" class="view-panel">
-    <div class="study-header">
-      <div>
-        <h2 id="studyLessonTitle">...</h2>
-        <p id="studyProgressText" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">کارت ۰ از ۰</p>
-      </div>
-      <button class="btn-back" id="btnBackToDashboard">پایان مطالعه</button>
-    </div>
+  <!-- فوتر سیستم -->
+  <footer class="py-4 text-center text-[11px] text-slate-600 border-t border-slate-900/40">
+    سامانه واژه‌نامه اختصاصی عربی متصل به شبکه‌ی یکپارچه‌ی سوپابیس و ورسل
+  </footer>
 
-    <div class="flashcard-wrapper">
-      <div class="flashcard" id="flashcard">
-        <div class="card-face card-front">
-          <span class="card-label">واژه</span>
-          <div class="word-arabic" id="wordFront">...</div>
-          <span class="card-hint">کلیک یا فشردن [Space] برای نمایش ترجمه</span>
-        </div>
-        <div class="card-face card-back">
-          <span class="card-label">معنی</span>
-          <div class="word-persian" id="wordBack">...</div>
-          <span class="card-hint">وضعیت پاسخ خود را تعیین کنید</span>
-        </div>
-      </div>
-    </div>
+  <!-- ========================================== -->
+  <!-- ۳. منطق، هسته پایداری و جاوااسکریپت اپلیکیشن -->
+  <!-- ========================================== -->
+  <script>
+    // تنظیمات مستقیم و بدون ایراد کلاینت سوپابیس
+    const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co"; 
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    <div class="action-row">
-      <button class="btn-action btn-incorrect" id="btnIncorrect">
-        ❌ نیاز به تکرار <span class="keyboard-key">→</span>
-      </button>
-      <button class="btn-action btn-correct" id="btnCorrect">
-        ✅ به یاد داشتم <span class="keyboard-key">←</span>
-      </button>
-    </div>
-    <div class="keyboard-guide">
-      میانبر کیبورد: جابه‌جایی کارت با <span class="keyboard-key">Space</span> | تأیید با کلید <span class="keyboard-key">←</span> | تکرار با کلید <span class="keyboard-key">→</span>
-    </div>
-  </div>
+    // وضعیت‌های داخلی اپلیکیشن
+    let currentUser = null;
+    let isSignUpMode = false;
+    let allWords = [];
+    let currentLessonWords = [];
+    let currentWordIndex = 0;
+    
+    // متغیرهای تایمر نشست
+    let sessionSeconds = 0;
+    let timerInterval = null;
 
-  <div id="viewLive" class="view-panel">
-    <div class="card">
-      <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-        <span class="live-indicator"></span>
-        <h2>وضعیت همزمان بقیه همکاران</h2>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem;">نمایش زنده فعالیت و روند پیشرفت کاربران آنلاین در شبکه مستقر.</p>
-      <div class="progress-container" id="liveProgressRows">
-        <p class="empty-state">اتصال زنده برقرار نشد.</p>
-      </div>
-    </div>
-  </div>
-</main>
+    // لود اولیه برنامه
+    document.addEventListener('DOMContentLoaded', () => {
+      initApp();
+      setupAuthToggle();
+      setupAuthForm();
+    });
 
-<div id="toast" class="toast">...</div>
-
-<script>
-//  این کد اصلاح‌شده رو جاش بذار:
-// آدرس‌های دقیق و اختصاصی پروژه شما بر اساس فایل ارسالی
-const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co"; 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
-
-// حل مشکل قفل شدن دکمه با اضافه کردن window.
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  let currentSession = null;
-  let currentUserProfile = null;
-  let isSignUpMode = false;
-  
-  let allWords = [];
-  let currentLessonWords = [];
-  let currentWordIndex = 0;
-  let currentStudySessionId = null;
-  let currentLessonName = "";
-  let sessionTimerInterval = null;
-  let liveRealtimeChannel = null;
-
-  let userStats = { correct: 0, incorrect: 0, total: 0 };
-  const wordsMap = new Map();
-
-  const themeToggle = document.getElementById('themeToggle');
-  themeToggle.addEventListener('click', () => {
-    const curr = document.documentElement.getAttribute('data-theme') || 'dark';
-    const next = curr === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('fc-theme', next);
-  });
-
-  const views = {
-    dashboard: document.getElementById('viewDashboard'),
-    study: document.getElementById('viewStudy'),
-    live: document.getElementById('viewLive')
-  };
-
-  function showToast(msg, type = 'info') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast show';
-    if (type === 'error') t.classList.add('toast-error');
-    if (type === 'success') t.classList.add('toast-success');
-    setTimeout(() => t.classList.remove('show'), 4000);
-  }
-
-  function safeEscapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>"']/g, m => {
-      switch (m) {
-        case '&': return '&amp;';
-        case '<': return '&lt;';
-        case '>': return '&gt;';
-        case '"': return '&quot;';
-        case "'": return '&#039;';
-        default: return m;
+    // بررسی وضعیت نشست کاربر در بدو ورود
+    async function initApp() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+        showDashboard();
+      } else {
+        showAuthForm();
       }
-    });
-  }
-
-  function switchView(target) {
-    Object.keys(views).forEach(k => views[k].classList.remove('active'));
-    if(views[target]) views[target].classList.add('active');
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-      tab.classList.toggle('active', tab.dataset.target === 'view' + target.charAt(0).toUpperCase() + target.slice(1));
-    });
-    if (target !== 'study' && currentSession) {
-      updateLiveStatus('idle', null, null);
     }
-  }
 
-  document.querySelectorAll('.nav-tab').forEach(tab => {
-    tab.addEventListener('click', () => switchView(tab.dataset.target.replace('view', '').toLowerCase()));
-  });
+    function showAuthForm() {
+      document.getElementById('authSection').classList.remove('hidden');
+      document.getElementById('appSection').classList.add('hidden');
+    }
 
-  document.addEventListener('click', function(e) {
-    if (e.target && e.target.id === 'authToggleLink') {
-      e.preventDefault();
-      isSignUpMode = !isSignUpMode;
+    function showDashboard() {
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('appSection').classList.remove('hidden');
+      document.getElementById('userDisplayName').textContent = currentUser.email;
       
-      const title = document.getElementById('authTitle');
-      const subtitle = document.getElementById('authSubtitle');
-      const submitBtn = document.getElementById('btnAuthSubmit');
-      const toggleContainer = document.getElementById('authToggleText');
-
-      if (isSignUpMode) {
-        title.textContent = "ایجاد حساب";
-        subtitle.textContent = "یک نام کاربری و رمز عبور منحصربه‌فرد انتخاب کنید";
-        submitBtn.textContent = "ثبت‌نام و ورود";
-        toggleContainer.innerHTML = 'قبلاً عضو شده‌اید؟ <span id="authToggleLink" style="color: var(--accent); cursor: pointer; font-weight: 700; text-decoration: underline;">ورود به حساب</span>';
-      } else {
-        title.textContent = "خوش آمدید";
-        subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
-        submitBtn.textContent = "ورود به حساب";
-        toggleContainer.innerHTML = 'عضو نیستید؟ <span id="authToggleLink" style="color: var(--accent); cursor: pointer; font-weight: 700; text-decoration: underline;">ایجاد حساب جدید</span>';
-      }
+      startStudyTimer();
+      loadLessonsList();
+      fetchAndSetupRealtime();
     }
-  });
 
-  document.getElementById('authForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const userVal = document.getElementById('inputUsername').value.trim();
-    const passVal = document.getElementById('inputPassword').value;
-    const submitBtn = document.getElementById('btnAuthSubmit');
-
-    if (!userVal || !passVal) return;
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = "شکیبا باشید...";
-    
-    const virtualEmail = `${userVal}@flashcard-local.net`;
-
-    try {
-      if (isSignUpMode) {
-        const { data: aData, error: sErr } = await supabase.auth.signUp({ email: virtualEmail, password: passVal });
-        if (sErr) throw sErr;
+    // جابه‌جایی ظاهری فرم ورود و ثبت‌نام
+    function setupAuthToggle() {
+      const toggleLink = document.getElementById('authToggleLink');
+      toggleLink.addEventListener('click', () => {
+        isSignUpMode = !isSignUpMode;
         
-        if (aData?.user) {
-          const { error: profErr } = await supabase.from('profiles').insert([{ id: aData.user.id, display_name: userVal }]);
-          if (profErr) console.warn("مشکل لاگ پروفایل: ", profErr.message);
-          showToast("حساب کاربری شما با موفقیت ایجاد شد.", "success");
+        const title = document.getElementById('authTitle');
+        const subtitle = document.getElementById('authSubtitle');
+        const submitBtn = document.getElementById('btnAuthSubmit');
+        const toggleText = document.getElementById('authToggleText');
+
+        if (isSignUpMode) {
+          title.textContent = "ایجاد حساب جدید";
+          subtitle.textContent = "یک ایمیل و رمز عبور (حداقل ۶ کاراکتر) وارد کنید";
+          submitBtn.textContent = "ثبت‌نام در سامانه";
+          toggleText.innerHTML = 'حساب کاربری دارید؟ <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ورود به حساب</span>';
+        } else {
+          title.textContent = "خوش آمدید";
+          subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
+          submitBtn.textContent = "ورود به حساب";
+          toggleText.innerHTML = 'عضو نیستید؟ <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ایجاد حساب جدید</span>';
         }
-      } else {
-        const { error: lErr } = await supabase.auth.signInWithPassword({ email: virtualEmail, password: passVal });
-        if (lErr) {
-          const { data: retryData, error: retryErr } = await supabase.auth.signUp({ email: virtualEmail, password: passVal });
-          if (retryErr) throw lErr;
-          if (retryData?.user) {
-            await supabase.from('profiles').insert([{ id: retryData.user.id, display_name: userVal }]);
+        // اتصال مجدد ایونت کلیک بعد از بازنویسی innerHTML
+        setupAuthToggle();
+      });
+    }
+
+    // هندل کردن زدن فرم احراز هویت
+    function setupAuthForm() {
+      const form = document.getElementById('authForm');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('inputUsername').value.trim();
+        const password = document.getElementById('inputPassword').value;
+        const submitBtn = document.getElementById('btnAuthSubmit');
+
+        if (password.length < 6) {
+          alert('رمز عبور باید حداقل ۶ کاراکتر باشد.');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'در حال پردازش...';
+
+        try {
+          if (isSignUpMode) {
+            // فرآیند ثبت نام کاربر جدید
+            const { data, error } = await supabase.auth.signUp({
+              email: email,
+              password: password,
+              options: { data: { display_name: email.split('@')[0] } }
+            });
+            if (error) throw error;
+            alert('ثبت‌نام موفقیت‌آمیز بود! اکنون سیستم تلاش می‌کند وارد حساب شود.');
+            
+            // تلاش برای ورود خودکار پس از ثبت‌نام
+            const { data: logData, error: logErr } = await supabase.auth.signInWithPassword({ email, password });
+            if (logErr) throw logErr;
+            currentUser = logData.user;
+          } else {
+            // فرآیند ورود به حساب کاربری
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            currentUser = data.user;
           }
+          
+          showDashboard();
+        } catch (err) {
+          alert('خطا در احراز هویت: ' + (err.message || 'مشکلی پیش آمده است.'));
+          console.error(err);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = isSignUpMode ? "ثبت‌نام در سامانه" : "ورود به حساب";
         }
-        showToast("ورود موفقیت‌آمیز بود.", "success");
+      });
+    }
+
+    // خروج از حساب کاربری
+    async function handleLogout() {
+      clearInterval(timerInterval);
+      await supabase.auth.signOut();
+      currentUser = null;
+      window.location.reload();
+    }
+
+    // ساخت لیست درس‌ها به صورت داینامیک
+    function loadLessonsList() {
+      const listContainer = document.getElementById('lessonList');
+      listContainer.innerHTML = '';
+      
+      const lessons = ['درس اول', 'درس دوم', 'درس سوم', 'درس چهارم', 'درس پنجم', 'درس ششم', 'درس هفتم'];
+      
+      lessons.forEach(lesson => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-right px-3 py-2 rounded-lg text-slate-400 hover:bg-[#1f2937] hover:text-white transition-all text-xs cursor-pointer flex justify-between items-center";
+        btn.innerHTML = `<span>📖 ${lesson}</span> <span class="text-[10px] opacity-60">مشاهده</span>`;
+        btn.onclick = () => selectLesson(lesson, btn);
+        listContainer.appendChild(btn);
+      });
+    }
+
+    // انتخاب درس و واکشی اطلاعات آن از جدول کلمات سوپابیس
+    async function selectLesson(lessonName, element) {
+      // استایل دکمه فعال
+      document.querySelectorAll('#lessonList button').forEach(b => b.classList.remove('bg-blue-950', 'text-blue-400', 'font-bold'));
+      if (element) element.classList.add('bg-blue-950', 'text-blue-400', 'font-bold');
+
+      document.getElementById('currentLessonTitle').textContent = `در حال لود کلمات ${lessonName}...`;
+
+      try {
+        const { data, error } = await supabase
+          .from('words')
+          .select('*')
+          .eq('lesson', lessonName);
+
+        if (error) throw error;
+
+        currentLessonWords = data || [];
+        document.getElementById('currentLessonTitle').textContent = lessonName;
+        document.getElementById('wordCount').textContent = currentLessonWords.length;
+
+        // آپدیت وضعیت در جدول لایو دیتابیس
+        updateLiveStatus(lessonName);
+
+        // رندر جدول و شروع کوییز
+        renderWordsTable();
+        if (currentLessonWords.length > 0) {
+          currentWordIndex = 0;
+          document.getElementById('quizBox').classList.remove('hidden');
+          loadQuizQuestion();
+        } else {
+          document.getElementById('quizBox').classList.add('hidden');
+        }
+
+      } catch (err) {
+        alert('خطا در دریافت کلمات: ' + err.message);
+        console.error(err);
       }
-    } catch (err) {
-      showToast(err.message || "خطایی در فرآیند احراز هویت رخ داد.", "error");
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = isSignUpMode ? "ثبت‌نام و ورود" : "ورود به حساب";
     }
-  });
 
-  document.getElementById('btnLogout').onclick = async function() {
-    await supabase.auth.signOut();
-    location.reload();
-  };
+    // رندر کردن اطلاعات دیتابیس در جدول کلمات فرانت
+    function renderWordsTable() {
+      const tbody = document.getElementById('wordsTableBody');
+      tbody.innerHTML = '';
 
-  supabase.auth.onAuthStateChange(async (event, session) => {
-    currentSession = session;
-    if (session) {
-      document.getElementById('viewAuth').classList.remove('active');
-      document.getElementById('appHeader').style.display = 'flex';
-      const { data: prof } = await supabase.from('profiles').select('display_name').eq('id', session.user.id).maybeSingle();
-      currentUserProfile = prof;
-      document.getElementById('userDisplayName').textContent = prof ? prof.display_name : "کاربر جدید";
-      switchView('dashboard');
-      await initData();
-    } else {
-      document.getElementById('appHeader').style.display = 'none';
-      document.getElementById('viewAuth').classList.add('active');
-    }
-  });
-
-  async function initData() {
-    await loadWords();
-    await loadStats();
-    renderLessons();
-    startRealtime();
-  }
-
-  async function loadWords() {
-    const { data, error } = await supabase.from('words').select('*').order('id', { ascending: true });
-    if (!error && data) {
-      allWords = data;
-      allWords.forEach(w => wordsMap.set(w.id, w));
-    }
-  }
-
-  async function loadStats() {
-    if (!currentSession) return;
-    const { data } = await supabase.from('live_status').select('correct_count, incorrect_count').eq('user_id', currentSession.user.id).maybeSingle();
-    if (data) {
-      userStats.correct = data.correct_count || 0;
-      userStats.incorrect = data.incorrect_count || 0;
-      userStats.total = userStats.correct + userStats.incorrect;
-      uiStats();
-    }
-  }
-
-  function uiStats() {
-    document.getElementById('statCorrect').textContent = userStats.correct;
-    document.getElementById('statIncorrect').textContent = userStats.incorrect;
-    document.getElementById('statTotalStudied').textContent = userStats.total;
-  }
-
-  function renderLessons() {
-    const lSet = new Set();
-    allWords.forEach(w => { if(w.lesson) lSet.add(w.lesson); });
-    const sorted = Array.from(lSet).sort();
-    const box = document.getElementById('lessonList');
-    
-    if (sorted.length === 0) {
-      box.innerHTML = '<p class="empty-state">در حال اتصال یا عدم وجود داده در جدول words...</p>';
-      return;
-    }
-    box.innerHTML = '';
-    sorted.forEach(name => {
-      const cnt = allWords.filter(w => w.lesson === name).length;
-      const row = document.createElement('div');
-      row.className = 'lesson-row';
-      row.innerHTML = `<div class="lesson-info"><h3>${safeEscapeHtml(name)}</h3><p>${cnt} کارت آموزشی</p></div><button class="btn-sm">شروع مرور</button>`;
-      row.querySelector('button').onclick = () => startStudy(name);
-      box.appendChild(row);
-    });
-  }
-
-  async function startStudy(name) {
-    currentLessonName = name;
-    currentLessonWords = allWords.filter(w => w.lesson === name).sort(() => Math.random() - 0.5);
-    if(currentLessonWords.length === 0) return;
-    currentWordIndex = 0;
-
-    try {
-      const { data, error } = await supabase.from('study_sessions').insert([{ user_id: currentSession.user.id }]).select().single();
-      if (error) throw error;
-      currentStudySessionId = data.id;
-      document.getElementById('studyLessonTitle').textContent = name;
-      switchView('study');
-      showCard();
-      runTimer(data.started_at);
-    } catch(e) {
-      showToast("خطا در ایجاد نشست معاملاتی سرور.", "error");
-    }
-  }
-
-  function showCard() {
-    const card = document.getElementById('flashcard');
-    card.classList.remove('flipped');
-    const word = currentLessonWords[currentWordIndex];
-    document.getElementById('studyProgressText').textContent = `کارت ${currentWordIndex + 1} از ${currentLessonWords.length}`;
-    document.getElementById('wordFront').textContent = word.arabic_word;
-    document.getElementById('wordBack').textContent = word.persian_meaning;
-    updateLiveStatus('studying', currentLessonName, word.id);
-  }
-
-  const flashcardEl = document.getElementById('flashcard');
-  flashcardEl.onclick = () => flashcardEl.classList.toggle('flipped');
-
-  async function answer(isOk) {
-    if (isOk) userStats.correct++; else userStats.incorrect++;
-    userStats.total++;
-    uiStats();
-    currentWordIndex++;
-    if (currentWordIndex < currentLessonWords.length) showCard(); else { showToast("مرور این فصل به پایان رسید.", "success"); stopStudy(); }
-  }
-
-  document.getElementById('btnCorrect').onclick = (e) => { e.stopPropagation(); answer(true); };
-  document.getElementById('btnIncorrect').onclick = (e) => { e.stopPropagation(); answer(false); };
-
-  async function stopStudy() {
-    if (!currentStudySessionId) return;
-    clearInterval(sessionTimerInterval);
-    await supabase.from('live_status').upsert({
-      user_id: currentSession.user.id,
-      correct_count: userStats.correct,
-      incorrect_count: userStats.incorrect,
-      status: 'idle',
-      current_lesson: null,
-      current_word_id: null
-    });
-    currentStudySessionId = null;
-    switchView('dashboard');
-  }
-
-  document.getElementById('btnBackToDashboard').onclick = () => {
-    if(confirm("آیا مایلید روند مرور را متوقف کنید؟")) stopStudy();
-  };
-
-  function runTimer(start) {
-    if(sessionTimerInterval) clearInterval(sessionTimerInterval);
-    const origin = new Date(start).getTime();
-    const box = document.getElementById('badgeContainer');
-    sessionTimerInterval = setInterval(async () => {
-      const mins = (Date.now() - origin) / 60000;
-      if (mins >= 5) {
-        clearInterval(sessionTimerInterval);
-        await supabase.from('study_sessions').update({ earned_badge: true, total_minutes: mins }).eq('id', currentStudySessionId);
-        await supabase.from('live_status').update({ earned_badge: true }).eq('user_id', currentSession.user.id);
-        box.style.display = 'flex';
-        showToast("نشان تمرکز طلایی به شما تعلق گرفت! 🏅", "success");
+      if (currentLessonWords.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="2" class="p-8 text-center text-slate-500">هیچ کلمه‌ای پیدا نشد.</td></tr>`;
+        return;
       }
-    }, 10000);
-  }
 
-  window.onkeydown = function(e) {
-    if (!views.study.classList.contains('active')) return;
-    if (e.code === 'Space') { e.preventDefault(); flashcardEl.classList.toggle('flipped'); }
-    else if (e.key === 'ArrowLeft') { e.preventDefault(); answer(true); }
-    else if (e.key === 'ArrowRight') { e.preventDefault(); answer(false); }
-  };
-
-  async function updateLiveStatus(status, les, wId) {
-    if (!currentSession) return;
-    await supabase.from('live_status').upsert({
-      user_id: currentSession.user.id,
-      status: status,
-      current_lesson: les,
-      current_word_id: wId,
-      session_started_at: status === 'studying' ? new Date().toISOString() : null,
-      correct_count: userStats.correct,
-      incorrect_count: userStats.incorrect
-    });
-  }
-
-  function startRealtime() {
-    if (liveRealtimeChannel) return;
-    liveRealtimeChannel = supabase.channel('db-sync').on('postgres_changes', { event: '*', schema: 'public', table: 'live_status' }, () => {
-      drawLive();
-    }).subscribe();
-    drawLive();
-    setInterval(tickTimes, 1000);
-  }
-
-  async function drawLive() {
-    const wrap = document.getElementById('liveProgressRows');
-    const { data: rows } = await supabase.from('live_status').select('*');
-    if (!rows) return;
-    
-    const network = rows.filter(r => r.user_id !== currentSession.user.id);
-    if(network.length === 0) {
-      wrap.innerHTML = '<p class="empty-state">هیچ زبان‌آموز دیگری در حال حاضر آنلاین نیست.</p>';
-      return;
+      currentLessonWords.forEach(w => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[#1f2937]/20 border-b border-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="p-4 font-bold text-amber-400 tracking-wide">${w.arabic_word}</td>
+          <td class="p-4 text-slate-300">${w.persian_meaning}</td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
-    
-    const ids = network.map(r => r.user_id);
-    const { data: profs } = await supabase.from('profiles').select('id, display_name').in('id', ids);
-    const pMap = new Map();
-    if (profs) profs.forEach(p => pMap.set(p.id, p.display_name));
 
-    wrap.innerHTML = '';
-    network.forEach(row => {
-      const name = pMap.get(row.user_id) || 'کاربر ناشناس';
-      const word = row.current_word_id ? wordsMap.get(row.current_word_id) : null;
-      let text = "در حال انتخاب سرفصل";
-      if(row.status === 'studying') {
-        text = `در حال مرور: ${row.current_lesson || ''} ${word ? ' — واژه (' + word.arabic_word + ')' : ''}`;
+    // لود کردن سوالات تستی چهار گزینه‌ای هوشمند
+    function loadQuizQuestion() {
+      if (currentLessonWords.length === 0) return;
+      
+      const progress = document.getElementById('quizProgress');
+      progress.textContent = `${currentWordIndex + 1}/${currentLessonWords.length}`;
+
+      const currentWord = currentLessonWords[currentWordIndex];
+      document.getElementById('quizArabicWord').textContent = currentWord.arabic_word;
+
+      // ساخت گزینه‌ها (یک گزینه صحیح و ۳ گزینه غلت تصادفی از کل درس‌ها)
+      let options = [currentWord.persian_meaning];
+      
+      // تلاش برای پیدا کردن گزینه‌های انحرافی
+      const otherMeanings = currentLessonWords
+        .filter(w => w.persian_meaning !== currentWord.persian_meaning)
+        .map(w => w.persian_meaning);
+      
+      // مخلوط کردن گزینه‌ها
+      while(options.length < Math.min(4, currentLessonWords.length)) {
+        if (otherMeanings.length === 0) break;
+        const randomIdx = Math.floor(Math.random() * otherMeanings.length);
+        const item = otherMeanings.splice(randomIdx, 1)[0];
+        if (!options.includes(item)) options.push(item);
       }
-      const el = document.createElement('div');
-      el.className = 'progress-row';
-      el.innerHTML = `<div class="user-info"><h4>${safeEscapeHtml(name)} ${row.earned_badge ? '🏅' : ''}</h4><p class="${row.status === 'studying' ? 'active-status' : ''}">${safeEscapeHtml(text)}</p></div><div class="time-elapsed" data-started="${row.session_started_at || ''}">00:00</div>`;
-      wrap.appendChild(el);
-    });
-    tickTimes();
-  }
+      options.sort(() => Math.random() - 0.5);
 
-  function tickTimes() {
-    document.querySelectorAll('.time-elapsed').forEach(el => {
-      const s = el.dataset.started;
-      if (!s) { el.textContent = '--:--'; return; }
-      const diff = Math.max(0, Math.floor((Date.now() - new Date(s).getTime()) / 1000));
-      el.textContent = `${Math.floor(diff / 60).toString().padStart(2, '0')}:${(diff % 60).toString().padStart(2, '0')}`;
-    });
-  }
-</script>
+      const optionsContainer = document.getElementById('quizOptions');
+      optionsContainer.innerHTML = '';
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "w-full bg-[#1f2937] hover:bg-slate-700 text-slate-200 py-3 px-4 rounded-xl text-xs font-semibold text-right transition-all duration-150 cursor-pointer border border-slate-800 hover:border-slate-600";
+        btn.textContent = opt;
+        btn.onclick = () => handleAnswer(opt, currentWord.persian_meaning);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    // هندل کردن پاسخ کاربر به تست
+    function handleAnswer(selected, correct) {
+      if (selected === correct) {
+        alert('🎉 بارک‌الله! پاسخ صحیح است.');
+      } else {
+        alert(`❌ اشتباه بود! معنی درست: "${correct}" است.`);
+      }
+      
+      // رفتن به کلمه بعدی به صورت چرخشی
+      currentWordIndex = (currentWordIndex + 1) % currentLessonWords.length;
+      loadQuizQuestion();
+    }
+
+    // آپدیت کردن وضعیت آنلاین کاربر در سوپابیس
+    async function updateLiveStatus(lessonName) {
+      if (!currentUser) return;
+      try {
+        await supabase
+          .from('live_status')
+          .upsert({ 
+            user_id: currentUser.id, 
+            status: 'studying', 
+            current_lesson: lessonName,
+            updated_at: new Date().toISOString()
+          });
+      } catch (err) {
+        console.error('خطای بروزرسانی وضعیت زنده:', err);
+      }
+    }
+
+    // اتصال به سیستم ریل‌تایم سوپابیس برای پایش آنلاین کاربران
+    function fetchAndSetupRealtime() {
+      // بارگذاری اولیه کاربران آنلاین
+      fetchOnlineUsers();
+
+      // گوش دادن به تغییرات جدول برای رندر ریل‌تایم آنلاین‌ها بدون رفرش
+      supabase
+        .channel('schema-db-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'live_status' }, () => {
+          fetchOnlineUsers();
+        })
+        .subscribe();
+    }
+
+    async function fetchOnlineUsers() {
+      try {
+        const { data, error } = await supabase
+          .from('live_status')
+          .select('user_id, status, current_lesson, updated_at');
+        
+        if (error) throw error;
+
+        const rowsContainer = document.getElementById('liveProgressRows');
+        rowsContainer.innerHTML = '';
+
+        if (!data || data.length === 0) {
+          rowsContainer.innerHTML = '<p class="text-center py-2 opacity-50">هیچ کاربری فعال نیست.</p>';
+          return;
+        }
+
+        data.forEach(user => {
+          const div = document.createElement('div');
+          div.className = "bg-[#1f2937]/40 border border-slate-800/80 p-2.5 rounded-lg flex items-center justify-between gap-2";
+          div.innerHTML = `
+            <div class="truncate">
+              <p class="font-bold text-slate-300 truncate text-[11px]">${user.user_id.substring(0,8)}... (دانش‌آموز)</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">وضعیت: <span class="text-blue-400">${user.current_lesson || 'میز مطالعه'}</span></p>
+            </div>
+            <span class="w-2 h-2 rounded-full ${user.status === 'studying' ? 'bg-emerald-500 shadow-emerald-500/50 shadow' : 'bg-amber-500'} flex-shrink-0"></span>
+          `;
+          rowsContainer.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error('خطا در واکشی کاربران آنلاین:', err);
+      }
+    }
+
+    // تایمر محاسبه زمان نشست مطالعه
+    function startStudyTimer() {
+      sessionSeconds = 0;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        sessionSeconds++;
+        const mins = String(Math.floor(sessionSeconds / 60)).padStart(2, '0');
+        const secs = String(sessionSeconds % 60).padStart(2, '0');
+        document.getElementById('studyTimer').textContent = `${mins}:${secs}`;
+      }, 1000);
+    }
+  </script>
 </body>
 </html>
