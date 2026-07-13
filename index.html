@@ -27,40 +27,44 @@
     <div class="bg-[#111827] border border-slate-800 p-8 rounded-2xl w-full max-w-md shadow-2xl">
       <h2 id="authTitle" class="text-2xl font-bold text-center text-white mb-2">خوش آمدید</h2>
       <p id="authSubtitle" class="text-sm text-slate-400 text-center mb-6">جهت ورود مشخصات خود را وارد کنید</p>
-      
-      <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+
+      <form id="authForm" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">ایمیل یا نام کاربری</label>
-          <input type="email" id="inputUsername" required placeholder="name@gmail.com" 
+          <label class="block text-xs font-semibold text-slate-400 mb-1">نام کاربری</label>
+          <input type="text" id="inputUsername" required placeholder="username"
+            autocomplete="username"
             class="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-left dir-ltr">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-400 mb-1">رمز عبور</label>
-          <input type="password" id="inputPassword" required placeholder="••••••••" 
+          <input type="password" id="inputPassword" required placeholder="••••••••"
+            autocomplete="current-password"
             class="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-left dir-ltr">
         </div>
-        
+
+        <p id="authError" class="text-xs text-rose-400 text-center hidden"></p>
+
         <button type="submit" id="btnAuthSubmit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl shadow-lg transition-all duration-200 cursor-pointer mt-2">
           ورود به حساب
         </button>
       </form>
-      
+
       <p class="text-sm text-slate-400 text-center mt-6">
-        <span id="authToggleLabel">عضو نیستید؟</span> 
-        <span id="authToggleLink" onclick="toggleAuthMode()" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer select-none">ایجاد حساب جدید</span>
+        <span id="authToggleLabel">عضو نیستید؟</span>
+        <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer select-none">ایجاد حساب جدید</span>
       </p>
     </div>
   </div>
 
   <main id="appSection" class="hidden flex-1 w-full max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
-    
+
     <div class="lg:col-span-1 space-y-6">
       <div class="bg-[#111827] border border-slate-800 p-4 rounded-xl flex items-center justify-between">
         <div>
           <p class="text-xs text-slate-400">کاربر فعال:</p>
           <h4 id="userDisplayName" class="text-sm font-bold text-white">در حال لود...</h4>
         </div>
-        <button onclick="handleLogout()" class="text-xs bg-rose-950/40 text-rose-400 border border-rose-900/50 px-3 py-1.5 rounded-lg hover:bg-rose-900 hover:text-white transition-all cursor-pointer">خروج</button>
+        <button id="btnLogout" class="text-xs bg-rose-950/40 text-rose-400 border border-rose-900/50 px-3 py-1.5 rounded-lg hover:bg-rose-900 hover:text-white transition-all cursor-pointer">خروج</button>
       </div>
 
       <div class="bg-[#111827] border border-slate-800 p-5 rounded-xl">
@@ -124,29 +128,65 @@
   </footer>
 
   <script>
-    const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co"; 
+    /* ==========================================================
+       پیکربندی Supabase
+       ========================================================== */
+    const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
-    
-    let supabase = null;
+
+    // توجه: نام متغیر عمداً supabaseClient است، نه "supabase"،
+    // چون window.supabase خودِ کتابخانه SDK است و هم‌نام‌کردنشان
+    // یکی از منابع اصلی باگ نسخهٔ قبلی بود.
+    let supabaseClient = null;
     try {
-      if (window.supabase) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      if (window.supabase && typeof window.supabase.createClient === 'function') {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      } else {
+        console.error('Supabase SDK لود نشده است.');
       }
-    } catch(e) {
-      console.error("Supabase fail to initialize:", e);
+    } catch (e) {
+      console.error('Supabase fail to initialize:', e);
     }
 
+    // ---- وضعیت کلی برنامه ----
     let currentUser = null;
     let isSignUpMode = false;
     let currentLessonWords = [];
     let currentWordIndex = 0;
     let sessionSeconds = 0;
     let timerInterval = null;
+    let realtimeChannel = null;
 
-    // تابع جابجایی حالت فرم - کاملاً مستقل و با تغییر متنی ساده (تضمین کارکرد)
+    // دامنهٔ ساختگی برای تبدیل نام‌کاربری به فرمت ایمیل موردنیاز Supabase Auth
+    // (کاربر هرگز این را نمی‌بیند و فقط با نام‌کاربری کار می‌کند)
+    const USERNAME_EMAIL_DOMAIN = 'users.arabicvocab.local';
+
+    function usernameToEmail(username) {
+      const clean = username.trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '');
+      return `${clean}@${USERNAME_EMAIL_DOMAIN}`;
+    }
+
+    /* ==========================================================
+       بخش احراز هویت (کاملاً ایزوله)
+       ========================================================== */
+    function showAuthError(message) {
+      const box = document.getElementById('authError');
+      if (!box) return;
+      box.textContent = message;
+      box.classList.remove('hidden');
+    }
+
+    function clearAuthError() {
+      const box = document.getElementById('authError');
+      if (!box) return;
+      box.textContent = '';
+      box.classList.add('hidden');
+    }
+
     function toggleAuthMode() {
       isSignUpMode = !isSignUpMode;
-      
+      clearAuthError();
+
       const title = document.getElementById('authTitle');
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('btnAuthSubmit');
@@ -154,83 +194,113 @@
       const toggleLink = document.getElementById('authToggleLink');
 
       if (isSignUpMode) {
-        if(title) title.textContent = "ایجاد حساب جدید";
-        if(subtitle) subtitle.textContent = "یک ایمیل و رمز عبور (حداقل ۶ کاراکتر) وارد کنید";
-        if(submitBtn) submitBtn.textContent = "ثبت‌نام در سامانه";
-        if(toggleLabel) toggleLabel.textContent = "حساب کاربری دارید؟ ";
-        if(toggleLink) toggleLink.textContent = "ورود به حساب";
+        if (title) title.textContent = 'ایجاد حساب جدید';
+        if (subtitle) subtitle.textContent = 'یک نام‌کاربری و رمز عبور (حداقل ۶ کاراکتر) وارد کنید';
+        if (submitBtn) submitBtn.textContent = 'ثبت‌نام در سامانه';
+        if (toggleLabel) toggleLabel.textContent = 'حساب کاربری دارید؟ ';
+        if (toggleLink) toggleLink.textContent = 'ورود به حساب';
       } else {
-        if(title) title.textContent = "خوش آمدید";
-        if(subtitle) subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
-        if(submitBtn) submitBtn.textContent = "ورود به حساب";
-        if(toggleLabel) toggleLabel.textContent = "عضو نیستید؟ ";
-        if(toggleLink) toggleLink.textContent = "ایجاد حساب جدید";
+        if (title) title.textContent = 'خوش آمدید';
+        if (subtitle) subtitle.textContent = 'جهت ورود مشخصات خود را وارد کنید';
+        if (submitBtn) submitBtn.textContent = 'ورود به حساب';
+        if (toggleLabel) toggleLabel.textContent = 'عضو نیستید؟ ';
+        if (toggleLink) toggleLink.textContent = 'ایجاد حساب جدید';
       }
     }
 
-    // بررسی اولیه سشن هنگام بالا آمدن صفحه
-    window.onload = async function() {
-      if (!supabase) {
-        alert("کتابخانه اصلی سیستم هنوز لود نشده، لطفا صفحه را رفرش کنید.");
+    function translateAuthError(message) {
+      const map = {
+        'Invalid login credentials': 'نام‌کاربری یا رمز عبور اشتباه است.',
+        'User already registered': 'این نام‌کاربری قبلاً ثبت‌نام کرده است.',
+        'Password should be at least 6 characters': 'رمز عبور باید حداقل ۶ کاراکتر باشد.',
+        'Unable to validate email address: invalid format': 'نام‌کاربری وارد‌شده معتبر نیست (فقط حروف انگلیسی، عدد، نقطه یا خط‌تیره).'
+      };
+      return map[message] || message;
+    }
+
+    async function handleAuthSubmit(event) {
+      event.preventDefault();
+      clearAuthError();
+
+      if (!supabaseClient) {
+        showAuthError('اتصال به سرور برقرار نیست. لطفاً صفحه را رفرش کنید.');
         return;
       }
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session && session.user) {
-        currentUser = session.user;
-        showDashboard();
-      }
-    }
 
-    // ارسال فرم (ثبت‌نام یا ورود)
-    async function handleAuthSubmit(e) {
-      e.preventDefault();
-      if (!supabase) return;
-
-      const email = document.getElementById('inputUsername').value.trim();
+      const usernameRaw = document.getElementById('inputUsername').value.trim();
       const password = document.getElementById('inputPassword').value;
       const submitBtn = document.getElementById('btnAuthSubmit');
 
+      if (!usernameRaw) {
+        showAuthError('لطفاً نام‌کاربری را وارد کنید.');
+        return;
+      }
       if (password.length < 6) {
-        alert('رمز عبور باید حداقل ۶ کاراکتر باشد.');
+        showAuthError('رمز عبور باید حداقل ۶ کاراکتر باشد.');
         return;
       }
 
+      const pseudoEmail = usernameToEmail(usernameRaw);
+      const originalText = submitBtn.textContent;
       submitBtn.disabled = true;
       submitBtn.textContent = 'در حال پردازش...';
 
       try {
         if (isSignUpMode) {
-          const { data, error } = await supabase.auth.signUp({
-            email: email,
+          const { data, error } = await supabaseClient.auth.signUp({
+            email: pseudoEmail,
             password: password,
-            options: { data: { display_name: email.split('@')[0] } }
+            options: { data: { username: usernameRaw } }
           });
           if (error) throw error;
-          alert('ثبت‌نام موفقیت‌آمیز بود! اکنون وارد سیستم می‌شوید.');
-          
-          const { data: logData, error: logErr } = await supabase.auth.signInWithPassword({ email, password });
-          if (logErr) throw logErr;
-          currentUser = logData.user;
+
+          // اگر سشن مستقیم برنگشت (مثلاً به‌خاطر تنظیمات تأیید ایمیل)، دستی لاگین می‌کنیم
+          if (data.session && data.user) {
+            currentUser = data.user;
+          } else {
+            const { data: logData, error: logErr } = await supabaseClient.auth.signInWithPassword({
+              email: pseudoEmail,
+              password: password
+            });
+            if (logErr) throw logErr;
+            currentUser = logData.user;
+          }
         } else {
-          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: pseudoEmail,
+            password: password
+          });
           if (error) throw error;
           currentUser = data.user;
         }
-        
+
         showDashboard();
       } catch (err) {
-        alert('خطا: ' + (err.message || 'مشکلی پیش آمده است.'));
+        console.error('Auth error:', err);
+        showAuthError(translateAuthError(err.message || 'مشکلی پیش آمده است.'));
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = isSignUpMode ? "ثبت‌نام در سامانه" : "ورود به حساب";
+        submitBtn.textContent = isSignUpMode ? 'ثبت‌نام در سامانه' : 'ورود به حساب';
       }
     }
 
+    function getDisplayName(user) {
+      if (!user) return '';
+      if (user.user_metadata && user.user_metadata.username) {
+        return user.user_metadata.username;
+      }
+      // fallback: بازگرداندن بخش قبل از @ در ایمیل ساختگی
+      return (user.email || '').split('@')[0];
+    }
+
+    /* ==========================================================
+       بخش داشبورد اصلی
+       ========================================================== */
     function showDashboard() {
       document.getElementById('authSection').classList.add('hidden');
       document.getElementById('appSection').classList.remove('hidden');
-      document.getElementById('userDisplayName').textContent = currentUser.email;
-      
+      document.getElementById('userDisplayName').textContent = getDisplayName(currentUser);
+
       startStudyTimer();
       loadLessonsList();
       fetchAndSetupRealtime();
@@ -238,7 +308,11 @@
 
     async function handleLogout() {
       clearInterval(timerInterval);
-      if (supabase) await supabase.auth.signOut();
+      if (realtimeChannel && supabaseClient) {
+        supabaseClient.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+      }
+      if (supabaseClient) await supabaseClient.auth.signOut();
       window.location.reload();
     }
 
@@ -246,12 +320,12 @@
       const listContainer = document.getElementById('lessonList');
       listContainer.innerHTML = '';
       const lessons = ['درس اول', 'درس دوم', 'درس سوم', 'درس چهارم', 'درس پنجم', 'درس ششم', 'درس هفتم'];
-      
+
       lessons.forEach(lesson => {
         const btn = document.createElement('button');
         btn.className = "w-full text-right px-3 py-2 rounded-lg text-slate-400 hover:bg-[#1f2937] hover:text-white transition-all text-xs cursor-pointer flex justify-between items-center";
         btn.innerHTML = `<span>📖 ${lesson}</span> <span class="text-[10px] opacity-60">مشاهده</span>`;
-        btn.onclick = () => selectLesson(lesson, btn);
+        btn.addEventListener('click', () => selectLesson(lesson, btn));
         listContainer.appendChild(btn);
       });
     }
@@ -262,7 +336,7 @@
       document.getElementById('currentLessonTitle').textContent = `در حال لود کلمات ${lessonName}...`;
 
       try {
-        const { data, error } = await supabase.from('words').select('*').eq('lesson', lessonName);
+        const { data, error } = await supabaseClient.from('words').select('*').eq('lesson', lessonName);
         if (error) throw error;
 
         currentLessonWords = data || [];
@@ -307,8 +381,8 @@
 
       let options = [currentWord.persian_meaning];
       const otherMeanings = currentLessonWords.filter(w => w.persian_meaning !== currentWord.persian_meaning).map(w => w.persian_meaning);
-      
-      while(options.length < Math.min(4, currentLessonWords.length)) {
+
+      while (options.length < Math.min(4, currentLessonWords.length)) {
         if (otherMeanings.length === 0) break;
         const randomIdx = Math.floor(Math.random() * otherMeanings.length);
         const item = otherMeanings.splice(randomIdx, 1)[0];
@@ -322,7 +396,7 @@
         const btn = document.createElement('button');
         btn.className = "w-full bg-[#1f2937] hover:bg-slate-700 text-slate-200 py-3 px-4 rounded-xl text-xs font-semibold text-right transition-all cursor-pointer border border-slate-800";
         btn.textContent = opt;
-        btn.onclick = () => handleAnswer(opt, currentWord.persian_meaning);
+        btn.addEventListener('click', () => handleAnswer(opt, currentWord.persian_meaning));
         optionsContainer.appendChild(btn);
       });
     }
@@ -335,23 +409,35 @@
     }
 
     async function updateLiveStatus(lessonName) {
-      if (!currentUser || !supabase) return;
+      if (!currentUser || !supabaseClient) return;
       try {
-        await supabase.from('live_status').upsert({ user_id: currentUser.id, status: 'studying', current_lesson: lessonName, updated_at: new Date().toISOString() });
-      } catch (e) {}
+        await supabaseClient.from('live_status').upsert({
+          user_id: currentUser.id,
+          status: 'studying',
+          current_lesson: lessonName,
+          updated_at: new Date().toISOString()
+        });
+      } catch (e) {
+        console.error('updateLiveStatus error:', e);
+      }
     }
 
     function fetchAndSetupRealtime() {
       fetchOnlineUsers();
-      if (supabase) {
-        supabase.channel('schema-db-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'live_status' }, () => { fetchOnlineUsers(); }).subscribe();
+      if (supabaseClient) {
+        realtimeChannel = supabaseClient
+          .channel('schema-db-changes')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'live_status' }, () => {
+            fetchOnlineUsers();
+          })
+          .subscribe();
       }
     }
 
     async function fetchOnlineUsers() {
-      if (!supabase) return;
+      if (!supabaseClient) return;
       try {
-        const { data } = await supabase.from('live_status').select('user_id, status, current_lesson');
+        const { data } = await supabaseClient.from('live_status').select('user_id, status, current_lesson');
         const rowsContainer = document.getElementById('liveProgressRows');
         rowsContainer.innerHTML = '';
 
@@ -362,10 +448,12 @@
         data.forEach(user => {
           const div = document.createElement('div');
           div.className = "bg-[#1f2937]/40 border border-slate-800/80 p-2.5 rounded-lg flex items-center justify-between gap-2";
-          div.innerHTML = `<div class="truncate"><p class="font-bold text-slate-300 text-[11px]">${user.user_id.substring(0,8)}...</p><p class="text-[10px] text-slate-500">درس: ${user.current_lesson || 'میز مطالعه'}</p></div><span class="w-2 h-2 rounded-full bg-emerald-500"></span>`;
+          div.innerHTML = `<div class="truncate"><p class="font-bold text-slate-300 text-[11px]">${user.user_id.substring(0, 8)}...</p><p class="text-[10px] text-slate-500">درس: ${user.current_lesson || 'میز مطالعه'}</p></div><span class="w-2 h-2 rounded-full bg-emerald-500"></span>`;
           rowsContainer.appendChild(div);
         });
-      } catch (e) {}
+      } catch (e) {
+        console.error('fetchOnlineUsers error:', e);
+      }
     }
 
     function startStudyTimer() {
@@ -378,6 +466,34 @@
         document.getElementById('studyTimer').textContent = `${mins}:${secs}`;
       }, 1000);
     }
+
+    /* ==========================================================
+       اتصال لیسنرها و بررسی سشن اولیه — فقط پس از آماده‌شدن کامل DOM
+       ========================================================== */
+    document.addEventListener('DOMContentLoaded', async () => {
+      const toggleLink = document.getElementById('authToggleLink');
+      const authForm = document.getElementById('authForm');
+      const logoutBtn = document.getElementById('btnLogout');
+
+      if (toggleLink) toggleLink.addEventListener('click', toggleAuthMode);
+      if (authForm) authForm.addEventListener('submit', handleAuthSubmit);
+      if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+
+      if (!supabaseClient) {
+        showAuthError('اتصال به سرور برقرار نیست. لطفاً صفحه را رفرش کنید.');
+        return;
+      }
+
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session && session.user) {
+          currentUser = session.user;
+          showDashboard();
+        }
+      } catch (e) {
+        console.error('getSession error:', e);
+      }
+    });
   </script>
 </body>
 </html>
