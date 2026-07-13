@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>واژه‌نامه عربی - میز مطالعه هوشمند</title>
-  <!-- Tailwind CSS برای ظاهر مینیمال و تم دارک دپ (Midnight Dark) -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <!-- کتابخانه رسمی سوپابیس -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://cdn.jsdelivr.net/npm/vazirmatn-font@3.3.0/dist/font-face.css" rel="stylesheet" type="text/css" />
   <style>
@@ -25,15 +23,12 @@
 </head>
 <body class="text-slate-200 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
 
-  <!-- ========================================== -->
-  <!-- ۱. بخش احراز هویت (ورود / ثبت‌نام) -->
-  <!-- ========================================== -->
   <div id="authSection" class="flex-1 flex items-center justify-center p-4">
-    <div class="bg-[#111827] border border-slate-800 p-8 rounded-2xl w-full max-w-md shadow-2xl transition-all duration-300">
+    <div class="bg-[#111827] border border-slate-800 p-8 rounded-2xl w-full max-w-md shadow-2xl">
       <h2 id="authTitle" class="text-2xl font-bold text-center text-white mb-2">خوش آمدید</h2>
       <p id="authSubtitle" class="text-sm text-slate-400 text-center mb-6">جهت ورود مشخصات خود را وارد کنید</p>
       
-      <form id="authForm" class="space-y-4">
+      <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-400 mb-1">ایمیل یا نام کاربری</label>
           <input type="email" id="inputUsername" required placeholder="name@gmail.com" 
@@ -45,25 +40,21 @@
             class="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-left dir-ltr">
         </div>
         
-        <button type="submit" id="btnAuthSubmit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl shadow-lg hover:shadow-amber-500/20 transition-all duration-200 cursor-pointer mt-2">
+        <button type="submit" id="btnAuthSubmit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl shadow-lg transition-all duration-200 cursor-pointer mt-2">
           ورود به حساب
         </button>
       </form>
       
-      <p id="authToggleText" class="text-sm text-slate-400 text-center mt-6">
-        عضو نیستید؟ <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ایجاد حساب جدید</span>
+      <p class="text-sm text-slate-400 text-center mt-6">
+        <span id="authToggleLabel">عضو نیستید؟</span> 
+        <span id="authToggleLink" onclick="toggleAuthMode()" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer select-none">ایجاد حساب جدید</span>
       </p>
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- ۲. بخش اصلی اپلیکیشن (میز مطالعه) -->
-  <!-- ========================================== -->
   <main id="appSection" class="hidden flex-1 w-full max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
     
-    <!-- پنل راست: مدیریت درس‌ها و وضعیت آنلاین -->
     <div class="lg:col-span-1 space-y-6">
-      <!-- مشخصات کاربر و خروج -->
       <div class="bg-[#111827] border border-slate-800 p-4 rounded-xl flex items-center justify-between">
         <div>
           <p class="text-xs text-slate-400">کاربر فعال:</p>
@@ -72,128 +63,167 @@
         <button onclick="handleLogout()" class="text-xs bg-rose-950/40 text-rose-400 border border-rose-900/50 px-3 py-1.5 rounded-lg hover:bg-rose-900 hover:text-white transition-all cursor-pointer">خروج</button>
       </div>
 
-      <!-- انتخاب درس -->
       <div class="bg-[#111827] border border-slate-800 p-5 rounded-xl">
         <h3 class="text-sm font-bold text-slate-300 mb-3 border-b border-slate-800 pb-2">📚 لیست درس‌ها</h3>
-        <div class="space-y-1" id="lessonList">
-          <!-- درس‌ها به صورت پویا با جاوااسکریپت ساخته می‌شوند -->
-        </div>
+        <div class="space-y-1" id="lessonList"></div>
       </div>
 
-      <!-- وضعیت کاربران آنلاین -->
       <div class="bg-[#111827] border border-slate-800 p-5 rounded-xl">
         <h3 class="text-sm font-bold text-slate-300 mb-3 border-b border-slate-800 pb-2 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> وضعیت زنده کاربران
         </h3>
         <div id="liveProgressRows" class="space-y-3 max-h-60 overflow-y-auto custom-scroll text-xs text-slate-400">
-          <p class="text-center py-4">در حال اتصال به شبکه زنده...</p>
+          <p class="text-center py-4">در حال اتصال...</p>
         </div>
       </div>
     </div>
 
-    <!-- پنل چپ: واژه‌ها و تمرین -->
     <div class="lg:col-span-3 space-y-6">
-      <!-- هدر وضعیت درس -->
       <div class="bg-[#111827] border border-slate-800 p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h2 id="currentLessonTitle" class="text-xl font-bold text-white">لطفاً یک درس را انتخاب کنید</h2>
-          <p class="text-xs text-slate-400 mt-1">تعداد کلمات موجود در این درس: <span id="wordCount" class="text-amber-400 font-bold">0</span></p>
+          <p class="text-xs text-slate-400 mt-1">تعداد کلمات: <span id="wordCount" class="text-amber-400 font-bold">0</span></p>
         </div>
-        <!-- زمان‌سنج -->
         <div class="bg-[#1f2937] px-4 py-2 rounded-xl border border-slate-700 text-center">
-          <p class="text-[10px] text-slate-400 uppercase tracking-wider">مدت مطالعه این نشست</p>
+          <p class="text-[10px] text-slate-400 uppercase tracking-wider">زمان مطالعه</p>
           <p id="studyTimer" class="text-lg font-mono font-bold text-emerald-400">00:00</p>
         </div>
       </div>
 
-      <!-- باکس تست و تمرین کلمات -->
       <div id="quizBox" class="bg-[#111827] border border-slate-800 p-6 rounded-xl hidden">
         <h3 class="text-sm font-bold text-slate-400 mb-4 flex justify-between">
           <span>📝 خودآزمایی هوشمند</span>
           <span id="quizProgress" class="font-mono text-blue-400">0/0</span>
         </h3>
         <div class="text-center py-6">
-          <p class="text-xs text-slate-500 mb-2">معنی کلمه زیر چیست؟</p>
-          <h1 id="quizArabicWord" class="text-3xl font-bold text-amber-400 tracking-wide mb-6">...</h1>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-xl mx-auto" id="quizOptions">
-            <!-- گزینه‌ها اینجا لود می‌شوند -->
-          </div>
+          <h1 id="quizArabicWord" class="text-3xl font-bold text-amber-400 mb-6">...</h1>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-xl mx-auto" id="quizOptions"></div>
         </div>
       </div>
 
-      <!-- جدول نمایش کلمات درس -->
       <div class="bg-[#111827] border border-slate-800 rounded-xl overflow-hidden">
-        <div class="p-4 bg-[#1f2937]/30 border-b border-slate-800 flex justify-between items-center">
-          <h3 class="text-sm font-bold text-slate-300">📋 واژگان این درس</h3>
-        </div>
         <div class="overflow-x-auto max-h-[500px] overflow-y-auto custom-scroll">
           <table class="w-full text-right border-collapse">
             <thead>
-              <tr class="bg-[#1f2937]/60 text-slate-400 text-xs uppercase border-b border-slate-800">
+              <tr class="bg-[#1f2937]/60 text-slate-400 text-xs border-b border-slate-800">
                 <th class="p-4 font-semibold">کلمه عربی</th>
                 <th class="p-4 font-semibold">معنی فارسی</th>
               </tr>
             </thead>
             <tbody id="wordsTableBody" class="text-sm divide-y divide-slate-800/60">
-              <tr>
-                <td colspan="2" class="p-8 text-center text-slate-500">هنوز درسی انتخاب نشده است.</td>
-              </tr>
+              <tr><td colspan="2" class="p-8 text-center text-slate-500">هنوز درسی انتخاب نشده است.</td></tr>
             </tbody>
           </table>
         </div>
       </div>
-
     </div>
   </main>
 
-  <!-- فوتر سیستم -->
   <footer class="py-4 text-center text-[11px] text-slate-600 border-t border-slate-900/40">
-    سامانه واژه‌نامه اختصاصی عربی متصل به شبکه‌ی یکپارچه‌ی سوپابیس و ورسل
+    سامانه واژه‌نامه اختصاصی عربی متصل به سوپابیس
   </footer>
 
-  <!-- ========================================== -->
-  <!-- ۳. منطق، هسته پایداری و جاوااسکریپت اپلیکیشن -->
-  <!-- ========================================== -->
   <script>
-    // تنظیمات مستقیم و بدون ایراد کلاینت سوپابیس
     const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co"; 
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
     
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let supabase = null;
+    try {
+      if (window.supabase) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch(e) {
+      console.error("Supabase fail to initialize:", e);
+    }
 
-    // وضعیت‌های داخلی اپلیکیشن
     let currentUser = null;
     let isSignUpMode = false;
-    let allWords = [];
     let currentLessonWords = [];
     let currentWordIndex = 0;
-    
-    // متغیرهای تایمر نشست
     let sessionSeconds = 0;
     let timerInterval = null;
 
-    // لود اولیه برنامه
-    document.addEventListener('DOMContentLoaded', () => {
-      initApp();
-      setupAuthToggle();
-      setupAuthForm();
-    });
+    // تابع جابجایی حالت فرم - کاملاً مستقل و با تغییر متنی ساده (تضمین کارکرد)
+    function toggleAuthMode() {
+      isSignUpMode = !isSignUpMode;
+      
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
+      const submitBtn = document.getElementById('btnAuthSubmit');
+      const toggleLabel = document.getElementById('authToggleLabel');
+      const toggleLink = document.getElementById('authToggleLink');
 
-    // بررسی وضعیت نشست کاربر در بدو ورود
-    async function initApp() {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (session && session.user) {
-        currentUser = session.user;
-        showDashboard();
+      if (isSignUpMode) {
+        if(title) title.textContent = "ایجاد حساب جدید";
+        if(subtitle) subtitle.textContent = "یک ایمیل و رمز عبور (حداقل ۶ کاراکتر) وارد کنید";
+        if(submitBtn) submitBtn.textContent = "ثبت‌نام در سامانه";
+        if(toggleLabel) toggleLabel.textContent = "حساب کاربری دارید؟ ";
+        if(toggleLink) toggleLink.textContent = "ورود به حساب";
       } else {
-        showAuthForm();
+        if(title) title.textContent = "خوش آمدید";
+        if(subtitle) subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
+        if(submitBtn) submitBtn.textContent = "ورود به حساب";
+        if(toggleLabel) toggleLabel.textContent = "عضو نیستید؟ ";
+        if(toggleLink) toggleLink.textContent = "ایجاد حساب جدید";
       }
     }
 
-    function showAuthForm() {
-      document.getElementById('authSection').classList.remove('hidden');
-      document.getElementById('appSection').classList.add('hidden');
+    // بررسی اولیه سشن هنگام بالا آمدن صفحه
+    window.onload = async function() {
+      if (!supabase) {
+        alert("کتابخانه اصلی سیستم هنوز لود نشده، لطفا صفحه را رفرش کنید.");
+        return;
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+        showDashboard();
+      }
+    }
+
+    // ارسال فرم (ثبت‌نام یا ورود)
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      if (!supabase) return;
+
+      const email = document.getElementById('inputUsername').value.trim();
+      const password = document.getElementById('inputPassword').value;
+      const submitBtn = document.getElementById('btnAuthSubmit');
+
+      if (password.length < 6) {
+        alert('رمز عبور باید حداقل ۶ کاراکتر باشد.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'در حال پردازش...';
+
+      try {
+        if (isSignUpMode) {
+          const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: { data: { display_name: email.split('@')[0] } }
+          });
+          if (error) throw error;
+          alert('ثبت‌نام موفقیت‌آمیز بود! اکنون وارد سیستم می‌شوید.');
+          
+          const { data: logData, error: logErr } = await supabase.auth.signInWithPassword({ email, password });
+          if (logErr) throw logErr;
+          currentUser = logData.user;
+        } else {
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          currentUser = data.user;
+        }
+        
+        showDashboard();
+      } catch (err) {
+        alert('خطا: ' + (err.message || 'مشکلی پیش آمده است.'));
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = isSignUpMode ? "ثبت‌نام در سامانه" : "ورود به حساب";
+      }
     }
 
     function showDashboard() {
@@ -206,97 +236,15 @@
       fetchAndSetupRealtime();
     }
 
-    // جابه‌جایی ظاهری فرم ورود و ثبت‌نام
-    function setupAuthToggle() {
-      const toggleLink = document.getElementById('authToggleLink');
-      toggleLink.addEventListener('click', () => {
-        isSignUpMode = !isSignUpMode;
-        
-        const title = document.getElementById('authTitle');
-        const subtitle = document.getElementById('authSubtitle');
-        const submitBtn = document.getElementById('btnAuthSubmit');
-        const toggleText = document.getElementById('authToggleText');
-
-        if (isSignUpMode) {
-          title.textContent = "ایجاد حساب جدید";
-          subtitle.textContent = "یک ایمیل و رمز عبور (حداقل ۶ کاراکتر) وارد کنید";
-          submitBtn.textContent = "ثبت‌نام در سامانه";
-          toggleText.innerHTML = 'حساب کاربری دارید؟ <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ورود به حساب</span>';
-        } else {
-          title.textContent = "خوش آمدید";
-          subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
-          submitBtn.textContent = "ورود به حساب";
-          toggleText.innerHTML = 'عضو نیستید؟ <span id="authToggleLink" class="text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ایجاد حساب جدید</span>';
-        }
-        // اتصال مجدد ایونت کلیک بعد از بازنویسی innerHTML
-        setupAuthToggle();
-      });
-    }
-
-    // هندل کردن زدن فرم احراز هویت
-    function setupAuthForm() {
-      const form = document.getElementById('authForm');
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('inputUsername').value.trim();
-        const password = document.getElementById('inputPassword').value;
-        const submitBtn = document.getElementById('btnAuthSubmit');
-
-        if (password.length < 6) {
-          alert('رمز عبور باید حداقل ۶ کاراکتر باشد.');
-          return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'در حال پردازش...';
-
-        try {
-          if (isSignUpMode) {
-            // فرآیند ثبت نام کاربر جدید
-            const { data, error } = await supabase.auth.signUp({
-              email: email,
-              password: password,
-              options: { data: { display_name: email.split('@')[0] } }
-            });
-            if (error) throw error;
-            alert('ثبت‌نام موفقیت‌آمیز بود! اکنون سیستم تلاش می‌کند وارد حساب شود.');
-            
-            // تلاش برای ورود خودکار پس از ثبت‌نام
-            const { data: logData, error: logErr } = await supabase.auth.signInWithPassword({ email, password });
-            if (logErr) throw logErr;
-            currentUser = logData.user;
-          } else {
-            // فرآیند ورود به حساب کاربری
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) throw error;
-            currentUser = data.user;
-          }
-          
-          showDashboard();
-        } catch (err) {
-          alert('خطا در احراز هویت: ' + (err.message || 'مشکلی پیش آمده است.'));
-          console.error(err);
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = isSignUpMode ? "ثبت‌نام در سامانه" : "ورود به حساب";
-        }
-      });
-    }
-
-    // خروج از حساب کاربری
     async function handleLogout() {
       clearInterval(timerInterval);
-      await supabase.auth.signOut();
-      currentUser = null;
+      if (supabase) await supabase.auth.signOut();
       window.location.reload();
     }
 
-    // ساخت لیست درس‌ها به صورت داینامیک
     function loadLessonsList() {
       const listContainer = document.getElementById('lessonList');
       listContainer.innerHTML = '';
-      
       const lessons = ['درس اول', 'درس دوم', 'درس سوم', 'درس چهارم', 'درس پنجم', 'درس ششم', 'درس هفتم'];
       
       lessons.forEach(lesson => {
@@ -308,31 +256,22 @@
       });
     }
 
-    // انتخاب درس و واکشی اطلاعات آن از جدول کلمات سوپابیس
     async function selectLesson(lessonName, element) {
-      // استایل دکمه فعال
       document.querySelectorAll('#lessonList button').forEach(b => b.classList.remove('bg-blue-950', 'text-blue-400', 'font-bold'));
       if (element) element.classList.add('bg-blue-950', 'text-blue-400', 'font-bold');
-
       document.getElementById('currentLessonTitle').textContent = `در حال لود کلمات ${lessonName}...`;
 
       try {
-        const { data, error } = await supabase
-          .from('words')
-          .select('*')
-          .eq('lesson', lessonName);
-
+        const { data, error } = await supabase.from('words').select('*').eq('lesson', lessonName);
         if (error) throw error;
 
         currentLessonWords = data || [];
         document.getElementById('currentLessonTitle').textContent = lessonName;
         document.getElementById('wordCount').textContent = currentLessonWords.length;
 
-        // آپدیت وضعیت در جدول لایو دیتابیس
         updateLiveStatus(lessonName);
-
-        // رندر جدول و شروع کوییز
         renderWordsTable();
+
         if (currentLessonWords.length > 0) {
           currentWordIndex = 0;
           document.getElementById('quizBox').classList.remove('hidden');
@@ -340,53 +279,35 @@
         } else {
           document.getElementById('quizBox').classList.add('hidden');
         }
-
       } catch (err) {
         alert('خطا در دریافت کلمات: ' + err.message);
-        console.error(err);
       }
     }
 
-    // رندر کردن اطلاعات دیتابیس در جدول کلمات فرانت
     function renderWordsTable() {
       const tbody = document.getElementById('wordsTableBody');
       tbody.innerHTML = '';
-
       if (currentLessonWords.length === 0) {
         tbody.innerHTML = `<tr><td colspan="2" class="p-8 text-center text-slate-500">هیچ کلمه‌ای پیدا نشد.</td></tr>`;
         return;
       }
-
       currentLessonWords.forEach(w => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-[#1f2937]/20 border-b border-slate-800/40 transition-colors";
-        tr.innerHTML = `
-          <td class="p-4 font-bold text-amber-400 tracking-wide">${w.arabic_word}</td>
-          <td class="p-4 text-slate-300">${w.persian_meaning}</td>
-        `;
+        tr.innerHTML = `<td class="p-4 font-bold text-amber-400">${w.arabic_word}</td><td class="p-4 text-slate-300">${w.persian_meaning}</td>`;
         tbody.appendChild(tr);
       });
     }
 
-    // لود کردن سوالات تستی چهار گزینه‌ای هوشمند
     function loadQuizQuestion() {
       if (currentLessonWords.length === 0) return;
-      
-      const progress = document.getElementById('quizProgress');
-      progress.textContent = `${currentWordIndex + 1}/${currentLessonWords.length}`;
-
+      document.getElementById('quizProgress').textContent = `${currentWordIndex + 1}/${currentLessonWords.length}`;
       const currentWord = currentLessonWords[currentWordIndex];
       document.getElementById('quizArabicWord').textContent = currentWord.arabic_word;
 
-      // ساخت گزینه‌ها (یک گزینه صحیح و ۳ گزینه غلت تصادفی از کل درس‌ها)
       let options = [currentWord.persian_meaning];
+      const otherMeanings = currentLessonWords.filter(w => w.persian_meaning !== currentWord.persian_meaning).map(w => w.persian_meaning);
       
-      // تلاش برای پیدا کردن گزینه‌های انحرافی
-      const otherMeanings = currentLessonWords
-        .filter(w => w.persian_meaning !== currentWord.persian_meaning)
-        .map(w => w.persian_meaning);
-      
-      // مخلوط کردن گزینه‌ها
       while(options.length < Math.min(4, currentLessonWords.length)) {
         if (otherMeanings.length === 0) break;
         const randomIdx = Math.floor(Math.random() * otherMeanings.length);
@@ -397,68 +318,40 @@
 
       const optionsContainer = document.getElementById('quizOptions');
       optionsContainer.innerHTML = '';
-
       options.forEach(opt => {
         const btn = document.createElement('button');
-        btn.className = "w-full bg-[#1f2937] hover:bg-slate-700 text-slate-200 py-3 px-4 rounded-xl text-xs font-semibold text-right transition-all duration-150 cursor-pointer border border-slate-800 hover:border-slate-600";
+        btn.className = "w-full bg-[#1f2937] hover:bg-slate-700 text-slate-200 py-3 px-4 rounded-xl text-xs font-semibold text-right transition-all cursor-pointer border border-slate-800";
         btn.textContent = opt;
         btn.onclick = () => handleAnswer(opt, currentWord.persian_meaning);
         optionsContainer.appendChild(btn);
       });
     }
 
-    // هندل کردن پاسخ کاربر به تست
     function handleAnswer(selected, correct) {
-      if (selected === correct) {
-        alert('🎉 بارک‌الله! پاسخ صحیح است.');
-      } else {
-        alert(`❌ اشتباه بود! معنی درست: "${correct}" است.`);
-      }
-      
-      // رفتن به کلمه بعدی به صورت چرخشی
+      if (selected === correct) alert('🎉 پاسخ صحیح است.');
+      else alert(`❌ اشتباه بود! معنی درست: "${correct}"`);
       currentWordIndex = (currentWordIndex + 1) % currentLessonWords.length;
       loadQuizQuestion();
     }
 
-    // آپدیت کردن وضعیت آنلاین کاربر در سوپابیس
     async function updateLiveStatus(lessonName) {
-      if (!currentUser) return;
+      if (!currentUser || !supabase) return;
       try {
-        await supabase
-          .from('live_status')
-          .upsert({ 
-            user_id: currentUser.id, 
-            status: 'studying', 
-            current_lesson: lessonName,
-            updated_at: new Date().toISOString()
-          });
-      } catch (err) {
-        console.error('خطای بروزرسانی وضعیت زنده:', err);
+        await supabase.from('live_status').upsert({ user_id: currentUser.id, status: 'studying', current_lesson: lessonName, updated_at: new Date().toISOString() });
+      } catch (e) {}
+    }
+
+    function fetchAndSetupRealtime() {
+      fetchOnlineUsers();
+      if (supabase) {
+        supabase.channel('schema-db-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'live_status' }, () => { fetchOnlineUsers(); }).subscribe();
       }
     }
 
-    // اتصال به سیستم ریل‌تایم سوپابیس برای پایش آنلاین کاربران
-    function fetchAndSetupRealtime() {
-      // بارگذاری اولیه کاربران آنلاین
-      fetchOnlineUsers();
-
-      // گوش دادن به تغییرات جدول برای رندر ریل‌تایم آنلاین‌ها بدون رفرش
-      supabase
-        .channel('schema-db-changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'live_status' }, () => {
-          fetchOnlineUsers();
-        })
-        .subscribe();
-    }
-
     async function fetchOnlineUsers() {
+      if (!supabase) return;
       try {
-        const { data, error } = await supabase
-          .from('live_status')
-          .select('user_id, status, current_lesson, updated_at');
-        
-        if (error) throw error;
-
+        const { data } = await supabase.from('live_status').select('user_id, status, current_lesson');
         const rowsContainer = document.getElementById('liveProgressRows');
         rowsContainer.innerHTML = '';
 
@@ -466,26 +359,15 @@
           rowsContainer.innerHTML = '<p class="text-center py-2 opacity-50">هیچ کاربری فعال نیست.</p>';
           return;
         }
-
         data.forEach(user => {
           const div = document.createElement('div');
           div.className = "bg-[#1f2937]/40 border border-slate-800/80 p-2.5 rounded-lg flex items-center justify-between gap-2";
-          div.innerHTML = `
-            <div class="truncate">
-              <p class="font-bold text-slate-300 truncate text-[11px]">${user.user_id.substring(0,8)}... (دانش‌آموز)</p>
-              <p class="text-[10px] text-slate-500 mt-0.5">وضعیت: <span class="text-blue-400">${user.current_lesson || 'میز مطالعه'}</span></p>
-            </div>
-            <span class="w-2 h-2 rounded-full ${user.status === 'studying' ? 'bg-emerald-500 shadow-emerald-500/50 shadow' : 'bg-amber-500'} flex-shrink-0"></span>
-          `;
+          div.innerHTML = `<div class="truncate"><p class="font-bold text-slate-300 text-[11px]">${user.user_id.substring(0,8)}...</p><p class="text-[10px] text-slate-500">درس: ${user.current_lesson || 'میز مطالعه'}</p></div><span class="w-2 h-2 rounded-full bg-emerald-500"></span>`;
           rowsContainer.appendChild(div);
         });
-
-      } catch (err) {
-        console.error('خطا در واکشی کاربران آنلاین:', err);
-      }
+      } catch (e) {}
     }
 
-    // تایمر محاسبه زمان نشست مطالعه
     function startStudyTimer() {
       sessionSeconds = 0;
       clearInterval(timerInterval);
