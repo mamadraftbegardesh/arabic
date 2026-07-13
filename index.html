@@ -3,76 +3,64 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>سامانه تمرین فلش‌کارت واژگان عربی</title>
-
+<title>فلش‌کارت عربی</title>
 <script>
-  // اعمال تم ذخیره شده قبل از رندر اولیه برای جلوگیری از پرش رنگ
   (function () {
-    var saved = localStorage.getItem('flashcard-theme') || 'dark';
+    var saved = localStorage.getItem('fc-theme') || 'dark';
     document.documentElement.setAttribute('data-theme', saved);
   })();
 </script>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
   :root[data-theme="dark"] {
-    --bg: #0b0f19;
-    --bg-elevated: #111827;
-    --bg-card: #1f2937;
-    --accent: #f59e0b;
-    --accent-soft: rgba(245, 158, 11, 0.12);
-    --accent-strong: #fbbf24;
+    --bg: #090d16;
+    --bg-elevated: #101622;
+    --bg-card: #172033;
+    --accent: #dca54c;
+    --accent-soft: rgba(220, 165, 76, 0.1);
+    --accent-strong: #f3be6b;
     --text: #f3f4f6;
     --text-muted: #9ca3af;
-    --border: #374151;
-    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    --border: #263147;
+    --card-shadow: 0 20px 40px -15px rgba(0,0,0,0.7);
     --success: #10b981;
-    --success-soft: rgba(16, 185, 129, 0.15);
+    --success-soft: rgba(16, 185, 129, 0.1);
     --error: #ef4444;
-    --error-soft: rgba(239, 68, 68, 0.15);
+    --error-soft: rgba(239, 68, 68, 0.1);
   }
-
   :root[data-theme="light"] {
-    --bg: #f9fafb;
+    --bg: #f8fafc;
     --bg-elevated: #ffffff;
     --bg-card: #ffffff;
-    --accent: #d97706;
-    --accent-soft: rgba(217, 119, 6, 0.08);
-    --accent-strong: #b45309;
-    --text: #111827;
-    --text-muted: #6b7280;
-    --border: #e5e7eb;
-    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    --accent: #c2882b;
+    --accent-soft: rgba(194, 136, 43, 0.06);
+    --accent-strong: #966418;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --card-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
     --success: #059669;
-    --success-soft: rgba(5, 150, 105, 0.1);
+    --success-soft: rgba(5, 150, 105, 0.06);
     --error: #dc2626;
-    --error-soft: rgba(220, 38, 38, 0.1);
+    --error-soft: rgba(220, 38, 38, 0.06);
   }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Vazirmatn', 'Inter', sans-serif;
     background-color: var(--bg);
     color: var(--text);
     line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background 0.3s, color 0.3s;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
   }
-
   header {
     background-color: var(--bg-elevated);
     border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem;
+    padding: 1.25rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -80,29 +68,10 @@
     top: 0;
     z-index: 50;
   }
-
-  .brand-group {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .brand-logo {
-    font-size: 1.75rem;
-  }
-
-  .brand-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
+  .brand-group { display: flex; align-items: center; gap: 0.75rem; }
+  .brand-logo { font-size: 1.5rem; color: var(--accent); }
+  .brand-title { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; }
+  .header-actions { display: flex; align-items: center; gap: 1.25rem; }
   .nav-tabs {
     display: flex;
     background: var(--bg);
@@ -110,591 +79,185 @@
     border-radius: 0.75rem;
     border: 1px solid var(--border);
   }
-
   .nav-tab {
     background: transparent;
     border: none;
     color: var(--text-muted);
     padding: 0.5rem 1.25rem;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.85rem;
+    font-weight: 700;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
     font-family: inherit;
   }
-
   .nav-tab.active {
     background: var(--bg-elevated);
     color: var(--accent);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   }
-
   button.btn-icon {
     background: transparent;
     border: 1px solid var(--border);
     color: var(--text);
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: 0.5rem;
+    border-radius: 0.6rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
   }
-
   button.btn-icon:hover {
     background: var(--accent-soft);
     border-color: var(--accent);
     color: var(--accent);
   }
-
   .user-badge {
     background-color: var(--bg);
     border: 1px solid var(--border);
     padding: 0.4rem 1rem;
-    border-radius: 2rem;
+    border-radius: 0.75rem;
     font-size: 0.85rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
-
   .btn-logout {
     background: transparent;
     border: none;
     color: var(--error);
     cursor: pointer;
     font-family: inherit;
-    font-weight: 600;
-    font-size: 0.85rem;
-    margin-right: 0.5rem;
+    font-weight: 700;
   }
-
-  .btn-logout:hover {
-    text-decoration: underline;
-  }
-
-  main {
-    flex: 1;
-    max-width: 800px;
-    width: 100%;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-  }
-
-  .view-panel {
-    display: none;
-  }
-
-  .view-panel.active {
-    display: block;
-  }
-
+  main { flex: 1; max-width: 800px; width: 100%; margin: 2.5rem auto; padding: 0 1.5rem; }
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
   .auth-card {
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 2.5rem;
+    border-radius: 1.25rem;
+    padding: 3rem 2.5rem;
     box-shadow: var(--card-shadow);
-    max-width: 450px;
+    max-width: 420px;
     margin: 4rem auto;
   }
-
-  .auth-card h2 {
-    margin-bottom: 0.5rem;
-    font-weight: 800;
-    text-align: center;
-  }
-
-  .auth-subtitle {
-    color: var(--text-muted);
-    text-align: center;
-    font-size: 0.9rem;
-    margin-bottom: 2rem;
-  }
-
-  .form-group {
-    margin-bottom: 1.25rem;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-muted);
-  }
-
-  .form-group input, .form-group select {
+  .auth-card h2 { margin-bottom: 0.5rem; font-weight: 800; text-align: center; font-size: 1.5rem; }
+  .auth-subtitle { color: var(--text-muted); text-align: center; font-size: 0.85rem; margin-bottom: 2.5rem; }
+  .form-group { margin-bottom: 1.5rem; }
+  .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
+  .form-group input {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1.25rem;
     background-color: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     color: var(--text);
     font-family: inherit;
-    font-size: 1rem;
-    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    transition: all 0.2s;
   }
-
-  .form-group input:focus, .form-group select:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-  }
-
+  .form-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .btn-primary {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.9rem;
     background-color: var(--accent);
-    color: #000000;
-    border: none;
-    border-radius: 0.5rem;
-    font-family: inherit;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin-top: 0.5rem;
-  }
-
-  .btn-primary:hover {
-    background-color: var(--accent-strong);
-  }
-
-  .auth-toggle {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-  }
-
-  .auth-toggle span {
-    color: var(--accent);
-    cursor: pointer;
-    font-weight: 600;
-  }
-
-  .auth-toggle span:hover {
-    text-decoration: underline;
-  }
-
-  .dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .card {
-    background-color: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: var(--card-shadow);
-  }
-
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .stat-box {
-    background-color: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    padding: 1rem;
-    text-align: center;
-  }
-
-  .stat-val {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--accent);
-    font-family: 'Inter', 'Vazirmatn', sans-serif;
-  }
-
-  .stat-lbl {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 0.25rem;
-    font-weight: 600;
-  }
-
-  .badge-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: var(--accent-soft);
-    border: 1px solid var(--accent);
-    padding: 1rem;
-    border-radius: 0.75rem;
-    margin-top: 1rem;
-  }
-
-  .badge-icon {
-    font-size: 2.5rem;
-  }
-
-  .badge-text h4 {
-    font-weight: 700;
-    color: var(--accent-strong);
-  }
-
-  .badge-text p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-
-  .lesson-browser {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1rem;
-  }
-
-  .lesson-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background-color: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    transition: all 0.2s ease;
-  }
-
-  .lesson-row:hover {
-    border-color: var(--border);
-    background-color: var(--bg-card);
-  }
-
-  .lesson-info h3 {
-    font-size: 1rem;
-    font-weight: 700;
-  }
-
-  .lesson-info p {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  .btn-sm {
-    padding: 0.4rem 1rem;
-    background: var(--accent);
-    border: none;
-    color: #000000;
-    border-radius: 0.5rem;
-    font-family: inherit;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .btn-sm:hover {
-    background: var(--accent-strong);
-  }
-
-  .study-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .btn-back {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.4rem 1rem;
-    border-radius: 0.5rem;
-    font-family: inherit;
-    font-size: 0.85rem;
-    cursor: pointer;
-  }
-
-  .btn-back:hover {
-    background: var(--bg);
-  }
-
-  .flashcard-wrapper {
-    perspective: 1000px;
-    width: 100%;
-    max-width: 500px;
-    height: 320px;
-    margin: 2rem auto;
-  }
-
-  .flashcard {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-  }
-
-  .flashcard.flipped {
-    transform: rotateY(180deg);
-  }
-
-  .card-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    border-radius: 1.25rem;
-    border: 2px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-    box-shadow: var(--card-shadow);
-  }
-
-  .card-front {
-    background-color: var(--bg-card);
-    color: var(--text);
-  }
-
-  .card-back {
-    background-color: var(--bg-elevated);
-    color: var(--text);
-    transform: rotateY(180deg);
-    border-color: var(--accent);
-  }
-
-  .card-label {
-    position: absolute;
-    top: 1.25rem;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    font-weight: 700;
-  }
-
-  .word-arabic {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    text-align: center;
-    font-family: 'Vazirmatn', sans-serif;
-  }
-
-  .word-persian {
-    font-size: 1.75rem;
-    font-weight: 600;
-    text-align: center;
-    color: var(--accent-strong);
-  }
-
-  .card-hint {
-    position: absolute;
-    bottom: 1.25rem;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  .action-row {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .btn-action {
-    flex: 1;
-    padding: 1rem;
+    color: #0b0f19;
     border: none;
     border-radius: 0.75rem;
     font-family: inherit;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-  }
-
-  .btn-correct {
-    background-color: var(--success-soft);
-    color: var(--success);
-    border: 1px solid var(--success);
-  }
-
-  .btn-correct:hover {
-    background-color: var(--success);
-    color: #ffffff;
-  }
-
-  .btn-incorrect {
-    background-color: var(--error-soft);
-    color: var(--error);
-    border: 1px solid var(--error);
-  }
-
-  .btn-incorrect:hover {
-    background-color: var(--error);
-    color: #ffffff;
-  }
-
-  .keyboard-guide {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  .keyboard-key {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    padding: 0.1rem 0.4rem;
-    border-radius: 0.25rem;
-    font-family: monospace;
-    font-size: 0.85rem;
-  }
-
-  .progress-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .progress-row {
-    background-color: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    padding: 1rem 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-  }
-
-  .progress-row .user-info h4 {
-    font-weight: 700;
     font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
   }
-
-  .progress-row .user-info p {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 0.15rem;
-  }
-
-  .progress-row .user-info p.active-status {
-    color: var(--accent);
-    font-weight: 500;
-  }
-
-  .progress-row .time-elapsed {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    background: var(--bg);
-    padding: 0.25rem 0.6rem;
-    border-radius: 0.35rem;
-    border: 1px solid var(--border);
-  }
-
-  .live-indicator {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background-color: var(--success);
-    border-radius: 50%;
-    margin-left: 0.5rem;
-    animation: pulse 2s infinite;
-  }
-
+  .btn-primary:hover { background-color: var(--accent-strong); transform: translateY(-1px); }
+  .auth-toggle { text-align: center; margin-top: 1.75rem; font-size: 0.85rem; color: var(--text-muted); }
+  .auth-toggle span { color: var(--accent); cursor: pointer; font-weight: 700; margin-right: 0.25rem; }
+  .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  .card { background-color: var(--bg-elevated); border: 1px solid var(--border); border-radius: 1.25rem; padding: 2rem; box-shadow: var(--card-shadow); }
+  .card h2 { font-size: 1.25rem; font-weight: 800; margin-bottom: 1.5rem; }
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; }
+  .stat-box { background-color: var(--bg); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem 1rem; text-align: center; }
+  .stat-val { font-size: 1.75rem; font-weight: 800; color: var(--accent); font-family: 'Inter', 'Vazirmatn', sans-serif; }
+  .stat-lbl { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 700; }
+  .badge-container { display: flex; align-items: center; gap: 1rem; background: var(--accent-soft); border: 1px solid var(--accent); padding: 1.25rem; border-radius: 0.75rem; margin-top: 1.5rem; }
+  .badge-icon { font-size: 2rem; }
+  .badge-text h4 { font-weight: 800; color: var(--accent-strong); font-size: 0.95rem; }
+  .badge-text p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
+  .lesson-browser { display: flex; flex-direction: column; gap: 1rem; }
+  .lesson-row { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; background-color: var(--bg); border: 1px solid var(--border); border-radius: 0.75rem; transition: all 0.2s; }
+  .lesson-row:hover { border-color: var(--accent); background-color: var(--bg-card); }
+  .lesson-info h3 { font-size: 1rem; font-weight: 800; }
+  .lesson-info p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+  .btn-sm { padding: 0.5rem 1.25rem; background: var(--accent); border: none; color: #0b0f19; border-radius: 0.6rem; font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-sm:hover { background: var(--accent-strong); }
+  .study-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+  .study-header h2 { font-size: 1.5rem; font-weight: 800; }
+  .btn-back { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 0.6rem; font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-back:hover { background: var(--bg); border-color: var(--text-muted); }
+  .flashcard-wrapper { perspective: 1000px; width: 100%; max-width: 480px; height: 300px; margin: 2.5rem auto; }
+  .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 1.25rem; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; box-shadow: var(--card-shadow); }
+  .card-front { background-color: var(--bg-card); }
+  .card-back { background-color: var(--bg-elevated); transform: rotateY(180deg); border-color: var(--accent); }
+  .card-label { position: absolute; top: 1.25rem; font-size: 0.75rem; font-weight: 800; color: var(--accent); letter-spacing: 0.05em; }
+  .word-arabic { font-size: 2.75rem; font-weight: 800; margin-bottom: 1rem; text-align: center; }
+  .word-persian { font-size: 1.75rem; font-weight: 700; text-align: center; color: var(--accent-strong); }
+  .card-hint { position: absolute; bottom: 1.25rem; font-size: 0.8rem; color: var(--text-muted); }
+  .action-row { display: flex; justify-content: center; gap: 1.25rem; margin-top: 2.5rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .btn-action { flex: 1; padding: 1rem; border: none; border-radius: 0.75rem; font-family: inherit; font-size: 0.95rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; }
+  .btn-correct { background-color: var(--success-soft); color: var(--success); border: 1px solid var(--success); }
+  .btn-correct:hover { background-color: var(--success); color: #ffffff; }
+  .btn-incorrect { background-color: var(--error-soft); color: var(--error); border: 1px solid var(--error); }
+  .btn-incorrect:hover { background-color: var(--error); color: #ffffff; }
+  .keyboard-guide { text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted); }
+  .keyboard-key { background: var(--bg-elevated); border: 1px solid var(--border); padding: 0.1rem 0.4rem; border-radius: 0.35rem; font-family: monospace; }
+  .progress-container { display: flex; flex-direction: column; gap: 1rem; }
+  .progress-row { background-color: var(--bg-elevated); border: 1px solid var(--border); border-radius: 0.85rem; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+  .progress-row .user-info h4 { font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; }
+  .progress-row .user-info p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+  .progress-row .user-info p.active-status { color: var(--accent); font-weight: 600; }
+  .progress-row .time-elapsed { font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--text-muted); background: var(--bg); padding: 0.25rem 0.6rem; border-radius: 0.4rem; border: 1px solid var(--border); font-weight: 600; }
+  .live-indicator { display: inline-block; width: 8px; height: 8px; background-color: var(--success); border-radius: 50%; margin-left: 0.5rem; animation: pulse 2s infinite; }
   @keyframes pulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
     70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
     100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
   }
-
-  .badge-mini {
-    font-size: 0.9rem;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text-muted);
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 2rem;
-    background-color: #1f2937;
-    color: #ffffff;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    z-index: 100;
-    transform: translateY(150%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 0.9rem;
-    border-left: 4px solid var(--accent);
-  }
-
-  .toast.show {
-    transform: translateY(0);
-  }
-
-  .toast.toast-error {
-    border-left-color: var(--error);
-  }
-
-  .toast.toast-success {
-    border-left-color: var(--success);
-  }
-
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 0.9rem; }
+  .toast { position: fixed; bottom: 2rem; left: 2rem; background-color: var(--bg-elevated); color: var(--text); padding: 1rem 1.75rem; border-radius: 0.85rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); display: flex; align-items: center; z-index: 100; transform: translateY(200%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 0.9rem; font-weight: 700; border-left: 4px solid var(--accent); }
+  .toast.show { transform: translateY(0); }
+  .toast.toast-error { border-left-color: var(--error); }
+  .toast.toast-success { border-left-color: var(--success); }
   @media (max-width: 640px) {
     header { padding: 1rem; flex-direction: column; gap: 1rem; }
     .header-actions { width: 100%; justify-content: space-between; }
-    .flashcard-wrapper { height: 280px; }
-    .word-arabic { font-size: 2.5rem; }
+    main { margin: 1.5rem auto; }
+    .flashcard-wrapper { height: 260px; }
+    .word-arabic { font-size: 2.25rem; }
   }
 </style>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
 <header id="appHeader" style="display: none;">
   <div class="brand-group">
-    <span class="brand-logo">📖</span>
-    <span class="brand-title">فلش‌کارت عربی</span>
+    <span class="brand-logo">✨</span>
+    <span class="brand-title">واژه‌نامه عربی</span>
   </div>
   <div class="header-actions">
     <nav class="nav-tabs">
-      <button class="nav-tab active" data-target="viewDashboard">داشبورد</button>
-      <button class="nav-tab" data-target="viewLive">وضعیت آنلاین</button>
+      <button class="nav-tab active" data-target="viewDashboard">میز مطالعه</button>
+      <button class="nav-tab" data-target="viewLive">اتاق آنلاین</button>
     </nav>
-    <button class="btn-icon" id="themeToggle" title="تغییر تم">🌗</button>
+    <button class="btn-icon" id="themeToggle">🌓</button>
     <div class="user-badge">
-      <span id="userDisplayName">کاربر</span>
+      <span id="userDisplayName">...</span>
       <button class="btn-logout" id="btnLogout">خروج</button>
     </div>
   </div>
@@ -703,27 +266,23 @@
 <main>
   <div id="viewAuth" class="view-panel active">
     <div class="auth-card">
-      <h2 id="authTitle">ورود به سامانه</h2>
-      <p id="authSubtitle" class="auth-subtitle">برای شروع تمرین اطلاعات خود را وارد کنید</p>
+      <h2 id="authTitle">خوش آمدید</h2>
+      <p id="authSubtitle" class="auth-subtitle">جهت ورود مشخصات خود را وارد کنید</p>
       
-      <form id="authForm">
-        <div class="form-group" id="groupDisplayName" style="display: none;">
-          <label for="inputDisplayName">نام و نام‌خانوادگی</label>
-          <input type="text" id="inputDisplayName" placeholder="مثال: علی محمدی" autocomplete="name" />
-        </div>
+      <form id="authForm" onsubmit="return false;">
         <div class="form-group">
-          <label for="inputEmail">پست الکترونیکی (ایمیل)</label>
-          <input type="email" id="inputEmail" placeholder="example@mail.com" required autocomplete="email" dir="ltr" />
+          <label for="inputUsername">نام کاربری</label>
+          <input type="text" id="inputUsername" placeholder="Username" required autocomplete="username" dir="ltr" />
         </div>
         <div class="form-group">
           <label for="inputPassword">رمز عبور</label>
-          <input type="password" id="inputPassword" placeholder="حداقل ۶ کاراکتر" required autocomplete="current-password" dir="ltr" />
+          <input type="password" id="inputPassword" placeholder="••••••••" required autocomplete="current-password" dir="ltr" />
         </div>
-        <button type="submit" class="btn-primary" id="btnAuthSubmit">ورود</button>
+        <button type="submit" class="btn-primary" id="btnAuthSubmit">ورود به حساب</button>
       </form>
       
       <div class="auth-toggle">
-        <p id="authToggleText">حساب کاربری ندارید؟ <span id="authToggleLink">ثبت‌نام کنید</span></p>
+        <p id="authToggleText">عضو نیستید؟<span id="authToggleLink">ایجاد حساب جدید</span></p>
       </div>
     </div>
   </div>
@@ -731,35 +290,34 @@
   <div id="viewDashboard" class="view-panel">
     <div class="dashboard-grid">
       <div class="card">
-        <h2>روند پیشرفت شما</h2>
-        <div class="stats-row" style="margin-top: 1rem;">
+        <h2>کارنامه فعالیت شما</h2>
+        <div class="stats-row">
           <div class="stat-box">
             <div class="stat-val" id="statCorrect">0</div>
-            <div class="stat-lbl">پاسخ صحیح</div>
+            <div class="stat-lbl">به‌خاطر سپرده شده</div>
           </div>
           <div class="stat-box">
             <div class="stat-val" id="statIncorrect">0</div>
-            <div class="stat-lbl">نیاز به تکرار</div>
+            <div class="stat-lbl">نیازمند تکرار</div>
           </div>
           <div class="stat-box">
             <div class="stat-val" id="statTotalStudied">0</div>
-            <div class="stat-lbl">کل کارت‌ها</div>
+            <div class="stat-lbl">مجموع کارت‌ها</div>
           </div>
         </div>
-
         <div id="badgeContainer" class="badge-container" style="display: none;">
           <span class="badge-icon">🏅</span>
           <div class="badge-text">
-            <h4>مدال پشتکار طلایی!</h4>
-            <p>شما بیش از ۵ دقیقه در جلسه فعلی تمرین کرده‌اید.</p>
+            <h4>نشان تمرکز طلایی ارتقا یافت!</h4>
+            <p>شما بیش از ۵ دقیقه به طور مستمر در این جلسه به مطالعه پرداختید.</p>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h2>انتخاب درس برای مطالعه</h2>
+        <h2>سرفصل‌های آموزشی</h2>
         <div class="lesson-browser" id="lessonList">
-          <p class="empty-state">در حال بارگذاری درس‌ها...</p>
+          <p class="empty-state">در حال فراخوانی سرور...</p>
         </div>
       </div>
     </div>
@@ -768,70 +326,65 @@
   <div id="viewStudy" class="view-panel">
     <div class="study-header">
       <div>
-        <h2 id="studyLessonTitle">نام درس</h2>
-        <p id="studyProgressText" style="font-size: 0.85rem; color: var(--text-muted);">کارت ۱ از ۱۰</p>
+        <h2 id="studyLessonTitle">...</h2>
+        <p id="studyProgressText" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">کارت ۰ از ۰</p>
       </div>
-      <button class="btn-back" id="btnBackToDashboard">بازگشت به داشبورد</button>
+      <button class="btn-back" id="btnBackToDashboard">پایان مطالعه</button>
     </div>
 
     <div class="flashcard-wrapper">
       <div class="flashcard" id="flashcard">
         <div class="card-face card-front">
-          <span class="card-label">واژه عربی</span>
+          <span class="card-label">واژه</span>
           <div class="word-arabic" id="wordFront">...</div>
-          <span class="card-hint">برای مشاهده معنی کلیک کنید یا [Space] را بزنید</span>
+          <span class="card-hint">کلیک یا فشردن [Space] برای نمایش ترجمه</span>
         </div>
         <div class="card-face card-back">
-          <span class="card-label">ترجمه فارسی</span>
+          <span class="card-label">معنی</span>
           <div class="word-persian" id="wordBack">...</div>
-          <span class="card-hint">وضعیت پاسخ خود را مشخص کنید</span>
+          <span class="card-hint">وضعیت پاسخ خود را تعیین کنید</span>
         </div>
       </div>
     </div>
 
     <div class="action-row">
       <button class="btn-action btn-incorrect" id="btnIncorrect">
-        ❌ بلد نبودم <span class="keyboard-key" style="margin-right: 0.5rem;">→</span>
+        ❌ نیاز به تکرار <span class="keyboard-key">→</span>
       </button>
       <button class="btn-action btn-correct" id="btnCorrect">
-        ✅ بلد بودم <span class="keyboard-key" style="margin-right: 0.5rem;">←</span>
+        ✅ به یاد داشتم <span class="keyboard-key">←</span>
       </button>
     </div>
     <div class="keyboard-guide">
-      راهنمای کیبورد: چرخش کارت با <span class="keyboard-key">Space</span> | پاسخ صحیح با کلید جهت‌نما <span class="keyboard-key">چپ</span> | پاسخ غلط با جهت‌نما <span class="keyboard-key">راست</span>
+      میانبر کیبورد: جابه‌جایی کارت با <span class="keyboard-key">Space</span> | تأیید با کلید <span class="keyboard-key">←</span> | تکرار با کلید <span class="keyboard-key">→</span>
     </div>
   </div>
 
   <div id="viewLive" class="view-panel">
     <div class="card">
-      <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+      <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
         <span class="live-indicator"></span>
-        <h2>وضعیت آنلاین زبان‌آموزان</h2>
+        <h2>وضعیت همزمان بقیه همکاران</h2>
       </div>
-      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
-        در این بخش می‌توانید وضعیت مطالعه و فعالیت همزمان سایر کاربران را به صورت زنده مشاهده کنید.
-      </p>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem;">نمایش زنده فعالیت و روند پیشرفت کاربران آنلاین در شبکه مستقر.</p>
       <div class="progress-container" id="liveProgressRows">
-        <p class="empty-state">در حال اتصال به شبکه زنده...</p>
+        <p class="empty-state">اتصال زنده برقرار نشد.</p>
       </div>
     </div>
   </div>
 </main>
 
-<div id="toast" class="toast">پیام سیستم</div>
+<div id="toast" class="toast">...</div>
 
 <script>
   // ============================================================================
-  // تنظیمات اتصال به سوپابیس
+  // اطلاعات پروژه خود را دقیقاً بین دبل‌کوتیشن‌ها جایگزین کنید
   // ============================================================================
   const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co/rest/v1/"; 
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
 
   const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // ============================================================================
-  // حالت‌ها و متغیرهای سراسری اپلیکیشن (State)
-  // ============================================================================
   let currentSession = null;
   let currentUserProfile = null;
   let isSignUpMode = false;
@@ -844,24 +397,17 @@
   let sessionTimerInterval = null;
   let liveRealtimeChannel = null;
 
-  // وضعیت محلی آمار کاربر برای بهینه‌سازی سرعت
   let userStats = { correct: 0, incorrect: 0, total: 0 };
   const wordsMap = new Map();
 
-  // ============================================================================
-  // پروسه مدیریت تم (Dark / Light)
-  // ============================================================================
   const themeToggle = document.getElementById('themeToggle');
   themeToggle.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', nextTheme);
-    localStorage.setItem('flashcard-theme', nextTheme);
+    const curr = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = curr === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('fc-theme', next);
   });
 
-  // ============================================================================
-  // المان‌های رابط کاربری (DOM Elements)
-  // ============================================================================
   const views = {
     auth: document.getElementById('viewAuth'),
     dashboard: document.getElementById('viewDashboard'),
@@ -869,32 +415,13 @@
     live: document.getElementById('viewLive')
   };
 
-  const authElements = {
-    form: document.getElementById('authForm'),
-    title: document.getElementById('authTitle'),
-    subtitle: document.getElementById('authSubtitle'),
-    groupDisplayName: document.getElementById('groupDisplayName'),
-    inputDisplayName: document.getElementById('inputDisplayName'),
-    inputEmail: document.getElementById('inputEmail'),
-    inputPassword: document.getElementById('inputPassword'),
-    btnSubmit: document.getElementById('btnAuthSubmit'),
-    toggleLink: document.getElementById('authToggleLink'),
-    toggleText: document.getElementById('authToggleText')
-  };
-
-  // ============================================================================
-  // سیستم نمایش پیام سیستم (Toast Notifications)
-  // ============================================================================
-  function showToast(message, type = 'info') {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.className = 'toast show';
-    if (type === 'error') toast.classList.add('toast-error');
-    if (type === 'success') toast.classList.add('toast-success');
-    
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 4000);
+  function showToast(msg, type = 'info') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show';
+    if (type === 'error') t.classList.add('toast-error');
+    if (type === 'success') t.classList.add('toast-success');
+    setTimeout(() => t.classList.remove('show'), 3500);
   }
 
   function safeEscapeHtml(str) {
@@ -911,296 +438,202 @@
     });
   }
 
-  // ============================================================================
-  // مدیریت تب‌ها و تغییر صفحات
-  // ============================================================================
-  function switchView(targetViewId) {
-    Object.keys(views).forEach(key => {
-      if (views[key].id === targetViewId) {
-        views[key].classList.add('active');
-      } else {
-        views[key].classList.remove('active');
-      }
-    });
-
+  function switchView(target) {
+    Object.keys(views).forEach(k => views[k].classList.remove('active'));
+    views[target].classList.add('active');
     document.querySelectorAll('.nav-tab').forEach(tab => {
-      if (tab.dataset.target === targetViewId) {
-        tab.classList.add('active');
-      } else {
-        tab.classList.remove('active');
-      }
+      tab.classList.toggle('active', tab.dataset.target === target);
     });
-
-    // اگر از صفحه مطالعه خارج شد، وضعیت لایو به idle تغییر کند
-    if (targetViewId !== 'viewStudy' && currentSession) {
+    if (target !== 'study' && currentSession) {
       updateLiveStatus('idle', null, null);
     }
   }
 
   document.querySelectorAll('.nav-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      switchView(tab.dataset.target);
-    });
+    tab.addEventListener('click', () => switchView(tab.dataset.target.replace('view', '').toLowerCase()));
   });
 
-  // ============================================================================
-  // احراز هویت (Authentication)
-  // ============================================================================
-  authElements.toggleLink.addEventListener('click', () => {
-    isSignUpMode = !isSignUpMode;
-    if (isSignUpMode) {
-      authElements.title.textContent = "ساخت حساب کاربری";
-      authElements.subtitle.textContent = "جهت ذخیره روند پیشرفت خود ثبت‌نام کنید";
-      authElements.groupDisplayName.style.display = "block";
-      authElements.inputDisplayName.required = true;
-      authElements.btnSubmit.textContent = "ثبت‌نام و ورود";
-      authElements.toggleText.innerHTML = 'حساب کاربری دارید؟ <span>وارد شوید</span>';
-    } else {
-      authElements.title.textContent = "ورود به سامانه";
-      authElements.subtitle.textContent = "برای شروع تمرین اطلاعات خود را وارد کنید";
-      authElements.groupDisplayName.style.display = "none";
-      authElements.inputDisplayName.required = false;
-      authElements.btnSubmit.textContent = "ورود";
-      authElements.toggleText.innerHTML = 'حساب کاربری ندارید؟ <span>ثبت‌نام کنید</span>';
-    }
-    authElements.toggleLink = document.getElementById('authToggleLink'); // پیوند مجدد رویداد
-  });
+  function setupAuthToggle() {
+    const link = document.getElementById('authToggleLink');
+    if (!link) return;
+    link.onclick = function() {
+      isSignUpMode = !isSignUpMode;
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
+      const submitBtn = document.getElementById('btnAuthSubmit');
+      const toggleText = document.getElementById('authToggleText');
+      
+      if (isSignUpMode) {
+        title.textContent = "ایجاد حساب";
+        subtitle.textContent = "یک نام کاربری و رمز عبور منحصربه‌فرد انتخاب کنید";
+        submitBtn.textContent = "ثبت‌نام و ورود";
+        toggleText.innerHTML = 'قبلاً عضو شده‌اید؟<span id="authToggleLink">ورود به حساب</span>';
+      } else {
+        title.textContent = "خوش آمدید";
+        subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
+        submitBtn.textContent = "ورود به حساب";
+        toggleText.innerHTML = 'عضو نیستید؟<span id="authToggleLink">ایجاد حساب جدید</span>';
+      }
+      setupAuthToggle();
+    };
+  }
+  setupAuthToggle();
 
-  authElements.form.addEventListener('submit', async (e) => {
+  document.getElementById('authForm').onsubmit = async function(e) {
     e.preventDefault();
-    const email = authElements.inputEmail.value.trim();
-    const password = authElements.inputPassword.value;
-    const displayName = authElements.inputDisplayName.value.trim();
+    const userVal = document.getElementById('inputUsername').value.trim();
+    const passVal = document.getElementById('inputPassword').value;
+    const submitBtn = document.getElementById('btnAuthSubmit');
+
+    if (!userVal || !passVal) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "شکیبا باشید...";
+    
+    // تبدیل نام کاربری به قالب ایمیل فرضی برای پشتیبانی بی نقص سرور سوپابیس
+    const virtualEmail = `${userVal}@flashcard-local.net`;
 
     try {
       if (isSignUpMode) {
-        // ثبت نام کاربر جدید
-        const { data: authData, error: signUpError } = await supabase.auth.signUp({ email, password });
-        if (signUpError) throw signUpError;
-
-        if (authData?.user) {
-          // ایجاد پروفایل در جدول مربوطه
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert([{ id: authData.user.id, display_name: displayName }]);
-          
-          if (profileError) throw profileError;
-          showToast("ثبت‌نام با موفقیت انجام شد.", "success");
+        const { data: aData, error: sErr } = await supabase.auth.signUp({ email: virtualEmail, password: passVal });
+        if (sErr) throw sErr;
+        if (aData?.user) {
+          await supabase.from('profiles').insert([{ id: aData.user.id, display_name: userVal }]);
+          showToast("حساب کاربری شما با موفقیت ایجاد شد.", "success");
         }
       } else {
-        // ورود کاربر قدیمی
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInError) throw signInError;
-        showToast("خوش آمدید!", "success");
+        const { error: lErr } = await supabase.auth.signInWithPassword({ email: virtualEmail, password: passVal });
+        if (lErr) throw lErr;
+        showToast("ورود موفقیت‌آمیز بود.", "success");
       }
     } catch (err) {
-      showToast(err.message || "خطایی در احراز هویت رخ داد.", "error");
+      showToast(err.message || "خطایی در فرآیند احراز هویت رخ داد.", "error");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = isSignUpMode ? "ثبت‌نام و ورود" : "ورود به حساب";
     }
-  });
+  };
 
-  document.getElementById('btnLogout').addEventListener('click', async () => {
-    if(confirm("آیا می‌خواهید از حساب کاربری خود خارج شوید؟")) {
-      await supabase.auth.signOut();
-      location.reload();
-    }
-  });
+  document.getElementById('btnLogout').onclick = async function() {
+    await supabase.auth.signOut();
+    location.reload();
+  };
 
-  // تعقیب وضعیت نشست کاربر
   supabase.auth.onAuthStateChange(async (event, session) => {
     currentSession = session;
     if (session) {
       document.getElementById('viewAuth').style.display = 'none';
       document.getElementById('appHeader').style.display = 'flex';
-      
-      // دریافت اطلاعات پروفایل کاربر
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('display_name')
-        .eq('id', session.user.id)
-        .single();
-      
-      currentUserProfile = profile;
-      document.getElementById('userDisplayName').textContent = profile ? profile.display_name : "کاربر";
-      
-      switchView('viewDashboard');
-      await initializeApp();
+      const { data: prof } = await supabase.from('profiles').select('display_name').eq('id', session.user.id).maybeSingle();
+      currentUserProfile = prof;
+      document.getElementById('userDisplayName').textContent = prof ? prof.display_name : "کاربر جدید";
+      switchView('dashboard');
+      await initData();
     } else {
       document.getElementById('appHeader').style.display = 'none';
       document.getElementById('viewAuth').style.display = 'block';
     }
   });
 
-  // ============================================================================
-  // هسته اصلی اپلیکیشن و منطق داده‌ها
-  // ============================================================================
-  async function initializeApp() {
-    await fetchWords();
-    await fetchUserStats();
-    renderLessonDashboard();
-    setupRealtimeSync();
+  async function initData() {
+    await loadWords();
+    await loadStats();
+    renderLessons();
+    startRealtime();
   }
 
-  async function fetchWords() {
-    const { data, error } = await supabase
-      .from('words')
-      .select('*')
-      .order('id', { ascending: true });
-
-    if (error) {
-      showToast("خطا در دریافت لیست واژگان منبع.", "error");
-      return;
-    }
-    allWords = data || [];
-    allWords.forEach(w => wordsMap.set(w.id, w));
-  }
-
-  async function fetchUserStats() {
-    if (!currentSession) return;
-    
-    // دریافت آمار از حالت بهینه فرانت‌اند بدون فشار به دیتابیس در هر کلیک
-    const { data, error } = await supabase
-      .from('live_status')
-      .select('correct_count, incorrect_count')
-      .eq('user_id', currentSession.user.id)
-      .maybeSingle();
-
+  async function loadWords() {
+    const { data, error } = await supabase.from('words').select('*').order('id', { ascending: true });
     if (!error && data) {
+      allWords = data;
+      allWords.forEach(w => wordsMap.set(w.id, w));
+    }
+  }
+
+  async function loadStats() {
+    if (!currentSession) return;
+    const { data } = await supabase.from('live_status').select('correct_count, incorrect_count').eq('user_id', currentSession.user.id).maybeSingle();
+    if (data) {
       userStats.correct = data.correct_count || 0;
       userStats.incorrect = data.incorrect_count || 0;
       userStats.total = userStats.correct + userStats.incorrect;
-      updateStatsUI();
+      uiStats();
     }
   }
 
-  function updateStatsUI() {
+  function uiStats() {
     document.getElementById('statCorrect').textContent = userStats.correct;
     document.getElementById('statIncorrect').textContent = userStats.incorrect;
     document.getElementById('statTotalStudied').textContent = userStats.total;
   }
 
-  function renderLessonDashboard() {
-    // استخراج دروس یکتا
-    const lessonsSet = new Set();
-    allWords.forEach(w => { if(w.lesson) lessonsSet.add(w.lesson); });
-    const lessonsList = Array.from(lessonsSet).sort();
-
-    const container = document.getElementById('lessonList');
-    if (lessonsList.length === 0) {
-      container.innerHTML = '<p class="empty-state">هیچ درسی در دیتابیس یافت نشد.</p>';
+  function renderLessons() {
+    const lSet = new Set();
+    allWords.forEach(w => { if(w.lesson) lSet.add(w.lesson); });
+    const sorted = Array.from(lSet).sort();
+    const box = document.getElementById('lessonList');
+    
+    if (sorted.length === 0) {
+      box.innerHTML = '<p class="empty-state">هیچ محتوای آموزشی در دیتابیس یافت نشد.</p>';
       return;
     }
-
-    container.innerHTML = '';
-    lessonsList.forEach(lessonName => {
-      const count = allWords.filter(w => w.lesson === lessonName).length;
-      
+    box.innerHTML = '';
+    sorted.forEach(name => {
+      const cnt = allWords.filter(w => w.lesson === name).length;
       const row = document.createElement('div');
       row.className = 'lesson-row';
-      row.innerHTML = `
-        <div class="lesson-info">
-          <h3>${safeEscapeHtml(lessonName)}</h3>
-          <p>${count} واژه برای تمرین</p>
-        </div>
-        <button class="btn-sm" data-lesson="${safeEscapeHtml(lessonName)}">شروع تمرین</button>
-      `;
-      
-      row.querySelector('button').addEventListener('click', () => {
-        startStudySession(lessonName);
-      });
-      container.appendChild(row);
+      row.innerHTML = `<div class="lesson-info"><h3>${safeEscapeHtml(name)}</h3><p>${cnt} کارت آموزشی</p></div><button class="btn-sm">شروع مرور</button>`;
+      row.querySelector('button').onclick = () => startStudy(name);
+      box.appendChild(row);
     });
   }
 
-  // ============================================================================
-  // سیستم مدیریت جلسات تمرین (Study Engine)
-  // ============================================================================
-  async function startStudySession(lessonName) {
-    currentLessonName = lessonName;
-    currentLessonWords = allWords.filter(w => w.lesson === lessonName);
-    
-    if(currentLessonWords.length === 0) {
-      showToast("این درس خالی است کلمه‌ای وجود ندارد.", "error");
-      return;
-    }
-    
-    // مخلوط کردن تصادفی کلمات (Shuffle)
-    currentLessonWords.sort(() => Math.random() - 0.5);
+  async function startStudy(name) {
+    currentLessonName = name;
+    currentLessonWords = allWords.filter(w => w.lesson === name).sort(() => Math.random() - 0.5);
+    if(currentLessonWords.length === 0) return;
     currentWordIndex = 0;
 
     try {
-      // ایجاد یک ردیف لاگ در جدول جلسات مطالعه
-      const { data, error } = await supabase
-        .from('study_sessions')
-        .insert([{ user_id: currentSession.user.id }])
-        .select()
-        .single();
-
+      const { data, error } = await supabase.from('study_sessions').insert([{ user_id: currentSession.user.id }]).select().single();
       if (error) throw error;
       currentStudySessionId = data.id;
-
-      // نمایش صفحه تمرین
-      document.getElementById('studyLessonTitle').textContent = lessonName;
-      switchView('viewStudy');
-      showWordCard();
-
-      // راه‌اندازی تایمر سنجش زمان جلسه برای مدال ۵ دقیقه‌ای
-      startSessionTimer(data.started_at);
-
-    } catch (err) {
-      showToast("خطا در ایجاد جلسه تمرینی دیتابیس.", "error");
+      document.getElementById('studyLessonTitle').textContent = name;
+      switchView('study');
+      showCard();
+      runTimer(data.started_at);
+    } catch(e) {
+      showToast("خطا در ایجاد نشست معاملاتی سرور.", "error");
     }
   }
 
-  function showWordCard() {
+  function showCard() {
     const card = document.getElementById('flashcard');
-    card.classList.remove('flipped'); // برگشت به رو
-
+    card.classList.remove('flipped');
     const word = currentLessonWords[currentWordIndex];
-    document.getElementById('studyProgressText').textContent = `واژه ${currentWordIndex + 1} از ${currentLessonWords.length}`;
-    
-    // اعمال متون واژه بدون پرش دیداری قبل چرخش
+    document.getElementById('studyProgressText').textContent = `کارت ${currentWordIndex + 1} از ${currentLessonWords.length}`;
     document.getElementById('wordFront').textContent = word.arabic_word;
     document.getElementById('wordBack').textContent = word.persian_meaning;
-
-    // آپدیت همزمان در بخش آنلاین بقیه کاربران
     updateLiveStatus('studying', currentLessonName, word.id);
   }
 
-  // انیمیشن چرخاندن کارت
   const flashcardEl = document.getElementById('flashcard');
-  flashcardEl.addEventListener('click', () => {
-    flashcardEl.classList.toggle('flipped');
-  });
+  flashcardEl.onclick = () => flashcardEl.classList.toggle('flipped');
 
-  async function handleAnswer(isCorrect) {
-    if (isCorrect) {
-      userStats.correct++;
-    } else {
-      userStats.incorrect++;
-    }
+  async function answer(isOk) {
+    if (isOk) userStats.correct++; else userStats.incorrect++;
     userStats.total++;
-    updateStatsUI();
-
-    // حرکت به کارت بعدی
+    uiStats();
     currentWordIndex++;
-    if (currentWordIndex < currentLessonWords.length) {
-      showWordCard();
-    } else {
-      showToast("آفرین! شما تمامی کلمات این درس را مرور کردید.", "success");
-      endStudySession();
-    }
+    if (currentWordIndex < currentLessonWords.length) showCard(); else { showToast("مرور این فصل به پایان رسید.", "success"); stopStudy(); }
   }
 
-  document.getElementById('btnCorrect').addEventListener('click', (e) => { e.stopPropagation(); handleAnswer(true); });
-  document.getElementById('btnIncorrect').addEventListener('click', (e) => { e.stopPropagation(); handleAnswer(false); });
+  document.getElementById('btnCorrect').onclick = (e) => { e.stopPropagation(); answer(true); };
+  document.getElementById('btnIncorrect').onclick = (e) => { e.stopPropagation(); answer(false); };
 
-  async function endStudySession() {
+  async function stopStudy() {
     if (!currentStudySessionId) return;
-
     clearInterval(sessionTimerInterval);
-    const endTime = new Date();
-
-    // بهینه‌سازی شده جهت آپدیت یکباره دیتابیس آمار نهایی وضعیت زنده
     await supabase.from('live_status').upsert({
       user_id: currentSession.user.id,
       correct_count: userStats.correct,
@@ -1209,171 +642,99 @@
       current_lesson: null,
       current_word_id: null
     });
-
     currentStudySessionId = null;
-    switchView('viewDashboard');
+    switchView('dashboard');
   }
 
-  document.getElementById('btnBackToDashboard').addEventListener('click', () => {
-    if(confirm("آیا می‌خواهید از این جلسه تمرین خارج شوید؟ پیشرفت شما تا این لحظه حفظ می‌شود.")) {
-      endStudySession();
-    }
-  });
+  document.getElementById('btnBackToDashboard').onclick = () => {
+    if(confirm("آیا مایلید روند مرور را متوقف کنید؟")) stopStudy();
+  };
 
-  function startSessionTimer(startedAtTimestamp) {
+  function runTimer(start) {
     if(sessionTimerInterval) clearInterval(sessionTimerInterval);
-    
-    const startTime = new Date(startedAtTimestamp).getTime();
-    const badgeContainer = document.getElementById('badgeContainer');
-
+    const origin = new Date(start).getTime();
+    const box = document.getElementById('badgeContainer');
     sessionTimerInterval = setInterval(async () => {
-      const elapsedMs = Date.now() - startTime;
-      const elapsedMinutes = elapsedMs / (1000 * 60);
-
-      // اگر کاربر بیشتر از ۵ دقیقه ماند و مدال نگرفته بود
-      if (elapsedMinutes >= 5) {
+      const mins = (Date.now() - origin) / 60000;
+      if (mins >= 5) {
         clearInterval(sessionTimerInterval);
-        
-        await supabase
-          .from('study_sessions')
-          .update({ earned_badge: true, total_minutes: elapsedMinutes })
-          .eq('id', currentStudySessionId);
-
-        await supabase
-          .from('live_status')
-          .update({ earned_badge: true })
-          .eq('user_id', currentSession.user.id);
-
-        badgeContainer.style.display = 'flex';
-        showToast("تبریک! شما مدال پشتکار طلایی را دریافت کردید! 🏅", "success");
+        await supabase.from('study_sessions').update({ earned_badge: true, total_minutes: mins }).eq('id', currentStudySessionId);
+        await supabase.from('live_status').update({ earned_badge: true }).eq('user_id', currentSession.user.id);
+        box.style.display = 'flex';
+        showToast("نشان تمرکز طلایی به شما تعلق گرفت! 🏅", "success");
       }
-    }, 10000); // چک کردن هر ۱۰ ثانیه یکبار برای صرفه‌جویی منابع مرورگر
+    }, 10000);
   }
 
-  // ============================================================================
-  // میانبرهای صفحه کلید (Keyboard Shortcuts)
-  // ============================================================================
-  window.addEventListener('keydown', (e) => {
-    // تنها در صورتی عمل کند که کاربر در صفحه مطالعه فعال باشد
+  window.onkeydown = function(e) {
     if (!views.study.classList.contains('active')) return;
+    if (e.code === 'Space') { e.preventDefault(); flashcardEl.classList.toggle('flipped'); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); answer(true); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); answer(false); }
+  };
 
-    if (e.code === 'Space') {
-      e.preventDefault();
-      flashcardEl.classList.toggle('flipped');
-    } else if (e.key === 'ArrowLeft') {
-      // کلید چپ مپ شده به دکمه صحیح
-      e.preventDefault();
-      handleAnswer(true);
-    } else if (e.key === 'ArrowRight') {
-      // کلید راست مپ شده به دکمه غلط
-      e.preventDefault();
-      handleAnswer(false);
-    }
-  });
-
-  // ============================================================================
-  // بخش آنلاین همزمان کاربران (Supabase Realtime Sync)
-  // ============================================================================
-  async function updateLiveStatus(status, lessonName, wordId) {
+  async function updateLiveStatus(status, les, wId) {
     if (!currentSession) return;
-
-    // استفاده از ساختار ایمن upsert متصل به وضعیت فرانت برای جلوگیری از کرش دیتابیس
     await supabase.from('live_status').upsert({
       user_id: currentSession.user.id,
       status: status,
-      current_lesson: lessonName,
-      current_word_id: wordId,
+      current_lesson: les,
+      current_word_id: wId,
       session_started_at: status === 'studying' ? new Date().toISOString() : null,
       correct_count: userStats.correct,
       incorrect_count: userStats.incorrect
     });
   }
 
-  function setupRealtimeSync() {
+  function startRealtime() {
     if (liveRealtimeChannel) return;
-
-    // گوش دادن به تغییرات جدول وضعیت لایو برای همگام‌سازی بلادرنگ حضور بقیه
-    liveRealtimeChannel = supabase
-      .channel('table-db-changes')
-      .on('postgres_changes', { event: '*', filter: 'status=eq.studying', schema: 'public', table: 'live_status' }, () => {
-        fetchAndRenderLiveStatus();
-      })
-      .subscribe();
-
-    // اولین بارگذاری برای داده های موجود
-    fetchAndRenderLiveStatus();
-    
-    // رفرش دوره‌ای تایمرها هر ثانیه
-    setInterval(tickElapsedLiveTimes, 1000);
+    liveRealtimeChannel = supabase.channel('db-sync').on('postgres_changes', { event: '*', schema: 'public', table: 'live_status' }, () => {
+      drawLive();
+    }).subscribe();
+    drawLive();
+    setInterval(tickTimes, 1000);
   }
 
-  async function fetchAndRenderLiveStatus() {
+  async function drawLive() {
     const wrap = document.getElementById('liveProgressRows');
+    const { data: rows } = await supabase.from('live_status').select('*');
+    if (!rows) return;
     
-    // راهکار بهینه رفع باگ PGRST200 پیوند نامنظم پروفایل‌ها
-    // ابتدا دریافت وضعیت‌های زنده و سپس دریافت مشخصات کاربران برای ایمنی ۱۰۰٪ ساختاری فرانت‌اند
-    const { data: liveRows, error: liveErr } = await supabase
-      .from('live_status')
-      .select('*');
-
-    if (liveErr || !liveRows) {
-      wrap.innerHTML = '<p class="empty-state">خطا در دریافت وضعیت آنلاین شبکه زنده.</p>';
+    const network = rows.filter(r => r.user_id !== currentSession.user.id);
+    if(network.length === 0) {
+      wrap.innerHTML = '<p class="empty-state">هیچ زبان‌آموز دیگری در حال حاضر آنلاین نیست.</p>';
       return;
     }
-
-    const studyingUsers = liveRows.filter(r => r.user_id !== currentSession.user.id);
-    if(studyingUsers.length === 0) {
-      wrap.innerHTML = '<p class="empty-state">در حال حاضر زبان‌آموز دیگری آنلاین نیست. شما تنها هستید!</p>';
-      return;
-    }
-
-    // دریافت نام نمایشی پروفایل‌های مرتبط به صورت جداگانه جهت پایداری کوئری
-    const userIds = studyingUsers.map(r => r.user_id);
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('id, display_name')
-      .in('id', userIds);
-
-    const profilesMap = new Map();
-    if (profiles) profiles.forEach(p => profilesMap.set(p.id, p.display_name));
+    
+    const ids = network.map(r => r.user_id);
+    const { data: profs } = await supabase.from('profiles').select('id, display_name').in('id', ids);
+    const pMap = new Map();
+    if (profs) profs.forEach(p => pMap.set(p.id, p.display_name));
 
     wrap.innerHTML = '';
-    studyingUsers.forEach(row => {
-      const name = profilesMap.get(row.user_id) || 'زبان‌آموز ناشناس';
+    network.forEach(row => {
+      const name = pMap.get(row.user_id) || 'کاربر ناشناس';
       const word = row.current_word_id ? wordsMap.get(row.current_word_id) : null;
-      
-      let statusText = "در حال استراحت در منو";
+      let text = "در حال انتخاب سرفصل";
       if(row.status === 'studying') {
-        statusText = `در حال مطالعه: ${row.current_lesson || ''} ${word ? ' — واژه (' + word.arabic_word + ')' : ''}`;
+        text = `در حال مرور: ${row.current_lesson || ''} ${word ? ' — واژه (' + word.arabic_word + ')' : ''}`;
       }
-
       const el = document.createElement('div');
       el.className = 'progress-row';
-      el.innerHTML = `
-        <div class="user-info">
-          <h4>${safeEscapeHtml(name)} ${row.earned_badge ? '<span class="badge-mini">🏅</span>' : ''}</h4>
-          <p class="${row.status === 'studying' ? 'active-status' : ''}">${safeEscapeHtml(statusText)}</p>
-        </div>
-        <div class="time-elapsed" data-started="${row.session_started_at || ''}">00:00</div>
-      `;
+      el.innerHTML = `<div class="user-info"><h4>${safeEscapeHtml(name)} ${row.earned_badge ? '🏅' : ''}</h4><p class="${row.status === 'studying' ? 'active-status' : ''}">${safeEscapeHtml(text)}</p></div><div class="time-elapsed" data-started="${row.session_started_at || ''}">00:00</div>`;
       wrap.appendChild(el);
     });
-
-    tickElapsedLiveTimes();
+    tickTimes();
   }
 
-  function tickElapsedLiveTimes() {
+  function tickTimes() {
     document.querySelectorAll('.time-elapsed').forEach(el => {
-      const started = el.dataset.started;
-      if (!started) { el.textContent = '--:--'; return; }
-      
-      const diffSeconds = Math.max(0, Math.floor((Date.now() - new Date(started).getTime()) / 1000));
-      const m = Math.floor(diffSeconds / 60);
-      const s = diffSeconds % 60;
-      el.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      const s = el.dataset.started;
+      if (!s) { el.textContent = '--:--'; return; }
+      const diff = Math.max(0, Math.floor((Date.now() - new Date(s).getTime()) / 1000));
+      el.textContent = `${Math.floor(diff / 60).toString().padStart(2, '0')}:${(diff % 60).toString().padStart(2, '0')}`;
     });
   }
-
 </script>
 </body>
 </html>
