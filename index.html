@@ -6,7 +6,6 @@
 <title>فلش‌کارت واژگان عربی</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- کتابخانه Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -97,25 +96,6 @@
   }
   .theme-toggle:hover{transform:scale(1.08);}
 
-  .logout-btn {
-    position: fixed;
-    top: 16px;
-    inset-inline-start: 66px;
-    z-index: 20;
-    background: var(--surface);
-    border: 1px solid var(--wrong);
-    color: var(--wrong);
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 0.85rem;
-    font-family: inherit;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: .15s;
-    display: none;
-  }
-  .logout-btn:hover { background: var(--wrong); color: var(--surface); }
-
   .top-ornament{
     width:100%;
     max-width:640px;
@@ -156,7 +136,6 @@
     padding:22px;
     position:relative;
     transition: background .25s, border-color .25s;
-    margin-bottom: 20px;
   }
   .panel::before{
     content:"";
@@ -167,137 +146,299 @@
     pointer-events:none;
   }
 
-  /* کامپوننت احراز هویت با نام کاربری */
-  #authScreen { display: block; text-align: center; }
-  .auth-inputs { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-  .auth-inputs input {
-    width: 100%; padding: 12px; border-radius: 12px;
+  /* ---------- Auth Screen Styles ---------- */
+  #authScreen { display: none; }
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .auth-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
     border: 1px solid var(--border-soft);
     background: var(--surface-alt);
     color: var(--ink);
-    font-family: inherit; font-size: 0.95rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
   }
-  .auth-inputs input:focus { outline: none; border-color: var(--gold); }
-  .auth-actions { display: flex; gap: 10px; margin-top: 15px; justify-content: center; }
-  .auth-error { color: var(--wrong); font-size: 0.85rem; margin-top: 10px; display: none; }
-
-  /* کامپوننت حضور آنلاین */
-  .online-users-container {
-    background: var(--surface-alt);
-    border: 1px solid var(--border-soft);
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 16px;
+  .auth-input:focus {
+    border-color: var(--gold);
+  }
+  .auth-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+    flex-direction: row-reverse;
+  }
+  .auth-message {
     font-size: 0.85rem;
-    display: none;
-  }
-  .online-users-title { font-weight: bold; color: var(--gold); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-  .online-users-title::before { content:""; display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--correct); }
-  .online-users-list { display: flex; flex-wrap: wrap; gap: 8px; }
-  .online-user-badge {
-    background: var(--surface); border: 1px solid var(--gold-soft);
-    color: var(--ink); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem;
+    text-align: center;
+    margin-top: 5px;
+    font-weight: 500;
   }
 
   /* ---------- lesson selection ---------- */
   #selectScreen { display: none; }
-  .panel h2{ font-size:1.05rem; margin:0 0 14px; display:flex; align-items:center; gap:8px; }
-  .lesson-toolbar{ display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+  .panel h2{
+    font-size:1.05rem;
+    margin:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .lesson-toolbar{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
   .lesson-toolbar button{
-    background:none; border:1px solid var(--gold); color:var(--gold);
-    border-radius:20px; padding:6px 14px; font-family:inherit;
-    font-size:0.8rem; cursor:pointer; transition:.15s;
+    background:none;
+    border:1px solid var(--gold);
+    color:var(--gold);
+    border-radius:20px;
+    padding:6px 14px;
+    font-family:inherit;
+    font-size:0.8rem;
+    cursor:pointer;
+    transition:.15s;
   }
   .lesson-toolbar button:hover{background:var(--gold);color:var(--surface);}
 
   .lesson-list{
-    display:grid; grid-template-columns:1fr; gap:8px;
-    max-height:340px; overflow-y:auto; padding-inline-end:4px; margin-bottom:18px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    max-height:340px;
+    overflow-y:auto;
+    padding-inline-end:4px;
+    margin-bottom:18px;
   }
   .lesson-item{
-    display:flex; align-items:center; justify-content:space-between;
-    gap:10px; padding:10px 14px; border-radius:10px;
-    background:var(--surface-alt); border:1px solid transparent;
-    cursor:pointer; transition:.15s; font-size:0.92rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 14px;
+    border-radius:10px;
+    background:var(--surface-alt);
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:.15s;
+    font-size:0.92rem;
   }
   .lesson-item:hover{background:var(--surface-alt-hover);}
   .lesson-item.checked{border-color:var(--gold); background:var(--surface-alt-hover);}
-  .lesson-item .count{ color:var(--ink-soft); font-size:0.78rem; white-space:nowrap; }
+  .lesson-item .count{
+    color:var(--ink-soft);
+    font-size:0.78rem;
+    white-space:nowrap;
+  }
   .lesson-item input{accent-color:var(--gold); width:17px; height:17px; cursor:pointer;}
 
-  .start-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .start-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
   .selected-info{color:var(--ink-soft); font-size:0.85rem;}
 
   .btn{
-    border:none; border-radius:12px; padding:12px 22px;
-    font-family:inherit; font-size:0.95rem; font-weight:700;
-    cursor:pointer; transition:transform .12s, box-shadow .12s, background .15s;
+    border:none;
+    border-radius:12px;
+    padding:12px 22px;
+    font-family:inherit;
+    font-size:0.95rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .12s, box-shadow .12s, background .15s;
   }
   .btn:active{transform:scale(0.97);}
+  
   .btn-primary{background:var(--ink); color:var(--surface);}
   .btn-primary:hover{box-shadow:0 6px 16px rgba(0,0,0,0.25);}
   .btn-primary:disabled{background:var(--border-soft); color:var(--ink-soft); cursor:not-allowed; box-shadow:none;}
+  
   .btn-ghost{background:transparent; color:var(--ink-soft); border:1px solid var(--border-soft);}
   .btn-ghost:hover{background:var(--border-soft-hover);}
 
   .resume-banner{
-    display:none; background:var(--surface-alt); border:1px solid var(--gold-soft);
-    color:var(--ink); border-radius:12px; padding:12px 16px;
-    font-size:0.85rem; margin-bottom:16px; align-items:center;
-    justify-content:space-between; gap:10px; flex-wrap:wrap;
+    display:none;
+    background:var(--surface-alt);
+    border:1px solid var(--gold-soft);
+    color:var(--ink);
+    border-radius:12px;
+    padding:12px 16px;
+    font-size:0.85rem;
+    margin-bottom:16px;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
   }
   .resume-banner button{white-space:nowrap;}
 
   /* ---------- study screen ---------- */
   #studyScreen{display:none;}
-  .study-top{ width:100%; max-width:640px; display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px; }
-  .study-top .lesson-name{ font-size:0.85rem; color:var(--ink-soft); }
-  
-  /* کامپوننت تایمر */
-  .study-timer {
-    font-size: 0.95rem; font-weight: bold; color: var(--gold);
-    background: var(--surface-alt); padding: 6px 12px;
-    border-radius: 12px; border: 1px solid var(--gold-soft);
+
+  .study-top{
+    width:100%;
+    max-width:640px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+    gap:10px;
+  }
+  .study-top .lesson-name{
+    font-size:0.85rem;
+    color:var(--ink-soft);
   }
 
-  .progress-wrap{ width:100%; max-width:640px; margin-bottom:22px; }
-  .progress-bar-bg{ height:8px; background:var(--track-bg); border-radius:6px; overflow:hidden; }
-  .progress-bar-fill{ height:100%; background:linear-gradient(90deg, var(--gold-soft), var(--gold)); width:0%; transition:width .35s ease; }
-  .progress-stats{ display:flex; justify-content:space-between; font-size:0.78rem; color:var(--ink-soft); margin-top:6px; }
+  .progress-wrap{
+    width:100%;
+    max-width:640px;
+    margin-bottom:22px;
+  }
+  .progress-bar-bg{
+    height:8px;
+    background:var(--track-bg);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .progress-bar-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--gold-soft), var(--gold));
+    width:0%;
+    transition:width .35s ease;
+  }
+  .progress-stats{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
   .progress-stats span b{color:var(--ink);}
 
-  .card-stage{ width:100%; max-width:640px; display:flex; justify-content:center; margin-bottom:22px; perspective:1600px; }
-  .flashcard{ width:100%; max-width:420px; height:260px; position:relative; cursor:pointer; }
+  .card-stage{
+    width:100%;
+    max-width:640px;
+    display:flex;
+    justify-content:center;
+    margin-bottom:22px;
+    perspective:1600px;
+  }
+  .flashcard{
+    width:100%;
+    max-width:420px;
+    height:260px;
+    position:relative;
+    cursor:pointer;
+  }
   .flashcard .face{
-    position:absolute; inset:0; border-radius:20px; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; text-align:center; padding:26px;
-    backface-visibility:hidden; box-shadow:var(--shadow); border:1px solid rgba(59, 130, 246, 0.4);
+    position:absolute;
+    inset:0;
+    border-radius:20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:26px;
+    backface-visibility:hidden;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(59, 130, 246, 0.4);
     transition:transform .5s cubic-bezier(.4,.2,.2,1);
   }
-  .flashcard .face::before{ content:""; position:absolute; inset:8px; border:1px dashed rgba(59, 130, 246, 0.3); border-radius:13px; pointer-events:none; }
-  .face-front{ background:linear-gradient(160deg, var(--card-front-1), var(--card-front-2)); transform:rotateY(0deg); z-index:2; transition: transform .5s cubic-bezier(.4,.2,.2,1), background .25s; }
-  .face-back{ background:linear-gradient(160deg, var(--card-back-1), var(--card-back-2)); color:var(--card-back-text); transform:rotateY(180deg); transition: transform .5s cubic-bezier(.4,.2,.2,1), background .25s, color .25s; }
+  .flashcard .face::before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px dashed rgba(59, 130, 246, 0.3);
+    border-radius:13px;
+    pointer-events:none;
+  }
+  .face-front{
+    background:linear-gradient(160deg, var(--card-front-1), var(--card-front-2));
+    transform:rotateY(0deg);
+    z-index:2;
+    transition: transform .5s cubic-bezier(.4,.2,.2,1), background .25s;
+  }
+  .face-back{
+    background:linear-gradient(160deg, var(--card-back-1), var(--card-back-2));
+    color:var(--card-back-text);
+    transform:rotateY(180deg);
+    transition: transform .5s cubic-bezier(.4,.2,.2,1), background .25s, color .25s;
+  }
   .flashcard.flipped .face-front{transform:rotateY(180deg);}
   .flashcard.flipped .face-back{transform:rotateY(360deg);}
   .flashcard.no-anim .face{transition:none !important;}
 
-  .card-label{ position:absolute; top:14px; inset-inline-start:18px; font-size:0.68rem; letter-spacing:1px; color:var(--gold); opacity:0.85; }
+  .card-label{
+    position:absolute;
+    top:14px;
+    inset-inline-start:18px;
+    font-size:0.68rem;
+    letter-spacing:1px;
+    color:var(--gold);
+    opacity:0.85;
+  }
   .face-back .card-label{color:var(--gold-soft);}
-  .word-text{ font-size:2.1rem; font-weight:800; line-height:1.3; }
-  .meaning-text{ font-size:1.15rem; font-weight:500; line-height:1.9; max-height:170px; overflow-y:auto; padding:0 4px; }
-  .tap-hint{ margin-top:14px; font-size:0.75rem; color:var(--ink-soft); opacity:0.75; }
+  .word-text{
+    font-size:2.1rem;
+    font-weight:800;
+    line-height:1.3;
+  }
+  .meaning-text{
+    font-size:1.15rem;
+    font-weight:500;
+    line-height:1.9;
+    max-height:170px;
+    overflow-y:auto;
+    padding:0 4px;
+  }
+  .tap-hint{
+    margin-top:14px;
+    font-size:0.75rem;
+    color:var(--ink-soft);
+    opacity:0.75;
+  }
   .face-back .tap-hint{color:var(--gold-soft); opacity:0.7;}
 
   .answer-row{
-    width:100%; max-width:640px; display:grid; grid-template-columns:1fr 1fr; 
-    gap:10px; margin-bottom:18px; opacity:0; transform:translateY(6px);
-    pointer-events:none; transition:opacity .25s, transform .25s;
+    width:100%;
+    max-width:640px;
+    display:grid;
+    grid-template-columns:1fr 1fr; 
+    gap:10px;
+    margin-bottom:18px;
+    opacity:0;
+    transform:translateY(6px);
+    pointer-events:none;
+    transition:opacity .25s, transform .25s;
   }
   .answer-row.show{opacity:1; transform:translateY(0); pointer-events:auto;}
   .ans-btn{
-    border:none; border-radius:14px; padding:14px 8px; font-family:inherit;
-    font-weight:700; font-size:0.9rem; cursor:pointer; display:flex;
-    flex-direction:column; align-items:center; gap:4px; transition:transform .12s, box-shadow .12s;
+    border:none;
+    border-radius:14px;
+    padding:14px 8px;
+    font-family:inherit;
+    font-weight:700;
+    font-size:0.9rem;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    transition:transform .12s, box-shadow .12s;
   }
   .ans-btn:active{transform:scale(0.95);}
   .ans-btn .icon{font-size:1.3rem;}
@@ -305,7 +446,13 @@
   .ans-wrong{background:var(--wrong-bg); color:var(--wrong); border:1.5px solid var(--wrong);}
   .ans-btn:hover{box-shadow:0 6px 14px rgba(0,0,0,0.12);}
 
-  .study-actions{ width:100%; max-width:640px; display:flex; justify-content:center; gap:10px; }
+  .study-actions{
+    width:100%;
+    max-width:640px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+  }
 
   /* ---------- completion ---------- */
   #doneScreen{display:none; text-align:center;}
@@ -326,8 +473,7 @@
 </head>
 <body>
 
-<button class="theme-toggle" id="themeToggle" title="تغییر حالت روشن/تاریک">🌙</button>
-<button class="logout-btn" id="logoutBtn" title="خروج از حساب">خروج</button>
+<button class="theme-toggle" id="themeToggle" title="تغییر حالت روشن/تاریک" aria-label="تغییر حالت روشن/تاریک">🌙</button>
 
 <div class="top-ornament"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
 <header>
@@ -335,29 +481,29 @@
   <p>تمرین لغت درس‌به‌درس — کارت را لمس کن، معنی را ببین، خودت را بسنج</p>
 </header>
 
-<!-- AUTH SCREEN -->
 <div id="authScreen" class="panel">
-  <h2>🔒 ورود یا ثبت‌نام با نام کاربری</h2>
-  <p style="font-size: 0.85rem; color: var(--ink-soft);">یک نام کاربری و رمز عبور برای خود تعیین کنید.</p>
-  <div class="auth-inputs">
-    <input type="text" id="authUsername" placeholder="نام کاربری (مثال: ali123)...">
-    <input type="password" id="authPassword" placeholder="رمز عبور (حداقل ۶ کاراکتر)...">
-  </div>
-  <div class="auth-error" id="authError"></div>
-  <div class="auth-actions">
-    <button class="btn btn-primary" id="loginBtn">ورود</button>
-    <button class="btn btn-ghost" id="signupBtn">ثبت‌نام حساب جدید</button>
+  <h2 style="justify-content: center; gap: 8px;"><span style="color: var(--gold);">🔒</span> ورود یا ثبت‌نام با نام کاربری</h2>
+  <p style="text-align: center; color: var(--ink-soft); font-size: 0.9rem; margin: 0;">یک نام کاربری و رمز عبور برای خود تعیین کنید.</p>
+  
+  <div class="auth-form">
+    <input type="text" id="authUsername" class="auth-input" placeholder="نام کاربری (مثال: ali123)..." dir="ltr">
+    <input type="password" id="authPassword" class="auth-input" placeholder="رمز عبور (حداقل ۶ کاراکتر)..." dir="ltr">
+    
+    <div id="authMessage" class="auth-message"></div>
+    
+    <div class="auth-buttons">
+      <button class="btn btn-primary" id="loginBtn" style="min-width: 100px;">ورود</button>
+      <button class="btn btn-ghost" id="signupBtn">ثبت‌نام حساب جدید</button>
+    </div>
   </div>
 </div>
 
-<!-- ONLINE USERS PANEL -->
-<div id="onlineUsersPanel" class="online-users-container">
-  <div class="online-users-title">هم‌اکنون در حال مطالعه:</div>
-  <div class="online-users-list" id="onlineUsersList"></div>
-</div>
-
-<!-- SELECTION SCREEN -->
 <div id="selectScreen" class="panel">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+    <h2>📖 انتخاب درس‌ها</h2>
+    <button class="btn btn-ghost" id="logoutBtn" style="padding: 4px 10px; font-size: 0.78rem; color: var(--wrong);">خروج از حساب</button>
+  </div>
+  
   <div id="resumeBanner" class="resume-banner">
     <span>یک تمرین ناتمام از قبل ذخیره شده — می‌خوای ادامه بدی؟</span>
     <div style="display:flex; gap:8px;">
@@ -366,7 +512,6 @@
     </div>
   </div>
 
-  <h2>📖 انتخاب درس‌ها</h2>
   <div class="lesson-toolbar">
     <button id="selectAllBtn">انتخاب همه</button>
     <button id="clearAllBtn">پاک‌کردن انتخاب</button>
@@ -379,12 +524,10 @@
   </div>
 </div>
 
-<!-- STUDY SCREEN -->
 <div id="studyScreen">
   <div class="study-top">
-    <button class="btn btn-ghost" style="padding:8px 16px; font-size:0.8rem;" id="backBtn">‹ بازگشت</button>
+    <button class="btn btn-ghost" style="padding:8px 16px; font-size:0.8rem;" id="backBtn">‹ بازگشت به انتخاب درس</button>
     <span class="lesson-name" id="activeLessonsLabel"></span>
-    <div class="study-timer" id="studyTimer">00:00</div>
   </div>
 
   <div class="progress-wrap">
@@ -420,7 +563,6 @@
   </div>
 </div>
 
-<!-- DONE SCREEN -->
 <div id="doneScreen" class="panel">
   <div class="medal">🎉</div>
   <h2>تبریک! همه لغات یاد گرفته شدن</h2>
@@ -431,482 +573,70 @@
 <div class="top-ornament" style="margin-top:26px;"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
 
 <script>
-/* ============== SUPABASE CONFIG ============== */
-const supabaseUrl = 'https://objayssyopmkzhsboulv.supabase.co/rest/v1/';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-/* ============== APP STATE & USERNAME AUTH ============== */
-let currentUser = null;
-let currentUsername = null;
-let realtimeChannel = null;
-
-const authScreen = document.getElementById('authScreen');
-const selectScreen = document.getElementById('selectScreen');
-const onlineUsersPanel = document.getElementById('onlineUsersPanel');
-const logoutBtn = document.getElementById('logoutBtn');
-const authError = document.getElementById('authError');
-const usernameInput = document.getElementById('authUsername');
-const passwordInput = document.getElementById('authPassword');
-
-function showAuthError(msg) {
-  authError.textContent = msg;
-  authError.style.display = 'block';
-}
-
-// تولید یک ایمیل ساختگی بر اساس نام کاربری
-function generateVirtualEmail(username) {
-  return `${username.trim().toLowerCase()}@internal.app`;
-}
-
-async function checkAuthSession() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    // استخراج نام کاربری از ایمیل ساختگی
-    currentUsername = session.user.email.split('@')[0];
-    handleLoginSuccess(session.user);
-  } else {
-    authScreen.style.display = 'block';
-    selectScreen.style.display = 'none';
-  }
-}
-
-// ثبت‌نام بر اساس نام کاربری
-document.getElementById('signupBtn').addEventListener('click', async () => {
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value;
-  
-  if(!username || !password) {
-    showAuthError("لطفاً نام کاربری و رمز عبور را وارد کنید.");
-    return;
-  }
-
-  const virtualEmail = generateVirtualEmail(username);
-  
-  const { data, error } = await supabase.auth.signUp({
-    email: virtualEmail,
-    password: password,
-  });
-
-  if (error) {
-    showAuthError(error.message);
-  } else {
-    showAuthError("حساب کاربری با موفقیت ساخته شد. اکنون می‌توانید وارد شوید.");
-  }
-});
-
-// ورود بر اساس نام کاربری
-document.getElementById('loginBtn').addEventListener('click', async () => {
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value;
-
-  if(!username || !password) {
-    showAuthError("لطفاً نام کاربری و رمز عبور را وارد کنید.");
-    return;
-  }
-
-  const virtualEmail = generateVirtualEmail(username);
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: virtualEmail,
-    password: password,
-  });
-
-  if (error) {
-    showAuthError("نام کاربری یا رمز عبور اشتباه است.");
-  } else {
-    currentUsername = username;
-    handleLoginSuccess(data.user);
-  }
-});
-
-logoutBtn.addEventListener('click', async () => {
-  await setPresence(false);
-  await supabase.auth.signOut();
-  window.location.reload();
-});
-
-function handleLoginSuccess(user) {
-  currentUser = user;
-  authScreen.style.display = 'none';
-  selectScreen.style.display = 'block';
-  logoutBtn.style.display = 'block';
-  onlineUsersPanel.style.display = 'block';
-  
-  initPresence();
-}
-
-/* ============== REALTIME PRESENCE ============== */
-let onlineUsersMap = new Map();
-
-async function setPresence(isOnline) {
-  if (!currentUser || !currentUsername) return;
-  await supabase.from('user_status').upsert({
-    id: currentUser.id,
-    username: currentUsername,
-    is_online: isOnline,
-    updated_at: new Date().toISOString()
-  });
-}
-
-async function initPresence() {
-  await setPresence(true);
-
-  const { data: activeUsers } = await supabase
-    .from('user_status')
-    .select('id, username')
-    .eq('is_online', true);
-
-  if (activeUsers) {
-    activeUsers.forEach(u => onlineUsersMap.set(u.id, u.username));
-    renderOnlineUsers();
-  }
-
-  realtimeChannel = supabase.channel('user-status-changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'user_status' }, payload => {
-      const record = payload.new;
-      if (record && record.is_online) {
-        onlineUsersMap.set(record.id, record.username);
-      } else if (payload.old && payload.old.id) {
-        onlineUsersMap.delete(payload.old.id);
-      } else if (record && !record.is_online) {
-        onlineUsersMap.delete(record.id);
-      }
-      renderOnlineUsers();
-    })
-    .subscribe();
-}
-
-function renderOnlineUsers() {
-  const container = document.getElementById('onlineUsersList');
-  container.innerHTML = '';
-  if (onlineUsersMap.size === 0) {
-    container.innerHTML = '<span style="color:var(--ink-soft)">کسی آنلاین نیست</span>';
-    return;
-  }
-  
-  onlineUsersMap.forEach((username, id) => {
-    const badge = document.createElement('div');
-    badge.className = 'online-user-badge';
-    badge.textContent = id === currentUser.id ? 'شما' : username;
-    container.appendChild(badge);
-  });
-}
-
-window.addEventListener('beforeunload', () => {
-  if (currentUser) setPresence(false);
-});
-
-/* ============== STUDY TIMER ============== */
-let studyTimerInterval = null;
-let studySeconds = 0;
-const timerEl = document.getElementById('studyTimer');
-
-function formatTime(sec) {
-  const m = String(Math.floor(sec / 60)).padStart(2, '0');
-  const s = String(sec % 60).padStart(2, '0');
-  return `${m}:${s}`;
-}
-
-function startStudyTimer() {
-  clearInterval(studyTimerInterval);
-  studySeconds = 0;
-  timerEl.textContent = formatTime(studySeconds);
-  studyTimerInterval = setInterval(() => {
-    studySeconds++;
-    timerEl.textContent = formatTime(studySeconds);
-  }, 1000);
-}
-
-function stopStudyTimer() {
-  clearInterval(studyTimerInterval);
-}
-
-/* ============== COMPLETE DATA (262 WORDS) ============== */
+/* ============== DATA ============== */
 const LESSONS = [
 {id:1, title:"درس اول", words:[
-["آمَنَ","ایمان آورد"],[cite: 1]
-["يُؤْمِنُ","ایمان می‌آوَرَد"],[cite: 1]
-["أعلى","بلندتر، بلندترین"],[cite: 1]
-["سِرْوال","شلوار (جمع: سراویل)"],[cite: 1]
-["اِجْتَنَبَ","پرهیز کرد"],[cite: 1]
-["يَجْتَنِبُ","پرهیز می‌کند pack "],[cite: 1]
-["جبل","کوه (جمع: جبال)"],[cite: 1]
-["النسائيّ","زنانه pack "],[cite: 1]
-["الظّنّ","گمان"],[cite: 1]
-["الکبری","بزرگتر"],[cite: 1]
-["الصُّغرى","کوچکتر pack "],[cite: 1]
-["مَتْجَر","مغازه (جمع: متاجر)"],[cite: 1]
-["آیات","نشانه‌ها (مفرد: آیة)"],[cite: 1]
-["أراذل","فرومایگان (مفرد: أرذل)"],[cite: 1]
-["زَمیل","همکار، همکلاسی (جمع: زملاء) pack "],[cite: 1]
-["الرحمن","بخشنده"],[cite: 1]
-["أفاضل","بهترین‌ها (مفرد: أفضل)"],[cite: 1]
-["رجاءً / مَنْ فَضْلِک","لطفاً"],[cite: 1]
-["الرّحیم","مهربان"],[cite: 1]
-["سَأَلَ","پرسید pack "],[cite: 1]
-["يَسْأَلُ","می‌پرسد pack "],[cite: 1]
-["سُئِلَ","پرسیده شد"],[cite: 1]
-["أعطى","داد"],[cite: 1]
-["يُعْطي","می‌دهد"],[cite: 1]
-["سَخِرَ مِنْ","مسخره کرد pack "],[cite: 1]
-["يَسْخَرُ","مسخره می‌کند (مصدر: سُخْريّة)"],[cite: 1]
-["أحَبّ","محبوب‌تر، محبوب‌ترین"],[cite: 1]
-["صارَ","شد"],[cite: 1]
-["يَصیرُ","می‌شود pack "],[cite: 1]
-["لا يَسْخَر","نباید مسخره کند"],[cite: 1]
-["أنْفَع","سودمندتر، سودمندترین pack "],[cite: 1]
-["مائة","صد pack "],[cite: 1]
-["عَسى / رُبَّما","شاید"],[cite: 1]
-["السّکینة","آرامش"],[cite: 1]
-["قَبِلَ","قبول کرد"],[cite: 1]
-["يَقْبَلُ","قبول می‌کند pack "],[cite: 1]
-["کانَ","بود"],[cite: 1]
-["فاعِل","انجام دهنده"],[cite: 1]
-["عباد","بندگان (مفرد: عبد) pack "],[cite: 1]
-["يَکونُ","می‌باشد pack "],[cite: 1]
-["قائل","گوینده pack "],[cite: 1]
-["رَضِيَ","راضی شد"],[cite: 1]
-["يَرْضى","راضی می‌شود"],[cite: 1]
-["أنْ يَکُنَّ","که باشند pack "],[cite: 1]
-["أوْسَط","میانه‌تر، میانه‌ترین"],[cite: 1]
-["غیاب","غیبت pack "][cite: 1]
+["آمَنَ","ایمان آورد"],["يُؤْمِنُ","ایمان می‌آوَرَد"],["أعلى","بلندتر، بلندترین"],["سِرْوال","شلوار (جمع: سراویل)"],["اِجْتَنَبَ","پرهیز کرد"],["يYَجْتَنِبُ","پرهیز می‌کند"],["جبل","کوه (جمع: جبال)"],["النسائيّ","زنانه"],["الظّنّ","گمان"],["الکبری","بزرگتر"],["الصُّغرى","کوچکتر"],["مَتْجَر","مغازه (جمع: متاجر)"],["آيات","نشانه‌ها (مفرد: آیة)"],["أراذل","فرومایگان (مفرد: أرذل)"],["زَمیل","همکار، همکلاسی (جمع: زملاء)"],["الرحمن","بخشنده"],["أفاضل","بهترین‌ها (مفرد: أفضل)"],["رجاءً / مَنْ فَضْلِک","لطفاً"],["الرّحیم","مهربان"],["سَأَلَ","پرسید"],["يَسْأَلُ","می‌پرسد"],["سُئِلَ","پرسیده شد"],["أعطى","داد"],["يُعْطي","می‌دهد"],["سَخِرَ مِنْ","مسخره کرد"],["يَسْخَرُ","مسخره می‌کند (مصدر: سُخْريّة)"],["أحَبّ","محبوب‌تر، محبوب‌ترین"],["صارَ","شد"],["يَصیرُ","می‌شود"],["لا يَسْخَر","نباید مسخره کند"],["أنْفَع","سودمندتر، سودمندترین"],["مائة","صد"],["عَسى / رُبَّما","شاید"],["السّکینة","آرامش"],["قَبِلَ","قبول کرد"],["يَقْبَلُ","قبول می‌کند"],["کانَ","بود"],["فاعِل","انجام دهنده"],["عباد","بندگان (مفرد: عبد)"],["يَکونُ","می‌باشد"],["قائل","گوینده"],["رَضِيَ","راضی شد"],["يَرْضى","راضی می‌شود"],["أنْ يَکُنَّ","که باشند"],["أوْسَط","میانه‌تر، میانه‌ترین"],["غیاب","غیبت"]
 ]},
 {id:2, title:"درس دوم", words:[
-["أجَلّ","گران‌قدرتر، بزرگوارتر pack "],[cite: 1]
-["نَجَحَ","موفق شد"],[cite: 1]
-["يَنْجَحُ","موفق می‌شود pack "],[cite: 1]
-["أنْقَذَ","نجات داد"],[cite: 1]
-["يُنْقِذُ","نجات می‌دهد"],[cite: 1]
-["اِرْتَبَطَ","ارتباط داشت pack "],[cite: 1]
-["يَرْتَبِطُ","ارتباط دارد pack "],[cite: 1]
-["إساءة","بدی، بدرفتاری"],[cite: 1]
-["اِبْتَعَدَ","دور شد"],[cite: 1]
-["يَبْتَعِدُ","دور می‌شود pack "],[cite: 1]
-["اِسْتَمَعَ","گوش فرا داد pack "],[cite: 1]
-["يَسْتَمِعُ","گوش می‌دهد pack "],[cite: 1]
-["هَرَبَ","فرار کرد pack "],[cite: 1]
-["يَهْرُبُ","فرار می‌کند"],[cite: 1]
-["اِنْسَحَبَ","عقب‌نشینی کرد"],[cite: 1]
-["الرّصيف","پیاده‌رو pack "],[cite: 1]
-["بِضاعَة","کالا (جمع: بضائع)"],[cite: 1]
-["مَمَرّ","محل عبور، گذرگاه"],[cite: 1]
-["الصِّعاب","سختی‌ها (مفرد: الصّعْبة) pack "],[cite: 1]
-["تَعايَشَ","همزیستی کرد"],[cite: 1]
-["دَرَّسَ","درس داد"],[cite: 1]
-["يُدَرِّسُ","درس می‌دهد pack "],[cite: 1]
-["مُتَعايِش","دارای همزیستی مسالمت‌آمیز"],[cite: 1]
-["مَذْهَب","روش، دین (جمع: مذاهب)"],[cite: 1]
-["حِصّة","زنگ درسی، بخش، سهم pack "],[cite: 1]
-["يَسْلَمُ","سالم می‌ماند pack "],[cite: 1]
-["وُدّ / حُبّ","دوستی pack "],[cite: 1]
-["عَداوَة","دشمنی pack "],[cite: 1]
-["تَأْکید","استوار کردن pack "],[cite: 1]
-["أخَوانِ","دو برادر"],[cite: 1]
-["الأسْوَد","سیاه pack "],[cite: 1]
-["الأبْيَض","سفید pack "],[cite: 1]
-["تَفاصِيل","جزئیات (مفرد: تفصيل) pack "],[cite: 1]
-["حَذَّرَ","هشدار داد pack "],[cite: 1]
-["مُجْتَمَع","جامعه pack "],[cite: 1]
-["اِعْتَبَرَ","به شمار آورد pack "][cite: 1]
+["أجَلّ","گران‌قدرتر، بزرگوارتر"],["نَجَحَ","موفق شد"],["يَنْجَحُ","موفق می‌شود"],["أنْقَذَ","نجات داد"],["يُنْقِذُ","نجات می‌دهد"],["اِرْتَبَطَ","ارتباط داشت"],["يَرْتَبِطُ","ارتباط دارد"],["إساءة","بدی، بدرفتاری"],["اِبْتَعَدَ","دور شد"],["يَبْتَعِدُ","دور می‌شود"],["اِسْتَمَعَ","گوش فرا داد"],["يَسْتَمِعُ","گوش می‌دهد"],["هَرَبَ","فرار کرد"],["يَهْرُبُ","فرار می‌کند"],["اِنْسَحَبَ","عقب‌نشینی کرد"],["الرّصيف","پیاده‌رو"],["بِضاعَة","کالا (جمع: بضائع)"],["مَمَرّ","محل عبور، گذرگاه"],["الصِّعاب","سختی‌ها (مفرد: الصّعْبة)"],["تَعايَشَ","همزیستی کرد"],["دَرَّسَ","درس داد"],["يُدَرِّسُ","درس می‌دهد"],["مُتَعايِش","دارای همزیستی مسالمت‌آمیز"],["مَذْهَب","روش، دین (جمع: مذاهب)"],["حِصّة","زنگ درسی، بخش، سهم"],["يَسْلَمُ","سالم می‌ماند"],["وُدّ / حُبّ","دوستی"],["عَداوَة","دشمنی"],["تَأْکید","استوار کردن"],["أخَوانِ","دو برادر"],["الأسْوَد","سیاه"],["الأبْيَض","سفید"],["تَفاصِيل","جزئیات (مفرد: تفصيل)"],["حَذَّرَ","هشدار داد"],["مُجْتَمَع","جامعه"],["اِعْتَبَرَ","به شمار آورد"]
 ]},
 {id:3, title:"درس سوم", words:[
-["أحَلّ","حلال‌تر، حلال‌ترین pack "],[cite: 1]
-["العِنَب البرازیليّ","انگور برزیلی pack "],[cite: 1]
-["غَرَسَ","کاشت pack "],[cite: 1]
-["يَغْرِسُ","می‌کارد pack "],[cite: 1]
-["اِشْتِعال","برافروخته شدن، سوختن (اِشْتَعَلَ، يَشْتَعِلُ) pack "],[cite: 1]
-["اِخْتَلَفَ","تفاوت داشت، فرق کرد pack "],[cite: 1]
-["يَخْتَلِفُ","تفاوت دارد pack "],[cite: 1]
-["العَشيرَة","قبیله، عشیره (جمع: عشائر) pack "],[cite: 1]
-["شابَّ","پیر شد (همچنین به معنی زن جوان) pack "],[cite: 1]
-["شَعْر","مو pack "],[cite: 1]
-["رَأْس","سر (جمع: رؤوس) pack "],[cite: 1]
-["شَيْب","پیری، سپیدی مو pack "],[cite: 1]
-["اِمْتَلأَ","پر شد pack "],[cite: 1]
-["يَمْتَلِئُ","پر می‌شود pack "],[cite: 1]
-["خَشْيَة","ترس pack "],[cite: 1]
-["تَمْر","خرما pack "],[cite: 1]
-["جِذْع","تنه درخت pack "],[cite: 1]
-["النَّخْلَة","درخت خرما pack "],[cite: 1]
-["ساقِط","ریزان، افتان pack "],[cite: 1]
-["رُطَب","خرمای تازه و رسیده pack "],[cite: 1]
-["جَنیّ","چیده شده pack "],[cite: 1]
-["قُرّي عَيْناً","چشمت روشن باد، خوشحال باش pack "],[cite: 1]
-["اِقْتَرَبَ","نزدیک شد pack "],[cite: 1]
-["يَقْتَرِبُ","نزدیک می‌شود pack "],[cite: 1]
-["اِبْتَلَعَ","قورت داد، بلعید pack "],[cite: 1]
-["يَبْتَلِعُ","می‌بلعد pack "],[cite: 1]
-["مَلَأَ","پر کرد pack "],[cite: 1]
-["يَمْلَأُ","پر می‌کند pack "],[cite: 1]
-["جَوْف","درون، شکم pack "],[cite: 1]
-["الصَّیاد","شکارچی pack "],[cite: 1]
-["حَبَّة","دانه pack "],[cite: 1]
-["الفَخّ","دام، تله pack "],[cite: 1]
-["النَّجاة","رهایی، نجات pack "],[cite: 1]
-["ماتَ","مُرد pack "],[cite: 1]
-["يَموتُ","می‌میرد pack "],[cite: 1]
-["الحيلَة","چاره، مکر (جمع: حِیَل) pack "],[cite: 1]
-["طائِر","پرنده (جمع: طُیور) pack "],[cite: 1]
-["جَناح","بال (جمع: أجنحة) pack "][cite: 1]
+["أحَلّ","حلال‌تر، hلال‌ترین"],["العِنَب البرازیليّ","انگور برزیلی"],["غَرَسَ","کاشت"],["يَغْرِسُ","می‌کارد"],["اِشْتِعال","برافروخته شدن، سوختن (اِشْتَعَلَ، يَشْتَعِلُ)"],["اِخْتَلَفَ","تفاوت داشت، فرق کرد"],["يَخْتَلِفُ","تفاوت دارد"],["العَشيرَة","قبیله، عشیره (جمع: عشائر)"],["شابَّ","پیر شد (همچنین به معنی زن جوان)"],["شَعْر","مو"],["رَأْس","سر (جمع: رؤوس)"],["شَيْب","پیری، سپیدی مو"],["اِمْتَلأَ","پر شد"],["يَمْتَلِئُ","پر می‌شود"],["خَشْيَة","ترس"],["تَمْر","خرما"],["جِذْع","تنه درخت"],["النَّخْلَة","درخت خرما"],["ساقِط","ریزان، افتان"],["رُطَب","خرمای تازه و رسیده"],["جَنیّ","چیده شده"],["قُرّي عَيْناً","چشمت روشن باد، خوشحال باش"],["اِقْتَرَبَ","نزدیک شد"],["يَقْتَرِبُ","نزدیک می‌شود"],["اِبْتَلَعَ","قورت داد، بلعید"],["يَبْتَلِعُ","می‌بلعد"],["مَلَأَ","پر کرد"],["يَمْلَأُ","پر می‌کند"],["جَوْف","درون، شکم"],["الصَّیاد","شکارچی"],["حَبَّة","دانه"],["الفَخّ","دام، تله"],["النَّجاة","رهایی، نجات"],["ماتَ","مُرد"],["يَموتُ","می‌میرد"],["الحيلَة","چاره، مکر (جمع: حِیَل)"],["طائِر","پرنده (جمع: طُیور)"],["جَناح","بال (جمع: أجنحة)"]
 ]},
 {id:4, title:"درس چهارم", words:[
-["اُدْعُ","فرا بخوان، دعوت کن (دَعا، يَدْعو) pack "],[cite: 1]
-["الإثْم / الذَّنْب / الخَطيئَة","گناه pack "],[cite: 1]
-["قَفَزَ","پرید pack "],[cite: 1]
-["يَقْفِزُ","می‌پرد pack "],[cite: 1]
-["أنْ لا يَتَدَخَّلَ","که دخالت نکند (تَدَخَّلَ، يَتَدَخَّلُ) pack "],[cite: 1]
-["سَدید","درست و استوار pack "],[cite: 1]
-["عَصَفَ","وزید pack "],[cite: 1]
-["يَعْصِفُ","می‌وزد pack "],[cite: 1]
-["شَبَعَ","سیر شد pack "],[cite: 1]
-["يَشْبَعُ","سیر می‌شود pack "],[cite: 1]
-["جاعَ","گرسنه شد pack "],[cite: 1]
-["يَجوعُ","گرسنه می‌شود pack "],[cite: 1]
-["جائع","گرسنه pack "],[cite: 1]
-["شَبْعان","سیر pack "],[cite: 1]
-["طَرَقَ","کوبید، در زد pack "],[cite: 1]
-["يَتْقُرَ","می‌کوبد، در می‌زند pack "],[cite: 1]
-["باب","در (جمع: أبواب) pack "],[cite: 1]
-["بَخيل","خسیس (جمع: بُخَلاء) pack "],[cite: 1]
-["مِضْیاف","مهمان‌نواز pack "],[cite: 1]
-["أطْعَمَ","غذا داد pack "],[cite: 1]
-["يُطْعِمُ","غذا می‌دهد pack "],[cite: 1]
-["اِسْتَحى","خجالت کشید pack "],[cite: 1]
-["يَسْتَحي","خجالت می‌کشد pack "],[cite: 1]
-["کَفَی","کافی است pack "],[cite: 1]
-["خَبَزَ","نان پخت pack "],[cite: 1]
-["يَخْبِزُ","نان می‌پزد (الخَبّاز: نانوا / الخُبْز: نان) pack "],[cite: 1]
-["الضَّيْف","مهمان (جمع: ضُيوف) pack "],[cite: 1]
-["حَفَرَ","کند، حفر کرد pack "],[cite: 1]
-["يَحْفِرُ","می‌کند pack "],[cite: 1]
-["البِئْر","چاه pack "],[cite: 1]
-["أعْمَق","عمیق‌تر pack "],[cite: 1]
-["فَرِحَ","خوشحال شد pack "],[cite: 1]
-["يَفْرَحُ","خوشحال می‌شود pack "],[cite: 1]
-["تَرَکَ","رها کرد، گذاشت pack "],[cite: 1]
-["يَتَرَکُ","رها می‌کند pack "],[cite: 1]
-["حَزِنَ","غمگین شد pack "],[cite: 1]
-["يَحْزَنُ","غمگین می‌شود pack "][cite: 1]
+["اُدْعُ","فرا بخوان، دعوت کن (دَعا، يَدْعو)"],["الإثْم / الذَّنْب / الخَطيئَة","گناه"],["قَفَزَ","پرید"],["يَقْفِزُ","می‌پرد"],["أنْ لا يَتَدَخَّلَ","که دخالت نکند (تَدَخَّلَ، يَتَدَخَّلُ)"],["سَدید","درست و استوار"],["عَصَفَ","وزید"],["يَعْصِفُ","می‌وزد"],["شَبَعَ","سیر شد"],["يَشْبَعُ","سیر می‌شود"],["جاعَ","گرسنه شد"],["يَجوعُ","گرسنه می‌شود"],["جائع","گرسنه"],["شَبْعان","سیر"],["طَرَقَ","کوبید، در زد"],["يَطْرُقُ","می‌کوبد، در می‌زند"],["باب","در (جمع: أبواب)"],["بَخيل","خسیس (جمع: بُخَلاء)"],["مِضْیاف","مهمان‌نواز"],["أطْعَمَ","غذا داد"],["يُطْعِمُ","غذا می‌دهد"],["اِسْتَحى","خجالت کشید"],["يَسْتَحي","خجالت می‌کشد"],["کَفَی","کافی است"],["خَبَزَ","نان پخت"],["يَخْبِزُ","نان می‌پزد (الخَبّاز: نانوا / الخُبْز: نان)"],["الضَّيْف","مهمان (جمع: ضُيوف)"],["حَفَرَ","کند، حفر کرد"],["يَحْفِرُ","می‌کند"],["البِئْر","چاه"],["أعْمَق","عمیق‌تر"],["فَرِحَ","خوشحال شد"],["يَفْرَحُ","خوشحال می‌شود"],["تَرَکَ","رها کرد، گذاشت"],["يَتَتْرُکُ","رها می‌کند"],["حَزِنَ","غمگین شد"],["يَحْزَنُ","غمگین می‌شود"]
 ]},
 {id:5, title:"درس پنجم", words:[
-["أجَّلَ","به تأخیر انداخت (يُؤَجِّلُ، تَأْجیل) = أخَّرَ pack "],[cite: 1]
-["تَعَسَّرَ","دشوار شد pack "],[cite: 1]
-["يَتَعَسَّرُ","دشوار می‌شود pack "],[cite: 1]
-["تَيَسَّرَ","آسان شد pack "],[cite: 1]
-["يَتَيَسَّرُ","آسان می‌شود pack "],[cite: 1]
-["عُسْر","دشواری، سختی pack "],[cite: 1]
-["يُسْر","آسانی pack "],[cite: 1]
-["الآخِرَة","جهان آخرت pack "],[cite: 1]
-["الدُّنْیا","جهان مادی pack "],[cite: 1]
-["سَتَرَ","پوشاند pack "],[cite: 1]
-["يَسْتُرُ","می‌پوشاند pack "],[cite: 1]
-["مُسْلِم","مسلمان pack "],[cite: 1]
-["اِسْتَغْنى","بی‌نیاز شد pack "],[cite: 1]
-["يَسْتَغْني","بی‌نیاز می‌شود pack "],[cite: 1]
-["العَوْن","کمک، یاری pack "],[cite: 1]
-["الخَبیر","آگاه pack "],[cite: 1]
-["الصِّراط","راه pack "],[cite: 1]
-["المُسْتَقِيم","راست pack "],[cite: 1]
-["الهُدى","هدایت pack "],[cite: 1]
-["التَّقْوى","پرهیزکاری pack "],[cite: 1]
-["العَفاف","پاکدامنی pack "],[cite: 1]
-["الغِنى","بی‌نیازی pack "],[cite: 1]
-["نَفَس","جان، نفس (جمع: أنْفُس / نُفوس) pack "],[cite: 1]
-["الخَسارَة","زیان pack "],[cite: 1]
-["الصِّحَّة","تندرستی pack "],[cite: 1]
-["الأمان","امنیت pack "],[cite: 1]
-["النِّعْمَة","نعمت (جمع: نِعَم) pack "],[cite: 1]
-["مَجْهول","ناشناخته pack "],[cite: 1]
-["فَقَدَ","از دست داد pack "],[cite: 1]
-["يَفْقِدُ","از دست می‌دهد pack "],[cite: 1]
-["الوالِدَيْن","پدر و مادر pack "],[cite: 1]
-["طاعَة","فرمانبرداری pack "],[cite: 1]
-["مَغْفِرَة","آمرزش pack "],[cite: 1]
-["الرِّضا","خشنودی pack "],[cite: 1]
-["الجَنَّة","بهشت pack "][cite: 1]
+["أجَّلَ","به تأخیر انداخت (يُؤَجِّلُ، تَأْجیل) = أخَّرَ"],["تَعَسَّرَ","دشوار شد"],["يَتَعَسَّرُ","دشوار می‌شود"],["تَيَسَّرَ","آسان شد"],["يَتَيَسَّرُ","آسان می‌شود"],["عُسْر","دشواری، سختی"],["يُسْر","آسانی"],["الآخِرَة","جهان آخرت"],["الدُّنْیا","جهان مادی"],["سَتَرَ","پوشاند"],["يَسْتُرُ","می‌پوشاند"],["مُسْلِم","مسلمان"],["اِسْتَغْنى","بی‌نیاز شد"],["يَسْتَغْني","بی‌نیاز می‌شود"],["العَوْن","کمک، یاری"],["الخَبیر","آگاه"],["الصِّراط","راه"],["المُسْتَقِيم","راست"],["الهُدى","هدایت"],["التَّقْوى","پرهیزکاری"],["العَفاف","پاکدامنی"],["الغِنى","بی‌نیازی"],["نَفَس","جان، نفس (جمع: أنْفُس / نُفوس)"],["الخَسارَة","زیان"],["الصِّحَّة","تندرستی"],["الأمان","امنیت"],["النِّعْمَة","نعمت (جمع: نِعَم)"],["مَجْهول","ناشناخته"],["فَقَدَ","از دست داد"],["يَفْقِدُ","از دست می‌دهد"],["الوالِدَيْن","پدر و مادر"],["طاعَة","فرمانبرداری"],["مَغْفِرَة","آمرزش"],["الرِّضا","خشنودی"],["الجَنَّة","بهشت"]
 ]},
 {id:6, title:"درس ششم", words:[
-["الأُرْدِيَّة","زبان اردو pack "],[cite: 1]
-["فُتْحَة","دریچه، روزنه pack "],[cite: 1]
-["بَسَطَ","گستراند pack "],[cite: 1]
-["يَبْسُطُ","می‌گستراند pack "],[cite: 1]
-["أشارَ","اشاره کرد pack "],[cite: 1]
-["يُشیرُ","اشاره می‌کند pack "],[cite: 1]
-["أشْهَر","مشهورترین pack "],[cite: 1]
-["العالَم","جهان pack "],[cite: 1]
-["المُعْجَم","کتاب لغت، فرهنگ‌نامه pack "],[cite: 1]
-["تَفَسَّحَ","وسعت یافت، گردش کرد pack "],[cite: 1]
-["يَتَفَسَّحُ","وسعت می‌یابد pack "],[cite: 1]
-["فَسِيح","وسیع, پهناور pack "],[cite: 1]
-["الساحِل","ساحل (جمع: سَواحِل) pack "],[cite: 1]
-["الذَّهَب","طلا pack "],[cite: 1]
-["الفِضَّة","نقره pack "],[cite: 1]
-["النَّحاس","مس pack "],[cite: 1]
-["الحَدید","آهن pack "],[cite: 1]
-["المَعْدِن","معدن (جمع: مَعادِن) pack "],[cite: 1]
-["الغالیَة","گران‌بها pack "],[cite: 1]
-["الرَّخيصَة","ارزان pack "],[cite: 1]
-["الصِّناعَة","صنعت pack "],[cite: 1]
-["التِّجارَة","بازرگانی pack "],[cite: 1]
-["الزِّراعَة","کشاورزی pack "],[cite: 1]
-["الغابات","جنگل‌ها (مفرد: غابَة) pack "],[cite: 1]
-["الکَثيفَة","انبوه، متراکم pack "],[cite: 1]
-["الأشْجار","درختان (مفرد: شَجَرَة) pack "],[cite: 1]
-["الحَيَوانات","جانوران pack "],[cite: 1]
-["المُفْتَرِسَة","درنده pack "],[cite: 1]
-["الأليفَة","اهلی pack "],[cite: 1]
-["النّادِرَة","کمیاب، نایاب pack "],[cite: 1]
-["بَنى","ساخت pack "],[cite: 1]
-["يَبْني","می‌سازد pack "],[cite: 1]
-["الحِصْن","دژ، قلعه (جمع: حُصون) pack "],[cite: 1]
-["القَصْر","کاخ (جمع: قُصور) pack "],[cite: 1]
-["القَدِيمَة","کهن، قدیمی pack "],[cite: 1]
-["الآثار","نشانه‌ها، آثار تاریخی pack "][cite: 1]
+["الأُرْدِيَّة","زبان اردو"],["فُتْحَة","دریچه، روزنه"],["بَسَطَ","گستراند"],["يَبْسُطُ","می‌گستراند"],["أشارَ","اشاره کرد"],["يُشیرُ","اشاره می‌کند"],["أشْهَر","مشهورترین"],["العالَم","جهان"],["المُعْجَم","کتاب لغت، فرهنگ‌نامه"],["تَفَسَّحَ","وسعت یافت، گردش کرد"],["يَتَفَسَّحُ","وسعت می‌یابد"],["فَسِيح","وسیع، پهناور"],["الساحِل","ساحل (جمع: سَواحِل)"],["الذَّهَب","طلا"],["الفِضَّة","نقره"],["النَّحاس","مس"],["الحَدید","آهن"],["المَعْدِن","معدن (جمع: مَعادِن)"],["الغالیَة","گران‌بها"],["الرَّخيصَة","ارزان"],["الصِّناعَة","صنعت"],["التِّجارَة","بازرگانی"],["الزِّراعَة","کشاورزی"],["الغابات","جنگل‌ها (مفرد: غابَة)"],["الکَثيفَة","انبوه، متراکم"],["الأشْجار","درختان (مفرد: شَجَرَة)"],["الحَيَوانات","جانوران"],["المُفْتَرِسَة","درنده"],["الأليفَة","اهلی"],["النّادِرَة","کمیاب، نایاب"],["بَنى","ساخت"],["يَبْني","می‌سازد"],["الحِصْن","دژ، قلعه (جمع: حُصون)"],["القَصْر","کاخ (جمع: قُصور)"],["القَدِيمَة","کهن، قدیمی"],["الآثار","نشانه‌ها، آثار تاریخی"]
 ]},
 {id:7, title:"درس هفتم", words:[
-["اِزْدادَ","افزایش یافت pack "],[cite: 1]
-["يَزْدادُ","افزایش می‌یابد pack "],[cite: 1]
-["خاتَم","انگشتر pack "],[cite: 1]
-["المُسْتَوْصَف","درمانگاه pack "],[cite: 1]
-["اِشْتَدَّ","شدت یافت pack "],[cite: 1]
-["يَشْتَدُّ","شدت می‌یابد pack "],[cite: 1]
-["سریر","تخت pack "],[cite: 1]
-["تَحَسَّنَ","خوب شد pack "],[cite: 1]
-["يَتَحَسَّنُ","خوب می‌شود pack "],[cite: 1]
-["اِشْتَقَّ","برگرفت، مشتق کرد pack "],[cite: 1]
-["يَشْتَقُّ","برمی‌گیرد pack "],[cite: 1]
-["خَشَبِيّ","چوبی pack "],[cite: 1]
-["غزال","آهو (جمع: غِزلان) pack "],[cite: 1]
-["اِنْضِمام","پیوستن (اِنْضَمَّ، يَنْضَمُّ) pack "],[cite: 1]
-["مُخْضَرَّة","سرسبز pack "],[cite: 1]
-["الشَّرْشَف","ملافه pack "],[cite: 1]
-["بَيَّنَ","آشکار کرد، توضیح داد pack "],[cite: 1]
-["يُبَيِّنُ","آشکار می‌کند pack "],[cite: 1]
-["نَظَّفَ","تمیز کرد pack "],[cite: 1]
-["يُنَظِّفُ","تمیز می‌کند pack "],[cite: 1]
-["قُماش","پارچه pack "],[cite: 1]
-["تَغَيَّرَ","دگرگون شد pack "],[cite: 1]
-["يَتَغَيَّرُ","دگرگون می‌شود pack "],[cite: 1]
-["فَم","دهان (جمع: أفْواه) pack "],[cite: 1]
-["الدَّخيلَة","وارد شده، بیگانه pack "],[cite: 1]
-["کَتَمَ","پنهان کرد pack "],[cite: 1]
-["يَکْتُمُ","پنهان می‌کند pack "],[cite: 1]
-["ذات","دارای، صاحب pack "],[cite: 1]
-["دیباج","ابریشم pack "],[cite: 1]
-["أوْفوا","وفا کنید pack "],[cite: 1]
-["جَرى","جاری شد pack "],[cite: 1]
-["يَجْري","جاری می‌شود pack "],[cite: 1]
-["شارَکَ","مشارکت کرد pack "],[cite: 1]
-["يُشارِکُ","مشارکت می‌کند pack "][cite: 1]
+["اِزْدادَ","افزایش یافت"],["يَزْدادُ","افزایش می‌یابد"],["خاتَم","انگشتر"],["المُسْتَوْصَف","درمانگاه"],["اِشْتَدَّ","شدت یافت"],["يَشْتَدُّ","شدت می‌یابد"],["سریر","تخت"],["تَحَسَّنَ","خوب شد"],["يَتَحَسَّنُ","خوب می‌شود"],["اِشْتَقَّ","برگرفت، مشتق کرد"],["يَشْتَقُّ","برمی‌گیرد"],["خَشَبِيّ","چوبی"],["غزال","آهو (جمع: غِزلان)"],["اِنْضِمام","پیوستن (اِنْضَمَّ، يَنْضَمُّ)"],["مُخْضَرَّة","سرسبز"],["الشَّرْشَف","ملافه"],["بَيَّنَ","آشکار کرد، توضیح داد"],["يُبَيِّنُ","آشکار می‌کند"],["نَظَّفَ","تمیز کرد"],["يُنَظِّفُ","تمیز می‌کند"],["قُماش","پارچه"],["تَغَيَّرَ","دگرگون شد"],["يَتَغَيَّرُ","دگرگون می‌شود"],["فَم","دهان (جمع: أفْواه)"],["الدَّخيلَة","وارد شده، بیگانه"],["کَتَمَ","پنهان کرد"],["يَکْتُمُ","پنهان می‌کند"],["ذات","دارای، صاحب"],["دیباج","ابریشم"],["أوْفوا","وفا کنید"],["جَرى","جاری شد"],["يَجْري","جاری می‌شود"],["شارَکَ","مشارکت کرد"],["يُشارِکُ","مشارکت می‌کند"]
 ]}
 ];
 
-/* ============== STATE / STORAGE ============== */
+/* ============== SUPABASE INITIALIZATION ============== */
+// تصحیح خطا با قراردادن متغیرها داخل گیومه
+const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ============== STORAGE & SYNC ============== */
 const STORAGE_KEY = "arabic_flashcards_state_v1";
-function saveState(state){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
-function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
-function clearState(){ try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} }
+
+function saveState(state){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function clearState(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+}
+
+// همگام‌سازی ابری با دیتای کلاود کاربران سوپابیس
+async function syncProgressToCloud() {
+  if (!session) return;
+  const { data: { user } } = await supabaseClient.auth.getUser();
+  if (user) {
+    const stateToSave = {
+      lessonIds: session.lessonIds,
+      queue: session.queue,
+      mastered: session.mastered,
+      total: session.total
+    };
+    await supabaseClient.auth.updateUser({
+      data: { flashcard_progress: stateToSave }
+    });
+  }
+}
 
 function shuffle(arr){
   const a = arr.slice();
@@ -930,16 +660,114 @@ function buildWordPool(lessonIds){
 /* ============== APP STATE ============== */
 let session = null; 
 
-/* ============== DOM LOGIC ============== */
+/* ============== DOM ELEMENTS ============== */
+const authScreen = document.getElementById('authScreen');
+const selectScreen = document.getElementById('selectScreen');
+const studyScreen = document.getElementById('studyScreen');
+const doneScreen = document.getElementById('doneScreen');
 const lessonListEl = document.getElementById('lessonList');
 const selectedInfo = document.getElementById('selectedInfo');
 const startBtn = document.getElementById('startBtn');
 const resumeBanner = document.getElementById('resumeBanner');
-const studyScreen = document.getElementById('studyScreen');
-const doneScreen = document.getElementById('doneScreen');
+const authUsernameInput = document.getElementById('authUsername');
+const authPasswordInput = document.getElementById('authPassword');
+const authMessageEl = document.getElementById('authMessage');
 
 let checkedLessons = new Set();
 
+/* ============== AUTHENTICATION LOGIC ============== */
+// تبدیل نام کاربری به قالب ایمیل فرضی برای کارکرد راحت با سیستم Auth سوپابیس
+function getFakeEmail(username) {
+  return `${username.trim().toLowerCase()}@arabicflashcards.local`;
+}
+
+function showAuthMessage(text, isError = true) {
+  authMessageEl.textContent = text;
+  authMessageEl.style.color = isError ? "var(--wrong)" : "var(--correct)";
+}
+
+document.getElementById('signupBtn').addEventListener('click', async () => {
+  const username = authUsernameInput.value.trim();
+  const password = authPasswordInput.value;
+  
+  if (!username || password.length < 6) {
+    showAuthMessage("نام کاربری نباید خالی باشد و رمز عبور باید حداقل ۶ کاراکتر باشد.");
+    return;
+  }
+  
+  showAuthMessage("در حال ثبت‌نام...", false);
+  
+  const { data, error } = await supabaseClient.auth.signUp({
+    email: getFakeEmail(username),
+    password: password,
+    options: { data: { display_username: username } }
+  });
+  
+  if (error) {
+    showAuthMessage("خطا در ثبت‌نام: " + error.message);
+  } else {
+    showAuthMessage("ثبت‌نام با موفقیت انجام شد! در حال ورود...", false);
+    checkAuthStatus();
+  }
+});
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const username = authUsernameInput.value.trim();
+  const password = authPasswordInput.value;
+  
+  if (!username || !password) {
+    showAuthMessage("لطفاً نام کاربری و رمز عبور را وارد کنید.");
+    return;
+  }
+  
+  showAuthMessage("در حال بررسی...", false);
+  
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: getFakeEmail(username),
+    password: password
+  });
+  
+  if (error) {
+    showAuthMessage("نام کاربری یا رمز عبور اشتباه است.");
+  } else {
+    showAuthMessage("ورود موفقیت‌آمیز!", false);
+    checkAuthStatus();
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await supabaseClient.auth.signOut();
+  clearState();
+  checkAuthStatus();
+});
+
+async function checkAuthStatus() {
+  const { data: { session: authSession } } = await supabaseClient.auth.getSession();
+  
+  if (authSession) {
+    authScreen.style.display = 'none';
+    selectScreen.style.display = 'block';
+    
+    // دریافت اطلاعات ذخیره شده کاربر از اببر در صورت وجود
+    const user = authSession.user;
+    if (user.user_metadata && user.user_metadata.flashcard_progress) {
+      saveState(user.user_metadata.flashcard_progress);
+    }
+    
+    renderLessonList();
+    checkForResume();
+  } else {
+    authScreen.style.display = 'block';
+    selectScreen.style.display = 'none';
+    studyScreen.style.display = 'none';
+    doneScreen.style.display = 'none';
+    authUsernameInput.value = "";
+    authPasswordInput.value = "";
+    authMessageEl.textContent = "";
+  }
+}
+
+/* ============== LESSON SELECTION ============== */
 function renderLessonList(){
   lessonListEl.innerHTML = "";
   LESSONS.forEach(l=>{
@@ -950,7 +778,7 @@ function renderLessonList(){
         <input type="checkbox" data-id="${l.id}" ${checkedLessons.has(l.id)?'checked':''}/>
         <span>${l.title}</span>
       </label>
-      <span class="count">${l.words.length} واژه pack</span>
+      <span class="count">${l.words.length} واژه</span>
     `;
     lessonListEl.appendChild(item);
     const checkbox = item.querySelector('input');
@@ -981,21 +809,21 @@ function updateSelectionUI(){
     selectedInfo.textContent = "هیچ درسی انتخاب نشده";
     startBtn.disabled = true;
   } else {
-    selectedInfo.textContent = `${count} درس انتخاب شده — ${totalWords} واژه pack`;
+    selectedInfo.textContent = `${count} درس انتخاب شده — ${totalWords} واژه`;
     startBtn.disabled = false;
   }
 }
 
-document.getElementById('selectAllBtn').addEventListener('click', ()=>{
+document.getElementById('selectAllBtn').addEventListener('click', () => {
   LESSONS.forEach(l=>checkedLessons.add(l.id));
   renderLessonList();
 });
-document.getElementById('clearAllBtn').addEventListener('click', ()=>{
+document.getElementById('clearAllBtn').addEventListener('click', () => {
   checkedLessons.clear();
   renderLessonList();
 });
 
-startBtn.addEventListener('click', ()=>{
+startBtn.addEventListener('click', () => {
   startNewSession(Array.from(checkedLessons));
 });
 
@@ -1009,11 +837,13 @@ function checkForResume(){
     resumeBanner.style.display = 'none';
   }
 }
-document.getElementById('resumeBtn').addEventListener('click', ()=>{
+document.getElementById('resumeBtn').addEventListener('click', () => {
   const saved = loadState();
-  if(saved) resumeSession(saved);
+  if(saved){
+    resumeSession(saved);
+  }
 });
-document.getElementById('discardResumeBtn').addEventListener('click', ()=>{
+document.getElementById('discardResumeBtn').addEventListener('click', () => {
   clearState();
   resumeBanner.style.display = 'none';
 });
@@ -1048,39 +878,39 @@ function resumeSession(saved){
 
 function persist(){
   if(!session) return;
-  saveState({ lessonIds: session.lessonIds, queue: session.queue, mastered: session.mastered, total: session.total });
+  saveState({
+    lessonIds: session.lessonIds,
+    queue: session.queue,
+    mastered: session.mastered,
+    total: session.total
+  });
+  syncProgressToCloud(); // ذخیره‌سازی ابری پس از هر تغییر پیشرفت
 }
 
 function enterStudyScreen(){
   selectScreen.style.display = 'none';
   doneScreen.style.display = 'none';
-  onlineUsersPanel.style.display = 'none';
   studyScreen.style.display = 'flex';
   studyScreen.style.flexDirection = 'column';
   studyScreen.style.alignItems = 'center';
-  
   document.getElementById('activeLessonsLabel').textContent =
     LESSONS.filter(l=>session.lessonIds.includes(l.id)).map(l=>l.title.split('：')[0].split(':')[0]).join('، ');
-  
-  startStudyTimer();
   renderCurrentCard();
 }
 
 function backToSelection(){
-  stopStudyTimer();
   selectScreen.style.display = 'block';
-  onlineUsersPanel.style.display = 'block';
   studyScreen.style.display = 'none';
   doneScreen.style.display = 'none';
   checkForResume();
 }
 
 document.getElementById('backBtn').addEventListener('click', backToSelection);
-document.getElementById('doneBackBtn').addEventListener('click', ()=>{
+document.getElementById('doneBackBtn').addEventListener('click', () => {
   clearState();
   backToSelection();
 });
-document.getElementById('resetProgressBtn').addEventListener('click', ()=>{
+document.getElementById('resetProgressBtn').addEventListener('click', () => {
   if(!session) return;
   if(confirm('پیشرفت این تمرین پاک شود و از نو شروع شود؟')){
     startNewSession(session.lessonIds);
@@ -1129,7 +959,7 @@ function updateProgress(){
 }
 
 let flipShowTimer = null;
-flashcard.addEventListener('click', ()=>{
+flashcard.addEventListener('click', () => {
   if(!flashcard.classList.contains('flipped')){
     flashcard.classList.add('flipped');
     flipShowTimer = setTimeout(()=>answerRow.classList.add('show'), 200);
@@ -1140,7 +970,7 @@ flashcard.addEventListener('click', ()=>{
   }
 });
 
-answerRow.addEventListener('click', (e)=>{
+answerRow.addEventListener('click', (e) => {
   const btn = e.target.closest('.ans-btn');
   if(!btn) return;
   const result = btn.dataset.result;
@@ -1161,11 +991,10 @@ function handleAnswer(result){
 }
 
 function showDoneScreen(){
-  stopStudyTimer();
   studyScreen.style.display = 'none';
   doneScreen.style.display = 'block';
   document.getElementById('doneSummary').textContent =
-    `${session.total} واژه pack از درس‌های انتخابی را با موفقیت تمرین کردی 👏 (زمان صرف شده: ${formatTime(studySeconds)})`;
+    `${session.total} واژه از درس‌های انتخابی را با موفقیت تمرین کردی 👏`;
   clearState();
 }
 
@@ -1185,7 +1014,7 @@ function initTheme(){
   }
   applyTheme(theme);
 }
-themeToggleBtn.addEventListener('click', ()=>{
+themeToggleBtn.addEventListener('click', () => {
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'dark' ? 'light' : 'dark';
   applyTheme(next);
@@ -1194,10 +1023,7 @@ themeToggleBtn.addEventListener('click', ()=>{
 
 /* ============== INIT ============== */
 initTheme();
-renderLessonList();
-checkForResume();
-
-checkAuthSession();
+checkAuthStatus(); // بررسی اولیه وضعیت ورود کاربر به جای اجرای مستقیم لیست درس‌ها
 </script>
 </body>
 </html>
