@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>فلش‌کارت عربی</title>
+<title>واژه‌نامه عربی</title>
 <script>
   (function () {
     var saved = localStorage.getItem('fc-theme') || 'dark';
@@ -175,7 +175,7 @@
   }
   .btn-primary:hover { background-color: var(--accent-strong); transform: translateY(-1px); }
   .auth-toggle { text-align: center; margin-top: 1.75rem; font-size: 0.85rem; color: var(--text-muted); }
-  .auth-toggle span { color: var(--accent); cursor: pointer; font-weight: 700; margin-right: 0.25rem; }
+  .auth-toggle span { color: var(--accent); cursor: pointer; font-weight: 700; margin-right: 0.25rem; text-decoration: underline; }
   .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
   .card { background-color: var(--bg-elevated); border: 1px solid var(--border); border-radius: 1.25rem; padding: 2rem; box-shadow: var(--card-shadow); }
   .card h2 { font-size: 1.25rem; font-weight: 800; margin-bottom: 1.5rem; }
@@ -269,7 +269,7 @@
       <h2 id="authTitle">خوش آمدید</h2>
       <p id="authSubtitle" class="auth-subtitle">جهت ورود مشخصات خود را وارد کنید</p>
       
-      <form id="authForm" onsubmit="return false;">
+      <form id="authForm">
         <div class="form-group">
           <label for="inputUsername">نام کاربری</label>
           <input type="text" id="inputUsername" placeholder="Username" required autocomplete="username" dir="ltr" />
@@ -377,9 +377,6 @@
 <div id="toast" class="toast">...</div>
 
 <script>
-  // ============================================================================
-  // اطلاعات پروژه خود را دقیقاً بین دبل‌کوتیشن‌ها جایگزین کنید
-  // ============================================================================
   const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co/rest/v1/"; 
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
 
@@ -409,7 +406,6 @@
   });
 
   const views = {
-    auth: document.getElementById('viewAuth'),
     dashboard: document.getElementById('viewDashboard'),
     study: document.getElementById('viewStudy'),
     live: document.getElementById('viewLive')
@@ -440,9 +436,9 @@
 
   function switchView(target) {
     Object.keys(views).forEach(k => views[k].classList.remove('active'));
-    views[target].classList.add('active');
+    if(views[target]) views[target].classList.add('active');
     document.querySelectorAll('.nav-tab').forEach(tab => {
-      tab.classList.toggle('active', tab.dataset.target === target);
+      tab.classList.toggle('active', tab.dataset.target === 'view' + target.charAt(0).toUpperCase() + target.slice(1));
     });
     if (target !== 'study' && currentSession) {
       updateLiveStatus('idle', null, null);
@@ -453,33 +449,30 @@
     tab.addEventListener('click', () => switchView(tab.dataset.target.replace('view', '').toLowerCase()));
   });
 
-  function setupAuthToggle() {
-    const link = document.getElementById('authToggleLink');
-    if (!link) return;
-    link.onclick = function() {
-      isSignUpMode = !isSignUpMode;
-      const title = document.getElementById('authTitle');
-      const subtitle = document.getElementById('authSubtitle');
-      const submitBtn = document.getElementById('btnAuthSubmit');
-      const toggleText = document.getElementById('authToggleText');
-      
-      if (isSignUpMode) {
-        title.textContent = "ایجاد حساب";
-        subtitle.textContent = "یک نام کاربری و رمز عبور منحصربه‌فرد انتخاب کنید";
-        submitBtn.textContent = "ثبت‌نام و ورود";
-        toggleText.innerHTML = 'قبلاً عضو شده‌اید؟<span id="authToggleLink">ورود به حساب</span>';
-      } else {
-        title.textContent = "خوش آمدید";
-        subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
-        submitBtn.textContent = "ورود به حساب";
-        toggleText.innerHTML = 'عضو نیستید؟<span id="authToggleLink">ایجاد حساب جدید</span>';
-      }
-      setupAuthToggle();
-    };
-  }
-  setupAuthToggle();
+  const toggleLink = document.getElementById('authToggleLink');
+  toggleLink.addEventListener('click', () => {
+    isSignUpMode = !isSignUpMode;
+    const title = document.getElementById('authTitle');
+    const subtitle = document.getElementById('authSubtitle');
+    const submitBtn = document.getElementById('btnAuthSubmit');
+    const toggleText = document.getElementById('authToggleText');
+    
+    if (isSignUpMode) {
+      title.textContent = "ایجاد حساب";
+      subtitle.textContent = "یک نام کاربری و رمز عبور منحصربه‌فرد انتخاب کنید";
+      submitBtn.textContent = "ثبت‌نام و ورود";
+      toggleText.innerHTML = 'قبلاً عضو شده‌اید؟ <span id="authToggleLink">ورود به حساب</span>';
+    } else {
+      title.textContent = "خوش آمدید";
+      subtitle.textContent = "جهت ورود مشخصات خود را وارد کنید";
+      submitBtn.textContent = "ورود به حساب";
+      toggleText.innerHTML = 'عضو نیستید؟ <span id="authToggleLink">ایجاد حساب جدید</span>';
+    }
+    
+    document.getElementById('authToggleLink').addEventListener('click', arguments.callee);
+  });
 
-  document.getElementById('authForm').onsubmit = async function(e) {
+  document.getElementById('authForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const userVal = document.getElementById('inputUsername').value.trim();
     const passVal = document.getElementById('inputPassword').value;
@@ -490,7 +483,6 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "شکیبا باشید...";
     
-    // تبدیل نام کاربری به قالب ایمیل فرضی برای پشتیبانی بی نقص سرور سوپابیس
     const virtualEmail = `${userVal}@flashcard-local.net`;
 
     try {
@@ -512,7 +504,7 @@
       submitBtn.disabled = false;
       submitBtn.textContent = isSignUpMode ? "ثبت‌نام و ورود" : "ورود به حساب";
     }
-  };
+  });
 
   document.getElementById('btnLogout').onclick = async function() {
     await supabase.auth.signOut();
@@ -522,7 +514,7 @@
   supabase.auth.onAuthStateChange(async (event, session) => {
     currentSession = session;
     if (session) {
-      document.getElementById('viewAuth').style.display = 'none';
+      document.getElementById('viewAuth').classList.remove('active');
       document.getElementById('appHeader').style.display = 'flex';
       const { data: prof } = await supabase.from('profiles').select('display_name').eq('id', session.user.id).maybeSingle();
       currentUserProfile = prof;
@@ -531,7 +523,7 @@
       await initData();
     } else {
       document.getElementById('appHeader').style.display = 'none';
-      document.getElementById('viewAuth').style.display = 'block';
+      document.getElementById('viewAuth').classList.add('active');
     }
   });
 
