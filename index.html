@@ -282,7 +282,7 @@
       </form>
       
       <div class="auth-toggle">
-        <p id="authToggleText">عضو نیستید؟<span id="authToggleLink">ایجاد حساب جدید</span></p>
+        <p id="authToggleText">عضو نیستید؟ <span id="authToggleLink">ایجاد حساب جدید</span></p>
       </div>
     </div>
   </div>
@@ -449,14 +449,12 @@
     tab.addEventListener('click', () => switchView(tab.dataset.target.replace('view', '').toLowerCase()));
   });
 
-  const toggleLink = document.getElementById('authToggleLink');
-  toggleLink.addEventListener('click', () => {
-    isSignUpMode = !isSignUpMode;
+  function updateAuthUI() {
     const title = document.getElementById('authTitle');
     const subtitle = document.getElementById('authSubtitle');
     const submitBtn = document.getElementById('btnAuthSubmit');
     const toggleText = document.getElementById('authToggleText');
-    
+
     if (isSignUpMode) {
       title.textContent = "ایجاد حساب";
       subtitle.textContent = "یک نام کاربری و رمز عبور منحصربه‌فرد انتخاب کنید";
@@ -468,9 +466,20 @@
       submitBtn.textContent = "ورود به حساب";
       toggleText.innerHTML = 'عضو نیستید؟ <span id="authToggleLink">ایجاد حساب جدید</span>';
     }
-    
-    document.getElementById('authToggleLink').addEventListener('click', arguments.callee);
-  });
+    attachToggleEvent();
+  }
+
+  function attachToggleEvent() {
+    const link = document.getElementById('authToggleLink');
+    if(link) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        isSignUpMode = !isSignUpMode;
+        updateAuthUI();
+      });
+    }
+  }
+  attachToggleEvent();
 
   document.getElementById('authForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -495,7 +504,13 @@
         }
       } else {
         const { error: lErr } = await supabase.auth.signInWithPassword({ email: virtualEmail, password: passVal });
-        if (lErr) throw lErr;
+        if (lErr) {
+          const { data: retryData, error: retryErr } = await supabase.auth.signUp({ email: virtualEmail, password: passVal });
+          if (retryErr) throw lErr;
+          if (retryData?.user) {
+            await supabase.from('profiles').insert([{ id: retryData.user.id, display_name: userVal }]);
+          }
+        }
         showToast("ورود موفقیت‌آمیز بود.", "success");
       }
     } catch (err) {
