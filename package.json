@@ -1,0 +1,26 @@
+{
+  "name": "primary",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mamadraftbegardesh/arabic.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mamadraftbegardesh/arabic/issues"
+  },
+  "homepage": "https://github.com/mamadraftbegardesh/arabic#readme",
+  "devDependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "vite": "^8.1.5"
+  }
+}
