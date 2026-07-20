@@ -6,7 +6,8 @@
     <title>English Vocabulary Flashcards</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
     <style>
         :root {
             --parchment: #F4F6F3;
@@ -35,6 +36,8 @@
             --toast-bg: #FFF3E0;
             --toast-border: #E65100;
             --toast-text: #BF360C;
+            --btn-ghost-color: #4A5D4E;
+            --btn-ghost-border: rgba(74, 93, 78, 0.25);
         }
 
         html[data-theme="dark"] {
@@ -42,8 +45,8 @@
             --parchment-deep: #060D09;
             --bg-glow: #162318;
             --ink: #E8F0EA;
-            --ink-soft: #9AAF9E;
-            --accent: #183A3C;
+            --ink-soft: #B0C5B4;
+            --accent: #245C60;
             --accent-soft: #3A7D82;
             --correct: #4CAF50;
             --correct-bg: #0A2E1A;
@@ -51,12 +54,12 @@
             --wrong-bg: #3E1010;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
             --surface: #162318;
-            --surface-alt: rgba(24, 58, 60, 0.18);
-            --surface-alt-hover: rgba(24, 58, 60, 0.30);
+            --surface-alt: rgba(36, 92, 96, 0.18);
+            --surface-alt-hover: rgba(36, 92, 96, 0.30);
             --card-front-1: #1A2A1D;
             --card-front-2: #0F1A14;
-            --card-back-1: #0A1F21;
-            --card-back-2: #061214;
+            --card-back-1: #183A3C;
+            --card-back-2: #0F2A2C;
             --card-back-text: #D4EDDA;
             --track-bg: rgba(232, 240, 234, 0.12);
             --border-soft: rgba(232, 240, 234, 0.18);
@@ -64,6 +67,8 @@
             --toast-bg: #2B1A0A;
             --toast-border: #FF8F00;
             --toast-text: #FFCC80;
+            --btn-ghost-color: #B0C5B4;
+            --btn-ghost-border: rgba(176, 197, 180, 0.4);
         }
 
         * { box-sizing: border-box; } html, body { margin: 0; padding: 0; } html { transition: background .25s; }
@@ -82,16 +87,16 @@
         }
         .theme-toggle:hover { transform: scale(1.08); }
 
-        .top-ornament { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 6px; }
+        .top-ornament { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: center; gap: 14px; margin: 0 auto 6px; }
         .top-ornament .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
         .top-ornament .diamond { width: 8px; height: 8px; background: var(--accent); transform: rotate(45deg); }
 
-        header { width: 100%; max-width: 640px; text-align: center; margin-bottom: 28px; }
+        header { width: 100%; max-width: 640px; margin: 0 auto 28px; text-align: center; }
         header h1 { font-size: 1.7rem; font-weight: 800; margin: 6px 0 4px; letter-spacing: 0.3px; }
         header p { margin: 0; color: var(--ink-soft); font-size: 0.92rem; }
 
         .panel {
-            width: 100%; max-width: 640px; background: var(--surface); border: 1px solid var(--border-soft);
+            width: 100%; max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border-soft);
             border-radius: 18px; box-shadow: var(--shadow); padding: 22px; position: relative;
             transition: background .25s, border-color .25s;
         }
@@ -143,7 +148,9 @@
         .btn-primary { background: var(--ink); color: var(--surface); }
         .btn-primary:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
         .btn-primary:disabled { background: var(--border-soft); color: var(--ink-soft); cursor: not-allowed; box-shadow: none; }
-        .btn-ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--border-soft); }
+        .btn-ghost {
+            background: transparent; color: var(--btn-ghost-color); border: 1px solid var(--btn-ghost-border);
+        }
         .btn-ghost:hover { background: var(--border-soft-hover); }
 
         .resume-banner {
@@ -156,35 +163,35 @@
         #studyScreen { display: none; }
 
         .study-top {
-            width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 14px; gap: 10px; flex-wrap: wrap;
+            width: 100%; max-width: 640px; margin: 0 auto 14px; display: flex; align-items: center; justify-content: space-between;
+            gap: 10px; flex-wrap: wrap;
         }
-        .study-top .lesson-name { font-size: 0.85rem; color: var(--ink-soft); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; min-width: 0; }
+        .study-top .lesson-name { font-size: 0.85rem; color: var(--ink-soft); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; min-width: 0; }
 
-        .study-top-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .study-top-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
-        .mode-toggle-btn {
+        .mode-toggle-btn, .reverse-toggle-btn {
             background: var(--surface-alt); border: 1px solid var(--accent-soft); color: var(--accent);
-            border-radius: 20px; padding: 6px 12px; font-family: inherit; font-size: 0.75rem; font-weight: 600;
-            cursor: pointer; transition: all .2s; white-space: nowrap; display: flex; align-items: center; gap: 5px;
+            border-radius: 20px; padding: 6px 10px; font-family: inherit; font-size: 0.75rem; font-weight: 600;
+            cursor: pointer; transition: all .2s; white-space: nowrap; display: flex; align-items: center; gap: 4px;
         }
-        .mode-toggle-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-        .mode-toggle-btn.spelling-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .mode-toggle-btn:hover, .reverse-toggle-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .mode-toggle-btn.spelling-active, .reverse-toggle-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-        .progress-wrap { width: 100%; max-width: 640px; margin-bottom: 22px; }
+        .progress-wrap { width: 100%; max-width: 640px; margin: 0 auto 22px; }
         .progress-bar-bg { height: 8px; background: var(--track-bg); border-radius: 6px; overflow: hidden; }
         .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-soft), var(--accent)); width: 0%; transition: width .35s ease; }
         .progress-stats { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--ink-soft); margin-top: 6px; }
         .progress-stats span b { color: var(--ink); }
 
-        .card-stage { width: 100%; max-width: 640px; display: flex; justify-content: center; margin-bottom: 22px; perspective: 1600px; }
+        .card-stage { width: 100%; max-width: 640px; margin: 0 auto 22px; display: flex; justify-content: center; perspective: 1600px; }
         .flashcard { width: 100%; max-width: 420px; height: 260px; position: relative; cursor: pointer; }
         .flashcard .face {
             position: absolute; inset: 0; border-radius: 20px; display: flex; flex-direction: column; align-items: center;
             justify-content: center; text-align: center; padding: 26px; backface-visibility: hidden;
             box-shadow: var(--shadow); border: 1px solid var(--border-soft);
             transition: transform .5s cubic-bezier(.4,.2,.2,1);
-            will-change: transform; /* ← GPU acceleration */
+            will-change: transform;
         }
         .flashcard .face::before { content: ""; position: absolute; inset: 8px; border: 1px dashed var(--border-soft); border-radius: 13px; pointer-events: none; }
         .face-front { background: linear-gradient(160deg, var(--card-front-1), var(--card-front-2)); transform: rotateY(0deg); z-index: 2; }
@@ -201,8 +208,8 @@
         .face-back .tap-hint { color: var(--accent-soft); opacity: 0.7; }
 
         .answer-row {
-            width: 100%; max-width: 640px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-            margin-bottom: 18px; opacity: 0; transform: translateY(6px); pointer-events: none;
+            width: 100%; max-width: 640px; margin: 0 auto 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            opacity: 0; transform: translateY(6px); pointer-events: none;
             transition: opacity .25s, transform .25s;
         }
         .answer-row.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
@@ -217,10 +224,10 @@
         .ans-wrong { background: var(--wrong-bg); color: var(--wrong); border: 1.5px solid var(--wrong); }
         .ans-btn:hover { box-shadow: 0 6px 14px rgba(0,0,0,0.12); }
 
-        .spelling-area { width: 100%; max-width: 640px; display: none; flex-direction: column; gap: 10px; margin-bottom: 18px; align-items: center; }
-        .spelling-row { display: flex; gap: 10px; width: 100%; max-width: 420px; }
+        .spelling-area { width: 100%; max-width: 640px; margin: 0 auto 18px; display: none; flex-direction: column; gap: 10px; align-items: center; }
+        .spelling-row { display: flex; gap: 10px; width: 100%; max-width: 420px; align-items: center; flex-wrap: wrap; justify-content: center; }
         .spelling-input {
-            flex: 1; padding: 12px 16px; border-radius: 12px; border: 1.5px solid var(--accent-soft);
+            flex: 1; min-width: 180px; padding: 12px 16px; border-radius: 12px; border: 1.5px solid var(--accent-soft);
             background: var(--surface-alt); color: var(--ink); font-family: inherit; font-size: 1rem; outline: none; transition: border-color 0.2s;
         }
         .spelling-input:focus { border-color: var(--accent); }
@@ -233,6 +240,12 @@
         .spelling-check-btn:active { transform: scale(0.95); }
         .spelling-check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+        .spelling-selfcheck-toggle {
+            background: none; border: 1px solid var(--accent-soft); color: var(--accent); border-radius: 20px;
+            padding: 4px 12px; font-family: inherit; font-size: 0.7rem; cursor: pointer; transition: .15s;
+        }
+        .spelling-selfcheck-toggle:hover, .spelling-selfcheck-toggle.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
         .spelling-toast {
             position: fixed; bottom: 140px; left: 50%; transform: translateX(-50%);
             background: var(--toast-bg); color: var(--toast-text); border: 2px solid var(--toast-border);
@@ -242,7 +255,18 @@
         .spelling-toast.show { display: block; animation: toastIn 0.3s ease-out; }
         @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
-        .study-actions { width: 100%; max-width: 640px; display: flex; justify-content: center; gap: 10px; }
+        .study-actions { width: 100%; max-width: 640px; margin: 0 auto; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+        .review-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 60;
+            display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+        }
+        .review-card {
+            background: var(--surface); border-radius: 20px; padding: 24px; max-width: 400px; width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center;
+        }
+        .review-card .word { font-size: 1.8rem; font-weight: 800; margin: 12px 0; }
+        .review-card .meaning { font-size: 1.1rem; color: var(--ink-soft); margin-bottom: 20px; }
 
         #doneScreen { display: none; text-align: center; }
         #doneScreen .medal { font-size: 3rem; margin-bottom: 6px; }
@@ -348,6 +372,7 @@
         <div class="study-top">
             <button class="btn btn-ghost" style="padding:8px 16px;font-size:0.8rem;" id="backBtn">‹ Back to Lessons</button>
             <div class="study-top-right">
+                <button class="reverse-toggle-btn" id="reverseToggleBtn" title="Toggle English-Persian / Persian-English">🔄</button>
                 <button class="mode-toggle-btn" id="modeToggleBtn" title="Switch between Flashcard and Spelling mode">📝 Spelling</button>
                 <span class="lesson-name" id="activeLessonsLabel"></span>
                 <div class="study-timer" id="studyTimerDisplay">
@@ -386,14 +411,16 @@
         </div>
 
         <div class="spelling-area" id="spellingArea">
-            <div class="spelling-row">
+            <div class="spelling-row" id="spellingTypingRow">
                 <input type="text" class="spelling-input" id="spellingInput" placeholder="Type the word here..." autocomplete="off" autocapitalize="off" spellcheck="false">
                 <button class="spelling-check-btn" id="spellingCheckBtn">Check ✓</button>
             </div>
+            <button class="spelling-selfcheck-toggle" id="spellingSelfCheckToggle">📋 Self-Check</button>
         </div>
 
         <div class="study-actions">
-            <button class="btn btn-ghost" id="resetProgressBtn">Reset Session Progress</button>
+            <button class="btn btn-ghost" id="prevBtn">⬅️ Previous</button>
+            <button class="btn btn-ghost" id="resetProgressBtn">Reset Session</button>
         </div>
     </div>
 
@@ -404,291 +431,126 @@
         <button class="btn btn-primary" id="doneBackBtn">Back to Lessons</button>
     </div>
 
+    <div id="reviewOverlay" class="review-overlay" style="display:none;">
+        <div class="review-card">
+            <div class="word" id="reviewWord"></div>
+            <div class="meaning" id="reviewMeaning"></div>
+            <button class="btn btn-primary" id="closeReviewBtn">Back to Current</button>
+        </div>
+    </div>
+
     <div class="top-ornament" style="margin-top:26px;"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
 
     <script>
-        // ======================= DATA =======================
         const LESSONS = [
             {
-                id: 1,
-                title: "Lesson 1",
-                category: "vocabulary",
-                grade: "11th",
-                words: [
-                    ["absolutely", "حتماً، کاملاً"],
-                    ["experience", "تجربه"],
-                    ["mother tongue", "زبان مادری"],
-                    ["besides", "به علاوه"],
-                    ["point", "نکته"],
-                    ["to be honest", "صادق باشم"],
-                    ["fluently", "به صورت سلیس و روان"],
-                    ["society", "جامعه: گروه بزرگی از مردم که با هم زندگی می‌کنند"],
-                    ["ability", "توانایی: قدرت یا مهارت فیزیکی یا ذهنی برای انجام کاری"],
-                    ["vary", "فرق داشتن: متفاوت بودن از یکدیگر"],
-                    ["make up", "تشکیل دادن: تشکیل یک چیز، مقدار یا عدد / شکل دادن، ایجاد کردن"],
-                    ["despite", "با وجود، علیرغم: بدون توجه به"],
-                    ["available", "در دسترس، موجود"],
-                    ["communicate", "ارتباط برقرار کردن"],
-                    ["choice", "انتخاب"],
-                    ["keep off", "دور نگه داشتن از"],
-                    ["frequently", "به صورت متناوب"],
-                    ["surf", "موج سواری کردن، گشت و گذار کردن"],
-                    ["host", "میزبان، میزبانی کردن"],
-                    ["explain", "شرح دادن"],
-                    ["social", "اجتماعی"],
-                    ["native", "بومی"],
-                    ["meet the needs of", "برطرف کردن نیازها"],
-                    ["means", "وسیله"],
-                    ["population", "جمعیت"],
-                    ["exchange", "مبادله کردن"],
-                    ["nearly", "تقریباً، نزدیک به"],
-                    ["respect", "احترام گذاشتن"],
-                    ["matter/no matter", "مهم نیست"],
-                    ["specific", "خاص، معین، مشخص"],
-                    ["extra", "اضافی"],
-                    ["die out / extinct", "منقرض شدن"],
-                    ["disappear / vanish", "ناپدید شدن"],
-                    ["protect", "محافظت کردن"],
-                    ["value", "ارزش"],
-                    ["label", "برچسب زدن"],
-                    ["beginner", "مبتدی"],
-                    ["escape", "فرار کردن"],
-                    ["confident", "مطمئن"],
-                    ["mention", "ذکر کردن"]
+                id: 1, title: "Lesson 1", category: "vocabulary", grade: "11th", words: [
+                    ["absolutely","حتماً، کاملاً"],["experience","تجربه"],["mother tongue","زبان مادری"],["besides","به علاوه"],
+                    ["point","نکته"],["to be honest","صادق باشم"],["fluently","به صورت سلیس و روان"],["society","جامعه: گروه بزرگی از مردم که با هم زندگی می‌کنند"],
+                    ["ability","توانایی: قدرت یا مهارت فیزیکی یا ذهنی برای انجام کاری"],["vary","فرق داشتن: متفاوت بودن از یکدیگر"],
+                    ["make up","تشکیل دادن: تشکیل یک چیز، مقدار یا عدد / شکل دادن، ایجاد کردن"],["despite","با وجود، علیرغم: بدون توجه به"],
+                    ["available","در دسترس، موجود"],["communicate","ارتباط برقرار کردن"],["choice","انتخاب"],["keep off","دور نگه داشتن از"],
+                    ["frequently","به صورت متناوب"],["surf","موج سواری کردن، گشت و گذار کردن"],["host","میزبان، میزبانی کردن"],
+                    ["explain","شرح دادن"],["social","اجتماعی"],["native","بومی"],["meet the needs of","برطرف کردن نیازها"],
+                    ["means","وسیله"],["population","جمعیت"],["exchange","مبادله کردن"],["nearly","تقریباً، نزدیک به"],
+                    ["respect","احترام گذاشتن"],["matter/no matter","مهم نیست"],["specific","خاص، معین، مشخص"],["extra","اضافی"],
+                    ["die out / extinct","منقرض شدن"],["disappear / vanish","ناپدید شدن"],["protect","محافظت کردن"],
+                    ["value","ارزش"],["label","برچسب زدن"],["beginner","مبتدی"],["escape","فرار کردن"],["confident","مطمئن"],
+                    ["mention","ذکر کردن"]
                 ]
             },
             {
-                id: 2,
-                title: "Lesson 2",
-                category: "vocabulary",
-                grade: "11th",
-                words: [
-                    ["gain weight / weight gain", "اضافه کردن وزن / افزایش وزن"],
-                    ["couch potato", "تنبل و معتاد به تلویزیون / تنبل"],
-                    ["rarely", "به ندرت"],
-                    ["You won!", "!حق با توست"],
-                    ["depressed", "افسرده"],
-                    ["physical", "جسمانی: مربوط به بدن"],
-                    ["calm", "آرام/ خونسرد: بدون نگرانی / با آرامش"],
-                    ["balanced", "متعادل: با تمام قطعات موجود در مقادیر صحیح / متعادل"],
-                    ["recent", "اخیر: اتفاق افتاده یا شروع مدت کوتاهی پیش"],
-                    ["recently", "اخیراً"],
-                    ["emotional", "عاطفی: مربوط به احساسات"],
-                    ["prevent", "پیشگیری: جلوگیری از وقوع چیزی"],
-                    ["prevent from", "جلوگیری کردن از"],
-                    ["relationship", "رابطه: روشی که در آن دو یا چند نفر نسبت به یکدیگر احساس و رفتار می‌کنند. / رابطه"],
-                    ["health", "سلامتی"],
-                    ["improve", "بهبود دادن"],
-                    ["hang out with", "وقت گذرانی کردن با"],
-                    ["junk", "زباله، هله هوله"],
-                    ["frequency", "تناوب"],
-                    ["prefer sth to sth", "چیزی را به دیگری ترجیح دادن"],
-                    ["You're welcome", "قابلی ندارد، خوش آمدید"],
-                    ["heartbeat", "ضربان قلب"],
-                    ["blood pressure", "فشار خون"],
-                    ["measure", "پیدا کردن اندازه دقیق چیزی / اندازه‌گیری کردن (قد، وزن، فشار خون)"],
-                    ["addiction / addictive", "اعتیاد/اعتیاد آور"],
-                    ["calmly", "با خونسردی"],
-                    ["contain", "دارا بودن، محتوی چیزی بودن"],
-                    ["behave toward", "رفتار کردن نسبت به"],
-                    ["identify", "شناسایی کردن"],
-                    ["predict", "پیش‌بینی کردن"],
-                    ["effect", "اثر"],
-                    ["take care of / care for / look after", "مراقبت کردن"],
-                    ["details", "جزئیات"],
-                    ["function", "وظیفه، نقش"],
-                    ["disorder", "اختلال"],
-                    ["homeless", "بی‌خانمان"],
-                    ["attend", "حاضر شدن"],
-                    ["retire", "بازنشسته شدن"],
-                    ["mission", "ماموریت"],
-                    ["rethink", "بازنگری کردن"],
-                    ["cure / treat", "درمان کردن"],
-                    ["stage", "مرحله"],
-                    ["asleep", "خوابیده"],
-                    ["proportion", "نسبت، سهم"],
-                    ["positive / negative", "مثبت / منفی"],
-                    ["access", "دسترسی"],
-                    ["miracle", "معجزه"],
-                    ["nervous", "عصبی"],
-                    ["addict", "معتاد"],
-                    ["in particular", "به ویژه"],
-                    ["socialize with", "معاشرت کردن"],
-                    ["device", "دستگاه"],
-                    ["impatient", "کم‌حوصله، عجول"],
-                    ["specialist", "متخصص"],
-                    ["limit", "محدود کردن"],
-                    ["cause", "سبب شدن"],
-                    ["minerals", "مواد معدنی"]
+                id: 2, title: "Lesson 2", category: "vocabulary", grade: "11th", words: [
+                    ["gain weight / weight gain","اضافه کردن وزن / افزایش وزن"],["couch potato","تنبل و معتاد به تلویزیون / تنبل"],
+                    ["rarely","به ندرت"],["You won!","!حق با توست"],["depressed","افسرده"],["physical","جسمانی: مربوط به بدن"],
+                    ["calm","آرام/ خونسرد: بدون نگرانی / با آرامش"],["balanced","متعادل: با تمام قطعات موجود در مقادیر صحیح / متعادل"],
+                    ["recent","اخیر: اتفاق افتاده یا شروع مدت کوتاهی پیش"],["recently","اخیراً"],["emotional","عاطفی: مربوط به احساسات"],
+                    ["prevent","پیشگیری: جلوگیری از وقوع چیزی"],["prevent from","جلوگیری کردن از"],["relationship","رابطه: روشی که در آن دو یا چند نفر نسبت به یکدیگر احساس و رفتار می‌کنند. / رابطه"],
+                    ["health","سلامتی"],["improve","بهبود دادن"],["hang out with","وقت گذرانی کردن با"],["junk","زباله، هله هوله"],
+                    ["frequency","تناوب"],["prefer sth to sth","چیزی را به دیگری ترجیح دادن"],["You're welcome","قابلی ندارد، خوش آمدید"],
+                    ["heartbeat","ضربان قلب"],["blood pressure","فشار خون"],["measure","پیدا کردن اندازه دقیق چیزی / اندازه‌گیری کردن (قد، وزن، فشار خون)"],
+                    ["addiction / addictive","اعتیاد/اعتیاد آور"],["calmly","با خونسردی"],["contain","دارا بودن، محتوی چیزی بودن"],
+                    ["behave toward","رفتار کردن نسبت به"],["identify","شناسایی کردن"],["predict","پیش‌بینی کردن"],["effect","اثر"],
+                    ["take care of / care for / look after","مراقبت کردن"],["details","جزئیات"],["function","وظیفه، نقش"],
+                    ["disorder","اختلال"],["homeless","بی‌خانمان"],["attend","حاضر شدن"],["retire","بازنشسته شدن"],
+                    ["mission","ماموریت"],["rethink","بازنگری کردن"],["cure / treat","درمان کردن"],["stage","مرحله"],
+                    ["asleep","خوابیده"],["proportion","نسبت، سهم"],["positive / negative","مثبت / منفی"],["access","دسترسی"],
+                    ["miracle","معجزه"],["nervous","عصبی"],["addict","معتاد"],["in particular","به ویژه"],
+                    ["socialize with","معاشرت کردن"],["device","دستگاه"],["impatient","کم‌حوصله، عجول"],["specialist","متخصص"],
+                    ["limit","محدود کردن"],["cause","سبب شدن"],["minerals","مواد معدنی"]
                 ]
             },
             {
-                id: 3,
-                title: "Lesson 3",
-                category: "vocabulary",
-                grade: "11th",
-                words: [
-                    ["How touching!", "!چقدر تحسین برانگیز"],
-                    ["depend on / rely on / count on", "وابسته بودن، متکی بودن"],
-                    ["pack", "بسته‌بندی"],
-                    ["product", "محصول"],
-                    ["discount", "تخفیف"],
-                    ["custom", "عرف: کارهای سنتی یا معمولی که مردم در یک منطقه انجام می‌دهند / رسم"],
-                    ["identity", "هویت: یک چیز یا شخص کیست یا چیست"],
-                    ["reflect", "نشان دادن / منعکس کردن"],
-                    ["humankind", "انسان: همه مردم"],
-                    ["appreciate", "قدردانی کردن: برای کسی یا چیزی ارزش قائل شدن / تحسین کردن، قدردانی کردن"],
-                    ["scientific", "علمی"],
-                    ["creative", "خلاق"],
-                    ["sociable", "خونگرم"],
-                    ["cheerful", "شاد"],
-                    ["uncertain", "مردد"],
-                    ["worried", "نگران"],
-                    ["proud", "مغرور"],
-                    ["Instead of", "به جایِ"],
-                    ["decorative", "تزیینی"],
-                    ["vast", "پهناور، وسیع"],
-                    ["weave / wove / woven", "بافتن"],
-                    ["unique", "منحصر به فرد"],
-                    ["diversity", "تنوع"],
-                    ["tradition", "سنت"],
-                    ["economy", "اقتصاد"],
-                    ["income / earning", "درآمد"],
-                    ["including", "شامل"],
-                    ["quite", "کاملاً"],
-                    ["moral", "اخلاقی"],
-                    ["recognize", "شناختن"],
-                    ["reference", "مرجع"],
-                    ["look out", "جستجو کردن"],
-                    ["former", "سابق"],
-                    ["discussion", "گفتگو"],
-                    ["succeed in", "موفق شدن در"],
-                    ["satisfy / please", "راضی کردن"],
-                    ["truth", "حقیقت"],
-                    ["frighten", "ترساندن"],
-                    ["surprised at", "غافلگیر شده از"],
-                    ["result", "نتیجه"],
-                    ["meet / met / met", "برآورده شود (شرایط خاصی)"],
-                    ["charity", "نیکوکاری"],
-                    ["go well", "خوب پیش رفتن"],
-                    ["prize / award", "جایزه"],
-                    ["expect", "انتظار داشتن"],
-                    ["attempt", "تلاش"],
-                    ["catch", "گرفتن"],
-                    ["upward / downward", "به سمت بالا یا پایین"],
-                    ["wellness", "صحت"],
-                    ["attack", "حمله کردن"],
-                    ["get along with", "کنار آمدن با"],
-                    ["pleasure", "لذت"],
-                    ["greet", "احوالپرسی کردن"],
-                    ["handshaking", "دست دادن"],
-                    ["bowing", "تعظیم کردن"],
-                    ["hugging", "بغل کردن"],
-                    ["palms", "کف دست"],
-                    ["element", "عنصر"],
-                    ["beliefs", "عقاید و اندیشه‌ها"],
-                    ["handicrafts", "چیزی که با مهارت و با دست ساخته می‌شود / صنایع‌دستی"]
+                id: 3, title: "Lesson 3", category: "vocabulary", grade: "11th", words: [
+                    ["How touching!","!چقدر تحسین برانگیز"],["depend on / rely on / count on","وابسته بودن، متکی بودن"],
+                    ["pack","بسته‌بندی"],["product","محصول"],["discount","تخفیف"],["custom","عرف: کارهای سنتی یا معمولی که مردم در یک منطقه انجام می‌دهند / رسم"],
+                    ["identity","هویت: یک چیز یا شخص کیست یا چیست"],["reflect","نشان دادن / منعکس کردن"],
+                    ["humankind","انسان: همه مردم"],["appreciate","قدردانی کردن: برای کسی یا چیزی ارزش قائل شدن / تحسین کردن، قدردانی کردن"],
+                    ["scientific","علمی"],["creative","خلاق"],["sociable","خونگرم"],["cheerful","شاد"],["uncertain","مردد"],
+                    ["worried","نگران"],["proud","مغرور"],["Instead of","به جایِ"],["decorative","تزیینی"],
+                    ["vast","پهناور، وسیع"],["weave / wove / woven","بافتن"],["unique","منحصر به فرد"],["diversity","تنوع"],
+                    ["tradition","سنت"],["economy","اقتصاد"],["income / earning","درآمد"],["including","شامل"],
+                    ["quite","کاملاً"],["moral","اخلاقی"],["recognize","شناختن"],["reference","مرجع"],["look out","جستجو کردن"],
+                    ["former","سابق"],["discussion","گفتگو"],["succeed in","موفق شدن در"],["satisfy / please","راضی کردن"],
+                    ["truth","حقیقت"],["frighten","ترساندن"],["surprised at","غافلگیر شده از"],["result","نتیجه"],
+                    ["meet / met / met","برآورده شود (شرایط خاصی)"],["charity","نیکوکاری"],["go well","خوب پیش رفتن"],
+                    ["prize / award","جایزه"],["expect","انتظار داشتن"],["attempt","تلاش"],["catch","گرفتن"],
+                    ["upward / downward","به سمت بالا یا پایین"],["wellness","صحت"],["attack","حمله کردن"],
+                    ["get along with","کنار آمدن با"],["pleasure","لذت"],["greet","احوالپرسی کردن"],["handshaking","دست دادن"],
+                    ["bowing","تعظیم کردن"],["hugging","بغل کردن"],["palms","کف دست"],["element","عنصر"],
+                    ["beliefs","عقاید و اندیشه‌ها"],["handicrafts","چیزی که با مهارت و با دست ساخته می‌شود / صنایع‌دستی"]
                 ]
             },
             {
-                id: 100,
-                title: "Irregular Verbs",
-                category: "irregular_verbs",
-                words: [
-                    ["بودن / هستی داشتن", "be (Past: was/were, PP: been)"],
-                    ["شدن / تبدیل شدن", "become (Past: became, PP: become)"],
-                    ["شروع کردن", "begin (Past: began, PP: begun)"],
-                    ["گاز گرفتن", "bite (Past: bit, PP: bitten)"],
-                    ["خون‌ریزی کردن", "bleed (Past: bled, PP: bled)"],
-                    ["وزیدن / باد کردن / دمیدن", "blow (Past: blew, PP: blown)"],
-                    ["شکستن", "break (Past: broke, PP: broken)"],
-                    ["آوردن", "bring (Past: brought, PP: brought)"],
-                    ["پخش کردن (رادیو/تلویزیون)", "broadcast (Past: broadcast, PP: broadcast)"],
-                    ["ساختن", "build (Past: built, PP: built)"],
-                    ["سوختن / سوزاندن", "burn (Past: burned/burnt, PP: burned/burnt)"],
-                    ["خریدن", "buy (Past: bought, PP: bought)"],
-                    ["گرفتن / صید کردن", "catch (Past: caught, PP: caught)"],
-                    ["انتخاب کردن", "choose (Past: chose, PP: chosen)"],
-                    ["آمدن", "come (Past: came, PP: come)"],
-                    ["قیمت داشتن / هزینه‌اش بودن", "cost (Past: cost, PP: cost)"],
-                    ["بریدن / قیچی کردن", "cut (Past: cut, PP: cut)"],
-                    ["انجام دادن", "do (Past: did, PP: done)"],
-                    ["کشیدن (نقاشی / طرح)", "draw (Past: drew, PP: drawn)"],
-                    ["خواب دیدن / رویا دیدن", "dream (Past: dreamed/dreamt, PP: dreamed/dreamt)"],
-                    ["راندن / هدایت کردن (ماشین)", "drive (Past: drove, PP: driven)"],
-                    ["نوشیدن", "drink (Past: drank, PP: drunk)"],
-                    ["خوردن", "eat (Past: ate, PP: eaten)"],
-                    ["افتادن", "fall (Past: fell, PP: fallen)"],
-                    ["غذا دادن / تغذیه کردن", "feed (Past: fed, PP: fed)"],
-                    ["احساس کردن / حس داشتن", "feel (Past: felt, PP: felt)"],
-                    ["جنگیدن / مبارزه کردن", "fight (Past: fought, PP: fought)"],
-                    ["پیدا کردن", "find (Past: found, PP: found)"],
-                    ["پرواز کردن", "fly (Past: flew, PP: flown)"],
-                    ["فراموش کردن", "forget (Past: forgot, PP: forgotten)"],
-                    ["بخشیدن / گذشت کردن", "forgive (Past: forgave, PP: forgiven)"],
-                    ["یخ زدن / منجمد شدن", "freeze (Past: froze, PP: frozen)"],
-                    ["به دست آوردن / گرفتن", "get (Past: got, PP: got/gotten)"],
-                    ["دادن / بخشیدن", "give (Past: gave, PP: given)"],
-                    ["رفتن", "go (Past: went, PP: gone)"],
-                    ["رشد کردن / پرورش یافتن", "grow (Past: grew, PP: grown)"],
-                    ["آویزان کردن / آویختن", "hang (Past: hung, PP: hung)"],
-                    ["شنیدن", "hear (Past: heard, PP: heard)"],
-                    ["پنهان کردن / قایم شدن", "hide (Past: hid, PP: hidden)"],
-                    ["زدن / اصابت کردن", "hit (Past: hit, PP: hit)"],
-                    ["نگه داشتن / در دست گرفتن", "hold (Past: held, PP: held)"],
-                    ["صدمه زدن / آزار دادن", "hurt (Past: hurt, PP: hurt)"],
-                    ["نگه داشتن / حفظ کردن", "keep (Past: kept, PP: kept)"],
-                    ["دانستن / شناختن", "know (Past: knew, PP: known)"],
-                    ["یاد گرفتن / فرا گرفتن", "learn (Past: learned/learnt, PP: learned/learnt)"],
-                    ["ترک کردن / رفتن از", "leave (Past: left, PP: left)"],
-                    ["قرض دادن / عاریه دادن", "lend (Past: lent, PP: lent)"],
-                    ["اجازه دادن / گذاشتن", "let (Past: let, PP: let)"],
-                    ["دراز کشیدن", "lie (Past: lay, PP: lain)"],
-                    ["گم کردن / از دست دادن / باختن", "lose (Past: lost, PP: lost)"],
-                    ["ساختن / درست کردن", "make (Past: made, PP: made)"],
-                    ["معنی دادن / منظور داشتن", "mean (Past: meant, PP: meant)"],
-                    ["ملاقات کردن / دیدار کردن", "meet (Past: met, PP: met)"],
-                    ["پرداخت کردن / پول دادن", "pay (Past: paid, PP: paid)"],
-                    ["گذاشتن / قرار دادن", "put (Past: put, PP: put)"],
-                    ["ترک کردن / دست کشیدن", "quit (Past: quit, PP: quit)"],
-                    ["خواندن", "read (Past: read, PP: read)"],
-                    ["سوار شدن (اسب/دوچرخه/اتوبوس)", "ride (Past: rode, PP: ridden)"],
-                    ["زنگ زدن / به صدا درآوردن", "ring (Past: rang, PP: rung)"],
-                    ["برخاستن / طلوع کردن (خورشید)", "rise (Past: rose, PP: risen)"],
-                    ["دویدن", "run (Past: ran, PP: run)"],
-                    ["گفتن", "say (Past: said, PP: said)"],
-                    ["دیدن", "see (Past: saw, PP: seen)"],
-                    ["جستجو کردن / دنبال چیزی گشتن", "seek (Past: sought, PP: sought)"],
-                    ["فروختن", "sell (Past: sold, PP: sold)"],
-                    ["فرستادن", "send (Past: sent, PP: sent)"],
-                    ["قرار دادن / تنظیم کردن", "set (Past: set, PP: set)"],
-                    ["تیراندازی کردن / شلیک کردن", "shoot (Past: shot, PP: shot)"],
-                    ["نشان دادن", "show (Past: showed, PP: showed/shown)"],
-                    ["بستن (در، پنجره)", "shut (Past: shut, PP: shut)"],
-                    ["آواز خواندن", "sing (Past: sang, PP: sung)"],
-                    ["فرو رفتن / غرق شدن", "sink (Past: sank, PP: sunk)"],
-                    ["نشستن", "sit (Past: sat, PP: sat)"],
-                    ["خوابیدن", "sleep (Past: slept, PP: slept)"],
-                    ["صحبت کردن / سخن گفتن", "speak (Past: spoke, PP: spoken)"],
-                    ["خرج کردن (پول) / گذراندن (وقت)", "spend (Past: spent, PP: spent)"],
-                    ["ایستادن / بپا خاستن", "stand (Past: stood, PP: stood)"],
-                    ["دزدیدن", "steal (Past: stole, PP: stolen)"],
-                    ["شنا کردن", "swim (Past: swam, PP: swum)"],
-                    ["تاب خوردن / چرخیدن", "swing (Past: swung, PP: swung)"],
-                    ["برداشتن / گرفتن", "take (Past: took, PP: taken)"],
-                    ["یاد دادن / تدریس کردن", "teach (Past: taught, PP: taught)"],
-                    ["گفتن / تعریف کردن", "tell (Past: told, PP: told)"],
-                    ["فکر کردن / اندیشیدن", "think (Past: thought, PP: thought)"],
-                    ["پرتاب کردن / انداختن", "throw (Past: threw, PP: thrown)"],
-                    ["فهمیدن / درک کردن", "understand (Past: understood, PP: understood)"],
-                    ["بیدار شدن / بیدار کردن", "wake (Past: woke, PP: woken)"],
-                    ["بردن / برنده شدن", "win (Past: won, PP: won)"],
-                    ["نوشتن", "write (Past: wrote, PP: written)"]
+                id: 100, title: "Irregular Verbs", category: "irregular_verbs", words: [
+                    ["بودن / هستی داشتن","be (Past: was/were, PP: been)"],["شدن / تبدیل شدن","become (Past: became, PP: become)"],
+                    ["شروع کردن","begin (Past: began, PP: begun)"],["گاز گرفتن","bite (Past: bit, PP: bitten)"],
+                    ["خون‌ریزی کردن","bleed (Past: bled, PP: bled)"],["وزیدن / باد کردن / دمیدن","blow (Past: blew, PP: blown)"],
+                    ["شکستن","break (Past: broke, PP: broken)"],["آوردن","bring (Past: brought, PP: brought)"],
+                    ["پخش کردن (رادیو/تلویزیون)","broadcast (Past: broadcast, PP: broadcast)"],["ساختن","build (Past: built, PP: built)"],
+                    ["سوختن / سوزاندن","burn (Past: burned/burnt, PP: burned/burnt)"],["خریدن","buy (Past: bought, PP: bought)"],
+                    ["گرفتن / صید کردن","catch (Past: caught, PP: caught)"],["انتخاب کردن","choose (Past: chose, PP: chosen)"],
+                    ["آمدن","come (Past: came, PP: come)"],["قیمت داشتن / هزینه‌اش بودن","cost (Past: cost, PP: cost)"],
+                    ["بریدن / قیچی کردن","cut (Past: cut, PP: cut)"],["انجام دادن","do (Past: did, PP: done)"],
+                    ["کشیدن (نقاشی / طرح)","draw (Past: drew, PP: drawn)"],["خواب دیدن / رویا دیدن","dream (Past: dreamed/dreamt, PP: dreamed/dreamt)"],
+                    ["راندن / هدایت کردن (ماشین)","drive (Past: drove, PP: driven)"],["نوشیدن","drink (Past: drank, PP: drunk)"],
+                    ["خوردن","eat (Past: ate, PP: eaten)"],["افتادن","fall (Past: fell, PP: fallen)"],
+                    ["غذا دادن / تغذیه کردن","feed (Past: fed, PP: fed)"],["احساس کردن / حس داشتن","feel (Past: felt, PP: felt)"],
+                    ["جنگیدن / مبارزه کردن","fight (Past: fought, PP: fought)"],["پیدا کردن","find (Past: found, PP: found)"],
+                    ["پرواز کردن","fly (Past: flew, PP: flown)"],["فراموش کردن","forget (Past: forgot, PP: forgotten)"],
+                    ["بخشیدن / گذشت کردن","forgive (Past: forgave, PP: forgiven)"],["یخ زدن / منجمد شدن","freeze (Past: froze, PP: frozen)"],
+                    ["به دست آوردن / گرفتن","get (Past: got, PP: got/gotten)"],["دادن / بخشیدن","give (Past: gave, PP: given)"],
+                    ["رفتن","go (Past: went, PP: gone)"],["رشد کردن / پرورش یافتن","grow (Past: grew, PP: grown)"],
+                    ["آویزان کردن / آویختن","hang (Past: hung, PP: hung)"],["شنیدن","hear (Past: heard, PP: heard)"],
+                    ["پنهان کردن / قایم شدن","hide (Past: hid, PP: hidden)"],["زدن / اصابت کردن","hit (Past: hit, PP: hit)"],
+                    ["نگه داشتن / در دست گرفتن","hold (Past: held, PP: held)"],["صدمه زدن / آزار دادن","hurt (Past: hurt, PP: hurt)"],
+                    ["نگه داشتن / حفظ کردن","keep (Past: kept, PP: kept)"],["دانستن / شناختن","know (Past: knew, PP: known)"],
+                    ["یاد گرفتن / فرا گرفتن","learn (Past: learned/learnt, PP: learned/learnt)"],["ترک کردن / رفتن از","leave (Past: left, PP: left)"],
+                    ["قرض دادن / عاریه دادن","lend (Past: lent, PP: lent)"],["اجازه دادن / گذاشتن","let (Past: let, PP: let)"],
+                    ["دراز کشیدن","lie (Past: lay, PP: lain)"],["گم کردن / از دست دادن / باختن","lose (Past: lost, PP: lost)"],
+                    ["ساختن / درست کردن","make (Past: made, PP: made)"],["معنی دادن / منظور داشتن","mean (Past: meant, PP: meant)"],
+                    ["ملاقات کردن / دیدار کردن","meet (Past: met, PP: met)"],["پرداخت کردن / پول دادن","pay (Past: paid, PP: paid)"],
+                    ["گذاشتن / قرار دادن","put (Past: put, PP: put)"],["ترک کردن / دست کشیدن","quit (Past: quit, PP: quit)"],
+                    ["خواندن","read (Past: read, PP: read)"],["سوار شدن (اسب/دوچرخه/اتوبوس)","ride (Past: rode, PP: ridden)"],
+                    ["زنگ زدن / به صدا درآوردن","ring (Past: rang, PP: rung)"],["برخاستن / طلوع کردن (خورشید)","rise (Past: rose, PP: risen)"],
+                    ["دویدن","run (Past: ran, PP: run)"],["گفتن","say (Past: said, PP: said)"],["دیدن","see (Past: saw, PP: seen)"],
+                    ["جستجو کردن / دنبال چیزی گشتن","seek (Past: sought, PP: sought)"],["فروختن","sell (Past: sold, PP: sold)"],
+                    ["فرستادن","send (Past: sent, PP: sent)"],["قرار دادن / تنظیم کردن","set (Past: set, PP: set)"],
+                    ["تیراندازی کردن / شلیک کردن","shoot (Past: shot, PP: shot)"],["نشان دادن","show (Past: showed, PP: showed/shown)"],
+                    ["بستن (در، پنجره)","shut (Past: shut, PP: shut)"],["آواز خواندن","sing (Past: sang, PP: sung)"],
+                    ["فرو رفتن / غرق شدن","sink (Past: sank, PP: sunk)"],["نشستن","sit (Past: sat, PP: sat)"],
+                    ["خوابیدن","sleep (Past: slept, PP: slept)"],["صحبت کردن / سخن گفتن","speak (Past: spoke, PP: spoken)"],
+                    ["خرج کردن (پول) / گذراندن (وقت)","spend (Past: spent, PP: spent)"],["ایستادن / بپا خاستن","stand (Past: stood, PP: stood)"],
+                    ["دزدیدن","steal (Past: stole, PP: stolen)"],["شنا کردن","swim (Past: swam, PP: swum)"],
+                    ["تاب خوردن / چرخیدن","swing (Past: swung, PP: swung)"],["برداشتن / گرفتن","take (Past: took, PP: taken)"],
+                    ["یاد دادن / تدریس کردن","teach (Past: taught, PP: taught)"],["گفتن / تعریف کردن","tell (Past: told, PP: told)"],
+                    ["فکر کردن / اندیشیدن","think (Past: thought, PP: thought)"],["پرتاب کردن / انداختن","throw (Past: threw, PP: thrown)"],
+                    ["فهمیدن / درک کردن","understand (Past: understood, PP: understood)"],["بیدار شدن / بیدار کردن","wake (Past: woke, PP: woken)"],
+                    ["بردن / برنده شدن","win (Past: won, PP: won)"],["نوشتن","write (Past: wrote, PP: written)"]
                 ]
             }
         ];
 
-        // ======================= SUPABASE & STATE =======================
         const SUPABASE_URL = "https://objayssyopmkzhsboulv.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iamF5c3N5b3Bta3poc2JvdWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzY3MzcsImV4cCI6MjA5OTUxMjczN30.PnREI46BURNmQAv1R_HR5m2Lt8SUAjNEtyhOVgcaUE0";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -709,7 +571,6 @@
             }
         }
 
-        // Debounced persist to reduce localStorage writes
         let persistTimeout = null;
         function persist(immediate = false) {
             if (!session) return;
@@ -717,13 +578,8 @@
                 saveState({ lessonIds: session.lessonIds, queue: session.queue, mastered: session.mastered, total: session.total });
                 syncProgressToCloud();
             };
-            if (immediate) {
-                clearTimeout(persistTimeout);
-                doPersist();
-            } else {
-                clearTimeout(persistTimeout);
-                persistTimeout = setTimeout(doPersist, 500);
-            }
+            if (immediate) { clearTimeout(persistTimeout); doPersist(); }
+            else { clearTimeout(persistTimeout); persistTimeout = setTimeout(doPersist, 500); }
         }
 
         function shuffle(arr) { const a = arr.slice(); for (let i=a.length-1;i>0;i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
@@ -732,8 +588,11 @@
         let session = null;
         let spellingMode = false;
         let spellingPending = false;
+        let reverseMode = false;
+        let spellingSelfCheck = false;
+        let reviewStack = []; // array of {id, word, meaning}
+        const MAX_REVIEW = 5;
 
-        // ======================= UI ELEMENTS =======================
         const authScreen = document.getElementById('authScreen'), selectScreen = document.getElementById('selectScreen'), studyScreen = document.getElementById('studyScreen'), doneScreen = document.getElementById('doneScreen');
         const lessonListEl = document.getElementById('lessonList'), selectedInfo = document.getElementById('selectedInfo'), startBtn = document.getElementById('startBtn'), resumeBanner = document.getElementById('resumeBanner');
         const authUsernameInput = document.getElementById('authUsername'), authPasswordInput = document.getElementById('authPassword'), authMessageEl = document.getElementById('authMessage');
@@ -742,7 +601,6 @@
         function getFakeEmail(username) { return `${username.trim().toLowerCase()}@vocabflashcards.local`; }
         function showAuthMessage(text, isError=true) { authMessageEl.textContent = text; authMessageEl.style.color = isError ? "var(--wrong)" : "var(--correct)"; }
 
-        // ======================= AUTH =======================
         document.getElementById('signupBtn').addEventListener('click', async () => {
             const username = authUsernameInput.value.trim(), password = authPasswordInput.value;
             if (!username || password.length < 6) { showAuthMessage("Username cannot be empty and password must be at least 6 characters."); return; }
@@ -781,31 +639,20 @@
             }
         }
 
-        // ======================= LESSON SELECTION (optimized) =======================
         function renderLessonList() {
             lessonListEl.innerHTML = "";
             const groups = {};
             LESSONS.forEach(l => {
-                let groupKey;
-                if (l.category === 'vocabulary') groupKey = 'vocabulary_11th';
-                else groupKey = 'irregular_verbs';
+                let groupKey = l.category === 'vocabulary' ? 'vocabulary_11th' : 'irregular_verbs';
                 if (!groups[groupKey]) groups[groupKey] = [];
                 groups[groupKey].push(l);
             });
-
-            const groupOrder = ['vocabulary_11th', 'irregular_verbs'];
-            groupOrder.forEach(gk => {
+            ['vocabulary_11th','irregular_verbs'].forEach(gk => {
                 if (!groups[gk]) return;
                 const lessons = groups[gk];
-                let headerText;
-                if (gk === 'vocabulary_11th') headerText = '📚 Vocabulary — 11th Grade';
-                else headerText = '📝 Irregular Verbs';
-
-                const headerEl = document.createElement('div');
-                headerEl.className = 'lesson-group-header';
-                headerEl.textContent = headerText;
+                const headerText = gk === 'vocabulary_11th' ? '📚 Vocabulary — 11th Grade' : '📝 Irregular Verbs';
+                const headerEl = document.createElement('div'); headerEl.className = 'lesson-group-header'; headerEl.textContent = headerText;
                 lessonListEl.appendChild(headerEl);
-
                 lessons.forEach(l => {
                     const item = document.createElement('div');
                     item.className = 'lesson-item' + (checkedLessons.has(l.id) ? ' checked' : '');
@@ -814,12 +661,8 @@
                     lessonListEl.appendChild(item);
                     const checkbox = item.querySelector('input');
                     item.addEventListener('click', (e) => {
-                        if (e.target.tagName !== 'INPUT') {
-                            checkbox.checked = !checkbox.checked;
-                            toggleLesson(l.id, checkbox.checked, item);
-                        } else {
-                            toggleLesson(l.id, checkbox.checked, item);
-                        }
+                        if (e.target.tagName !== 'INPUT') checkbox.checked = !checkbox.checked;
+                        toggleLesson(l.id, checkbox.checked, item);
                     });
                 });
             });
@@ -828,40 +671,25 @@
 
         function toggleLesson(id, checked, itemElement) {
             if (checked) checkedLessons.add(id); else checkedLessons.delete(id);
-            if (itemElement) {
-                itemElement.classList.toggle('checked', checked);
-            } else {
-                // fallback if called from selectAll/clearAll
-                const el = document.querySelector(`.lesson-item[data-lesson-id="${id}"]`);
-                if (el) el.classList.toggle('checked', checked);
-            }
+            if (itemElement) itemElement.classList.toggle('checked', checked);
+            else { const el = document.querySelector(`.lesson-item[data-lesson-id="${id}"]`); if (el) el.classList.toggle('checked', checked); }
             updateSelectionUI();
         }
 
         function updateSelectionUI() {
-            const count = checkedLessons.size;
-            const totalWords = LESSONS.filter(l=>checkedLessons.has(l.id)).reduce((s,l)=>s+l.words.length,0);
+            const count = checkedLessons.size, totalWords = LESSONS.filter(l=>checkedLessons.has(l.id)).reduce((s,l)=>s+l.words.length,0);
             if (count===0) { selectedInfo.textContent="No lessons selected"; startBtn.disabled=true; }
             else { selectedInfo.textContent=`${count} lesson(s) selected — ${totalWords} word(s)`; startBtn.disabled=false; }
         }
 
         document.getElementById('selectAllBtn').addEventListener('click', () => {
             LESSONS.forEach(l => checkedLessons.add(l.id));
-            document.querySelectorAll('.lesson-item').forEach(el => {
-                const cb = el.querySelector('input');
-                cb.checked = true;
-                el.classList.add('checked');
-            });
+            document.querySelectorAll('.lesson-item').forEach(el => { el.querySelector('input').checked = true; el.classList.add('checked'); });
             updateSelectionUI();
         });
-
         document.getElementById('clearAllBtn').addEventListener('click', () => {
             checkedLessons.clear();
-            document.querySelectorAll('.lesson-item').forEach(el => {
-                const cb = el.querySelector('input');
-                cb.checked = false;
-                el.classList.remove('checked');
-            });
+            document.querySelectorAll('.lesson-item').forEach(el => { el.querySelector('input').checked = false; el.classList.remove('checked'); });
             updateSelectionUI();
         });
 
@@ -871,29 +699,91 @@
         document.getElementById('resumeBtn').addEventListener('click', () => { const saved = loadState(); if (saved) resumeSession(saved); });
         document.getElementById('discardResumeBtn').addEventListener('click', () => { clearState(); resumeBanner.style.display='none'; });
 
-        function startNewSession(lessonIds) { const pool = buildWordPool(lessonIds); const ids = shuffle(pool.map(w=>w.id)); session = { lessonIds, poolMap: Object.fromEntries(pool.map(w=>[w.id,w])), queue: ids, mastered: [], total: ids.length }; spellingMode = false; updateModeToggleUI(); persist(true); enterStudyScreen(); }
-        function resumeSession(saved) { const pool = buildWordPool(saved.lessonIds); const poolMap = Object.fromEntries(pool.map(w=>[w.id,w])); session = { lessonIds: saved.lessonIds, poolMap, queue: saved.queue.filter(id=>poolMap[id]), mastered: saved.mastered.filter(id=>poolMap[id]), total: saved.total }; spellingMode = false; updateModeToggleUI(); enterStudyScreen(); }
+        function startNewSession(lessonIds) {
+            const pool = buildWordPool(lessonIds); const ids = shuffle(pool.map(w=>w.id));
+            session = { lessonIds, poolMap: Object.fromEntries(pool.map(w=>[w.id,w])), queue: ids, mastered: [], total: ids.length };
+            spellingMode = false; reverseMode = false; spellingSelfCheck = false;
+            reviewStack = [];
+            updateModeUI(); persist(true); enterStudyScreen();
+        }
 
-        function enterStudyScreen() { selectScreen.style.display='none'; doneScreen.style.display='none'; studyScreen.style.display='flex'; studyScreen.style.flexDirection='column'; studyScreen.style.alignItems='center'; document.getElementById('activeLessonsLabel').textContent = LESSONS.filter(l=>session.lessonIds.includes(l.id)).map(l=>l.title).join(', '); renderCurrentCard(); startStudyTimer(); updatePresence(true); }
-        function backToSelection() { selectScreen.style.display='block'; studyScreen.style.display='none'; doneScreen.style.display='none'; stopStudyTimer(); updatePresence(false); checkForResume(); spellingMode = false; updateModeToggleUI(); }
+        function resumeSession(saved) {
+            const pool = buildWordPool(saved.lessonIds); const poolMap = Object.fromEntries(pool.map(w=>[w.id,w]));
+            session = { lessonIds: saved.lessonIds, poolMap, queue: saved.queue.filter(id=>poolMap[id]), mastered: saved.mastered.filter(id=>poolMap[id]), total: saved.total };
+            spellingMode = false; reverseMode = false; spellingSelfCheck = false;
+            reviewStack = [];
+            updateModeUI(); enterStudyScreen();
+        }
+
+        function enterStudyScreen() {
+            selectScreen.style.display='none'; doneScreen.style.display='none'; studyScreen.style.display='flex';
+            studyScreen.style.flexDirection='column'; studyScreen.style.alignItems='center';
+            document.getElementById('activeLessonsLabel').textContent = LESSONS.filter(l=>session.lessonIds.includes(l.id)).map(l=>l.title).join(', ');
+            renderCurrentCard(); startStudyTimer(); updatePresence(true);
+        }
+
+        function backToSelection() {
+            selectScreen.style.display='block'; studyScreen.style.display='none'; doneScreen.style.display='none';
+            stopStudyTimer(); updatePresence(false); checkForResume();
+            spellingMode = false; reverseMode = false; spellingSelfCheck = false; updateModeUI();
+        }
 
         document.getElementById('backBtn').addEventListener('click', backToSelection);
         document.getElementById('doneBackBtn').addEventListener('click', () => { clearState(); backToSelection(); });
         document.getElementById('resetProgressBtn').addEventListener('click', () => { if (!session) return; if (confirm('Reset this session\'s progress?')) startNewSession(session.lessonIds); });
 
-        // ======================= STUDY SCREEN =======================
-        const flashcard = document.getElementById('flashcard'), wordText = document.getElementById('wordText'), meaningText = document.getElementById('meaningText'), answerRow = document.getElementById('answerRow'), frontLabel = document.getElementById('frontLabel'), frontHint = document.getElementById('frontHint'), backLabel = document.getElementById('backLabel'), backHint = document.getElementById('backHint'), spellingArea = document.getElementById('spellingArea'), spellingInput = document.getElementById('spellingInput'), spellingCheckBtn = document.getElementById('spellingCheckBtn'), spellingToast = document.getElementById('spellingToast'), modeToggleBtn = document.getElementById('modeToggleBtn');
+        const flashcard = document.getElementById('flashcard'), wordText = document.getElementById('wordText'), meaningText = document.getElementById('meaningText'),
+              answerRow = document.getElementById('answerRow'), frontLabel = document.getElementById('frontLabel'), frontHint = document.getElementById('frontHint'),
+              backLabel = document.getElementById('backLabel'), backHint = document.getElementById('backHint'),
+              spellingArea = document.getElementById('spellingArea'), spellingInput = document.getElementById('spellingInput'),
+              spellingCheckBtn = document.getElementById('spellingCheckBtn'), spellingToast = document.getElementById('spellingToast'),
+              modeToggleBtn = document.getElementById('modeToggleBtn'), reverseToggleBtn = document.getElementById('reverseToggleBtn'),
+              spellingSelfCheckToggle = document.getElementById('spellingSelfCheckToggle'),
+              spellingTypingRow = document.getElementById('spellingTypingRow');
         const progressFill = document.getElementById('progressFill'), statQueue = document.getElementById('statQueue'), statMastered = document.getElementById('statMastered'), statTotal = document.getElementById('statTotal');
 
-        function updateModeToggleUI() {
-            if (spellingMode) { modeToggleBtn.textContent = '🃏 Flashcard'; modeToggleBtn.classList.add('spelling-active'); }
-            else { modeToggleBtn.textContent = '📝 Spelling'; modeToggleBtn.classList.remove('spelling-active'); }
+        function updateModeUI() {
+            modeToggleBtn.textContent = spellingMode ? '🃏 Flashcard' : '📝 Spelling';
+            modeToggleBtn.classList.toggle('spelling-active', spellingMode);
+            reverseToggleBtn.classList.toggle('active', reverseMode);
+            spellingSelfCheckToggle.classList.toggle('active', spellingSelfCheck);
+            if (spellingMode) {
+                spellingArea.style.display = 'flex';
+                answerRow.style.display = 'none';
+                spellingTypingRow.style.display = spellingSelfCheck ? 'none' : 'flex';
+                if (spellingSelfCheck) {
+                    answerRow.style.display = 'grid';
+                }
+            } else {
+                spellingArea.style.display = 'none';
+                answerRow.style.display = 'grid';
+            }
+            if (!spellingMode) {
+                answerRow.style.display = 'grid';
+            }
         }
 
         modeToggleBtn.addEventListener('click', () => {
             if (!session || session.queue.length === 0) return;
             spellingMode = !spellingMode;
-            updateModeToggleUI();
+            spellingSelfCheck = false;
+            updateModeUI();
+            renderCurrentCard();
+        });
+
+        reverseToggleBtn.addEventListener('click', () => {
+            reverseMode = !reverseMode;
+            updateModeUI();
+            renderCurrentCard();
+        });
+
+        spellingSelfCheckToggle.addEventListener('click', () => {
+            if (!spellingMode) return;
+            spellingSelfCheck = !spellingSelfCheck;
+            updateModeUI();
+            if (!spellingSelfCheck) {
+                answerRow.classList.remove('show');
+            }
             renderCurrentCard();
         });
 
@@ -908,16 +798,26 @@
 
             if (spellingMode) {
                 frontLabel.textContent = 'Definition'; backLabel.textContent = 'Answer';
-                frontHint.textContent = 'Type the word below ↓'; backHint.textContent = 'Correct spelling ↑';
+                frontHint.textContent = spellingSelfCheck ? 'Flip to see word' : 'Type the word below ↓';
                 wordText.textContent = w.meaning; meaningText.textContent = w.word;
-                answerRow.style.display = 'none'; spellingArea.style.display = 'flex';
-                spellingInput.value = ''; spellingInput.disabled = false; spellingCheckBtn.disabled = false;
-                setTimeout(() => spellingInput.focus(), 100);
+                if (!spellingSelfCheck) {
+                    spellingTypingRow.style.display = 'flex';
+                    answerRow.style.display = 'none';
+                    spellingInput.value = ''; spellingInput.disabled = false; spellingCheckBtn.disabled = false;
+                    setTimeout(() => spellingInput.focus(), 100);
+                } else {
+                    spellingTypingRow.style.display = 'none';
+                    answerRow.style.display = 'grid';
+                }
+                spellingArea.style.display = 'flex';
             } else {
-                frontLabel.textContent = 'Word'; backLabel.textContent = 'Meaning';
-                frontHint.textContent = 'Tap card to see meaning'; backHint.textContent = 'Assess your answer ↓';
-                wordText.textContent = w.word; meaningText.textContent = w.meaning;
-                answerRow.style.display = 'grid'; spellingArea.style.display = 'none';
+                frontLabel.textContent = reverseMode ? 'Meaning' : 'Word';
+                backLabel.textContent = reverseMode ? 'Word' : 'Meaning';
+                frontHint.textContent = 'Tap card to see ' + (reverseMode ? 'word' : 'meaning');
+                wordText.textContent = reverseMode ? w.meaning : w.word;
+                meaningText.textContent = reverseMode ? w.word : w.meaning;
+                answerRow.style.display = 'grid';
+                spellingArea.style.display = 'none';
             }
             void flashcard.offsetWidth; flashcard.classList.remove('no-anim');
             updateProgress();
@@ -928,7 +828,7 @@
         let flipShowTimer = null;
         flashcard.addEventListener('click', () => {
             if (spellingPending) return;
-            if (!flashcard.classList.contains('flipped')) { flashcard.classList.add('flipped'); flipShowTimer = setTimeout(()=>{ if(!spellingMode) answerRow.classList.add('show'); }, 200); }
+            if (!flashcard.classList.contains('flipped')) { flashcard.classList.add('flipped'); flipShowTimer = setTimeout(()=>{ if(!spellingMode || spellingSelfCheck) answerRow.classList.add('show'); }, 200); }
             else { if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer=null; } answerRow.classList.remove('show'); flashcard.classList.remove('flipped'); }
         });
 
@@ -957,25 +857,41 @@
             if (!session || session.queue.length===0) return;
             if (flipShowTimer) { clearTimeout(flipShowTimer); flipShowTimer=null; }
             const id = session.queue.shift();
+            const card = session.poolMap[id];
+            reviewStack.unshift({ id, word: card.word, meaning: card.meaning });
+            if (reviewStack.length > MAX_REVIEW) reviewStack.pop();
             if (result==='correct') session.mastered.push(id); else session.queue.push(id);
             persist(); renderCurrentCard();
         }
 
-        function showDoneScreen() { studyScreen.style.display='none'; doneScreen.style.display='block'; document.getElementById('doneSummary').textContent = `You successfully practiced ${session.total} word(s) from the selected lessons 👏`; stopStudyTimer(); updatePresence(false); clearState(); spellingMode = false; updateModeToggleUI(); }
+        function showDoneScreen() {
+            studyScreen.style.display='none'; doneScreen.style.display='block';
+            document.getElementById('doneSummary').textContent = `You successfully practiced ${session.total} word(s) from the selected lessons 👏`;
+            stopStudyTimer(); updatePresence(false); clearState();
+            spellingMode = false; reverseMode = false; spellingSelfCheck = false; updateModeUI();
+        }
 
-        // ======================= THEME =======================
+        // Previous button / review overlay
+        const reviewOverlay = document.getElementById('reviewOverlay'), reviewWordEl = document.getElementById('reviewWord'), reviewMeaningEl = document.getElementById('reviewMeaning');
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (reviewStack.length === 0) return;
+            const last = reviewStack[0];
+            reviewWordEl.textContent = last.word;
+            reviewMeaningEl.textContent = last.meaning;
+            reviewOverlay.style.display = 'flex';
+        });
+        document.getElementById('closeReviewBtn').addEventListener('click', () => {
+            reviewOverlay.style.display = 'none';
+        });
+
         const THEME_KEY = "english_flashcards_theme", themeToggleBtn = document.getElementById('themeToggle');
         function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); themeToggleBtn.textContent = theme==='dark'?'☀️':'🌙'; }
         function initTheme() { let theme = localStorage.getItem(THEME_KEY); if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; applyTheme(theme); }
         themeToggleBtn.addEventListener('click', () => { const next = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; applyTheme(next); localStorage.setItem(THEME_KEY, next); });
 
-        // ======================= PRESENCE & TIMER (optimized) =======================
         let presenceInterval=null, onlineUsersInterval=null, currentUsername=null;
         let studyTimerInterval=null, unsyncedSeconds=0, sessionTotalSeconds=0;
-        let isStudyActive=true, lastActivityTime=Date.now();
-        const INACTIVITY_LIMIT=30;
-        const SYNC_INTERVAL_SEC = 15; // was 5, reduced to 15
-        const HEARTBEAT_INTERVAL_MS = 30000; // was 20000, reduced to 30000
+        let isStudyActive=true, lastActivityTime=Date.now(); const INACTIVITY_LIMIT=30, SYNC_INTERVAL_SEC=15, HEARTBEAT_INTERVAL_MS=30000;
 
         const onlineUsersWidget = document.getElementById('onlineUsersWidget'), onlineCount = document.getElementById('onlineCount'), onlineTooltip = document.getElementById('onlineTooltip');
         const studyTimerDisplay = document.getElementById('studyTimerDisplay'), timerText = document.getElementById('timerText');
@@ -985,29 +901,22 @@
             if (!user) return;
             currentUsername = user.user_metadata?.display_username || user.email?.split('@')[0] || 'user';
             await updatePresence(false);
-            if (presenceInterval) clearInterval(presenceInterval);
-            presenceInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL_MS);
-            if (onlineUsersInterval) clearInterval(onlineUsersInterval);
-            onlineUsersInterval = setInterval(fetchOnlineUsers, 10000);
+            if (presenceInterval) clearInterval(presenceInterval); presenceInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL_MS);
+            if (onlineUsersInterval) clearInterval(onlineUsersInterval); onlineUsersInterval = setInterval(fetchOnlineUsers, 10000);
             fetchOnlineUsers();
         }
-
         function stopPresence() { if (presenceInterval) clearInterval(presenceInterval); if (onlineUsersInterval) clearInterval(onlineUsersInterval); presenceInterval=onlineUsersInterval=null; }
-
         async function removePresence() { const { data: { user } } = await supabaseClient.auth.getUser(); if (user) await supabaseClient.from('user_presence').delete().eq('user_id', user.id); }
-
         async function sendHeartbeat() {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user) return;
             await supabaseClient.rpc('update_heartbeat', { p_user_id: user.id, p_username: currentUsername, p_is_studying: false });
         }
-
         async function updatePresence(isStudying) {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user) return;
             await supabaseClient.rpc('update_heartbeat', { p_user_id: user.id, p_username: currentUsername, p_is_studying: isStudying });
         }
-
         async function fetchOnlineUsers() {
             try {
                 const { data, error } = await supabaseClient.from('online_users_view').select('*');
@@ -1015,7 +924,6 @@
                 renderOnlineUsers(data || []);
             } catch(e) { console.error('fetchOnlineUsers error:', e); onlineCount.textContent = '?'; }
         }
-
         function renderOnlineUsers(users) {
             onlineCount.textContent = users.length;
             if (users.length === 0) onlineTooltip.innerHTML = '<div style="text-align:center;color:var(--ink-soft);padding:8px;">No users online</div>';
@@ -1045,9 +953,7 @@
             }, 1000);
             setupActivityListeners();
         }
-
         function stopStudyTimer() { if (studyTimerInterval) { clearInterval(studyTimerInterval); studyTimerInterval=null; } removeActivityListeners(); syncStudyTime(); studyTimerDisplay.classList.add('inactive'); }
-
         async function syncStudyTime() {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user || unsyncedSeconds===0) return;
@@ -1056,13 +962,10 @@
             await supabaseClient.from('user_presence').upsert({ user_id: user.id, username: currentUsername, accumulated_study_seconds: previous + unsyncedSeconds }, { onConflict: 'user_id' });
             unsyncedSeconds=0;
         }
-
         function updateTimerDisplay() { const m=Math.floor(sessionTotalSeconds/60), s=sessionTotalSeconds%60; timerText.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
-
         function setupActivityListeners() { removeActivityListeners(); window.addEventListener('mousemove',activityHandler); window.addEventListener('keydown',activityHandler); window.addEventListener('click',activityHandler); }
         function removeActivityListeners() { window.removeEventListener('mousemove',activityHandler); window.removeEventListener('keydown',activityHandler); window.removeEventListener('click',activityHandler); }
         function activityHandler() { lastActivityTime=Date.now(); }
-
         window.addEventListener('beforeunload', () => { if (studyTimerInterval) syncStudyTime(); sendHeartbeat(); });
 
         initTheme();
