@@ -6,8 +6,7 @@
     <title>English Vocabulary Flashcards</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --parchment: #F4F6F3;
@@ -123,9 +122,6 @@
             color: var(--accent); padding: 10px 6px 4px; margin-top: 6px; border-bottom: 1px solid var(--border-soft);
         }
         .lesson-group-header:first-child { margin-top: 0; }
-        .lesson-sub-header {
-            font-size: 0.72rem; font-weight: 600; color: var(--ink-soft); padding: 4px 6px 2px 16px; letter-spacing: 0.5px;
-        }
         .lesson-item {
             display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px;
             border-radius: 10px; background: var(--surface-alt); border: 1px solid transparent; cursor: pointer;
@@ -188,6 +184,7 @@
             justify-content: center; text-align: center; padding: 26px; backface-visibility: hidden;
             box-shadow: var(--shadow); border: 1px solid var(--border-soft);
             transition: transform .5s cubic-bezier(.4,.2,.2,1);
+            will-change: transform; /* ← GPU acceleration */
         }
         .flashcard .face::before { content: ""; position: absolute; inset: 8px; border: 1px dashed var(--border-soft); border-radius: 13px; pointer-events: none; }
         .face-front { background: linear-gradient(160deg, var(--card-front-1), var(--card-front-2)); transform: rotateY(0deg); z-index: 2; }
@@ -412,7 +409,6 @@
     <script>
         // ======================= DATA =======================
         const LESSONS = [
-            // ---------- Vocabulary 11th Grade ----------
             {
                 id: 1,
                 title: "Lesson 1",
@@ -594,7 +590,6 @@
                     ["handicrafts", "چیزی که با مهارت و با دست ساخته می‌شود / صنایع‌دستی"]
                 ]
             },
-            // ---------- Irregular Verbs (all 83) ----------
             {
                 id: 100,
                 title: "Irregular Verbs",
@@ -714,6 +709,23 @@
             }
         }
 
+        // Debounced persist to reduce localStorage writes
+        let persistTimeout = null;
+        function persist(immediate = false) {
+            if (!session) return;
+            const doPersist = () => {
+                saveState({ lessonIds: session.lessonIds, queue: session.queue, mastered: session.mastered, total: session.total });
+                syncProgressToCloud();
+            };
+            if (immediate) {
+                clearTimeout(persistTimeout);
+                doPersist();
+            } else {
+                clearTimeout(persistTimeout);
+                persistTimeout = setTimeout(doPersist, 500);
+            }
+        }
+
         function shuffle(arr) { const a = arr.slice(); for (let i=a.length-1;i>0;i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
         function buildWordPool(lessonIds) { const pool = []; LESSONS.filter(l=>lessonIds.includes(l.id)).forEach(l=>{ l.words.forEach((w,idx)=>{ pool.push({id:l.id+"-"+idx, lessonId:l.id, word:w[0], meaning:w[1]}); }); }); return pool; }
 
@@ -769,7 +781,7 @@
             }
         }
 
-        // ======================= LESSON SELECTION =======================
+        // ======================= LESSON SELECTION (optimized) =======================
         function renderLessonList() {
             lessonListEl.innerHTML = "";
             const groups = {};
@@ -797,29 +809,70 @@
                 lessons.forEach(l => {
                     const item = document.createElement('div');
                     item.className = 'lesson-item' + (checkedLessons.has(l.id) ? ' checked' : '');
+                    item.dataset.lessonId = l.id;
                     item.innerHTML = `<label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;"><input type="checkbox" data-id="${l.id}" ${checkedLessons.has(l.id)?'checked':''}/><span>${l.title}</span></label><span class="count">${l.words.length} words</span>`;
                     lessonListEl.appendChild(item);
                     const checkbox = item.querySelector('input');
-                    item.addEventListener('click', (e) => { if (e.target.tagName !== 'INPUT') { checkbox.checked = !checkbox.checked; } toggleLesson(l.id, checkbox.checked); });
+                    item.addEventListener('click', (e) => {
+                        if (e.target.tagName !== 'INPUT') {
+                            checkbox.checked = !checkbox.checked;
+                            toggleLesson(l.id, checkbox.checked, item);
+                        } else {
+                            toggleLesson(l.id, checkbox.checked, item);
+                        }
+                    });
                 });
             });
             updateSelectionUI();
         }
 
-        function toggleLesson(id, checked) { if (checked) checkedLessons.add(id); else checkedLessons.delete(id); document.querySelectorAll('.lesson-item').forEach(el => { const cb = el.querySelector('input'); if (parseInt(cb.dataset.id) === id) el.classList.toggle('checked', checked); }); updateSelectionUI(); }
-        function updateSelectionUI() { const count = checkedLessons.size, totalWords = LESSONS.filter(l=>checkedLessons.has(l.id)).reduce((s,l)=>s+l.words.length,0); if (count===0) { selectedInfo.textContent="No lessons selected"; startBtn.disabled=true; } else { selectedInfo.textContent=`${count} lesson(s) selected — ${totalWords} word(s)`; startBtn.disabled=false; } }
+        function toggleLesson(id, checked, itemElement) {
+            if (checked) checkedLessons.add(id); else checkedLessons.delete(id);
+            if (itemElement) {
+                itemElement.classList.toggle('checked', checked);
+            } else {
+                // fallback if called from selectAll/clearAll
+                const el = document.querySelector(`.lesson-item[data-lesson-id="${id}"]`);
+                if (el) el.classList.toggle('checked', checked);
+            }
+            updateSelectionUI();
+        }
 
-        document.getElementById('selectAllBtn').addEventListener('click', () => { LESSONS.forEach(l=>checkedLessons.add(l.id)); renderLessonList(); });
-        document.getElementById('clearAllBtn').addEventListener('click', () => { checkedLessons.clear(); renderLessonList(); });
+        function updateSelectionUI() {
+            const count = checkedLessons.size;
+            const totalWords = LESSONS.filter(l=>checkedLessons.has(l.id)).reduce((s,l)=>s+l.words.length,0);
+            if (count===0) { selectedInfo.textContent="No lessons selected"; startBtn.disabled=true; }
+            else { selectedInfo.textContent=`${count} lesson(s) selected — ${totalWords} word(s)`; startBtn.disabled=false; }
+        }
+
+        document.getElementById('selectAllBtn').addEventListener('click', () => {
+            LESSONS.forEach(l => checkedLessons.add(l.id));
+            document.querySelectorAll('.lesson-item').forEach(el => {
+                const cb = el.querySelector('input');
+                cb.checked = true;
+                el.classList.add('checked');
+            });
+            updateSelectionUI();
+        });
+
+        document.getElementById('clearAllBtn').addEventListener('click', () => {
+            checkedLessons.clear();
+            document.querySelectorAll('.lesson-item').forEach(el => {
+                const cb = el.querySelector('input');
+                cb.checked = false;
+                el.classList.remove('checked');
+            });
+            updateSelectionUI();
+        });
+
         startBtn.addEventListener('click', () => startNewSession(Array.from(checkedLessons)));
 
         function checkForResume() { const saved = loadState(); if (saved?.queue?.length > 0) { resumeBanner.style.display='flex'; resumeBanner.dataset.hasSave="1"; } else resumeBanner.style.display='none'; }
         document.getElementById('resumeBtn').addEventListener('click', () => { const saved = loadState(); if (saved) resumeSession(saved); });
         document.getElementById('discardResumeBtn').addEventListener('click', () => { clearState(); resumeBanner.style.display='none'; });
 
-        function startNewSession(lessonIds) { const pool = buildWordPool(lessonIds); const ids = shuffle(pool.map(w=>w.id)); session = { lessonIds, poolMap: Object.fromEntries(pool.map(w=>[w.id,w])), queue: ids, mastered: [], total: ids.length }; spellingMode = false; updateModeToggleUI(); persist(); enterStudyScreen(); }
+        function startNewSession(lessonIds) { const pool = buildWordPool(lessonIds); const ids = shuffle(pool.map(w=>w.id)); session = { lessonIds, poolMap: Object.fromEntries(pool.map(w=>[w.id,w])), queue: ids, mastered: [], total: ids.length }; spellingMode = false; updateModeToggleUI(); persist(true); enterStudyScreen(); }
         function resumeSession(saved) { const pool = buildWordPool(saved.lessonIds); const poolMap = Object.fromEntries(pool.map(w=>[w.id,w])); session = { lessonIds: saved.lessonIds, poolMap, queue: saved.queue.filter(id=>poolMap[id]), mastered: saved.mastered.filter(id=>poolMap[id]), total: saved.total }; spellingMode = false; updateModeToggleUI(); enterStudyScreen(); }
-        function persist() { if (!session) return; saveState({ lessonIds: session.lessonIds, queue: session.queue, mastered: session.mastered, total: session.total }); syncProgressToCloud(); }
 
         function enterStudyScreen() { selectScreen.style.display='none'; doneScreen.style.display='none'; studyScreen.style.display='flex'; studyScreen.style.flexDirection='column'; studyScreen.style.alignItems='center'; document.getElementById('activeLessonsLabel').textContent = LESSONS.filter(l=>session.lessonIds.includes(l.id)).map(l=>l.title).join(', '); renderCurrentCard(); startStudyTimer(); updatePresence(true); }
         function backToSelection() { selectScreen.style.display='block'; studyScreen.style.display='none'; doneScreen.style.display='none'; stopStudyTimer(); updatePresence(false); checkForResume(); spellingMode = false; updateModeToggleUI(); }
@@ -916,10 +969,13 @@
         function initTheme() { let theme = localStorage.getItem(THEME_KEY); if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; applyTheme(theme); }
         themeToggleBtn.addEventListener('click', () => { const next = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; applyTheme(next); localStorage.setItem(THEME_KEY, next); });
 
-        // ======================= PRESENCE & TIMER =======================
+        // ======================= PRESENCE & TIMER (optimized) =======================
         let presenceInterval=null, onlineUsersInterval=null, currentUsername=null;
         let studyTimerInterval=null, unsyncedSeconds=0, sessionTotalSeconds=0;
-        let isStudyActive=true, lastActivityTime=Date.now(); const INACTIVITY_LIMIT=30;
+        let isStudyActive=true, lastActivityTime=Date.now();
+        const INACTIVITY_LIMIT=30;
+        const SYNC_INTERVAL_SEC = 15; // was 5, reduced to 15
+        const HEARTBEAT_INTERVAL_MS = 30000; // was 20000, reduced to 30000
 
         const onlineUsersWidget = document.getElementById('onlineUsersWidget'), onlineCount = document.getElementById('onlineCount'), onlineTooltip = document.getElementById('onlineTooltip');
         const studyTimerDisplay = document.getElementById('studyTimerDisplay'), timerText = document.getElementById('timerText');
@@ -929,8 +985,10 @@
             if (!user) return;
             currentUsername = user.user_metadata?.display_username || user.email?.split('@')[0] || 'user';
             await updatePresence(false);
-            if (presenceInterval) clearInterval(presenceInterval); presenceInterval = setInterval(sendHeartbeat, 20000);
-            if (onlineUsersInterval) clearInterval(onlineUsersInterval); onlineUsersInterval = setInterval(fetchOnlineUsers, 10000);
+            if (presenceInterval) clearInterval(presenceInterval);
+            presenceInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL_MS);
+            if (onlineUsersInterval) clearInterval(onlineUsersInterval);
+            onlineUsersInterval = setInterval(fetchOnlineUsers, 10000);
             fetchOnlineUsers();
         }
 
@@ -982,7 +1040,7 @@
                 else {
                     if (!isStudyActive) { isStudyActive=true; studyTimerDisplay.classList.remove('inactive'); updatePresence(true); }
                     sessionTotalSeconds++; unsyncedSeconds++; updateTimerDisplay();
-                    if (unsyncedSeconds % 5 === 0) syncStudyTime();
+                    if (unsyncedSeconds % SYNC_INTERVAL_SEC === 0) syncStudyTime();
                 }
             }, 1000);
             setupActivityListeners();
@@ -1001,8 +1059,8 @@
 
         function updateTimerDisplay() { const m=Math.floor(sessionTotalSeconds/60), s=sessionTotalSeconds%60; timerText.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
 
-        function setupActivityListeners() { removeActivityListeners(); window.addEventListener('mousemove',activityHandler); window.addEventListener('keydown',activityHandler); window.addEventListener('click',activityHandler); window.addEventListener('touchstart',activityHandler); window.addEventListener('scroll',activityHandler); }
-        function removeActivityListeners() { window.removeEventListener('mousemove',activityHandler); window.removeEventListener('keydown',activityHandler); window.removeEventListener('click',activityHandler); window.removeEventListener('touchstart',activityHandler); window.removeEventListener('scroll',activityHandler); }
+        function setupActivityListeners() { removeActivityListeners(); window.addEventListener('mousemove',activityHandler); window.addEventListener('keydown',activityHandler); window.addEventListener('click',activityHandler); }
+        function removeActivityListeners() { window.removeEventListener('mousemove',activityHandler); window.removeEventListener('keydown',activityHandler); window.removeEventListener('click',activityHandler); }
         function activityHandler() { lastActivityTime=Date.now(); }
 
         window.addEventListener('beforeunload', () => { if (studyTimerInterval) syncStudyTime(); sendHeartbeat(); });
